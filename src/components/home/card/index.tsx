@@ -45,7 +45,7 @@ const Tag = ({tag}:{tag: string}) => {
 }
 
 export type PostCardProps = {
-    id: number;
+    id: string;
     title: string;
     tags: string[];
     description: string;
