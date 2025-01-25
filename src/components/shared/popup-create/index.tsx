@@ -19,7 +19,7 @@ const Item = (props: ItemProps) => {
     return (
         <div className='flex flex-col gap-1 items-start w-full'>
             <span className='text-base font-normal w-full'>{props.title}</span>
-            <input className='py-2 pl-3 rounded-lg bg-grey w-full text-base font-semibold'>
+            <input className='py-2 pl-3 rounded-lg bg-grey w-full text-base font-semibold focus-within:outline-none'>
                 {/* <span className='text-base font-semibold'>{props.value}</span> */}
             </input>
         </div>
@@ -41,8 +41,8 @@ const ContentItem = (props: ItemProps) => {
     return (
         <div className='flex flex-col gap-1 items-start w-full'>
             <span className='text-base font-normal w-full'>{props.title}</span>
-            <div className='flex flex-col gap-3 p-3 rounded-lg bg-grey w-full text-base font-semibold'>
-                <textarea className='p-3 rounded-lg bg-grey w-full text-base font-semibold'>
+            <div className='flex flex-col gap-3 py-2 px-3 rounded-lg bg-grey w-full text-base font-semibold'>
+                <textarea className='rounded-lg bg-grey w-full text-base font-semibold focus-within:outline-none'>
                 </textarea>
                 <div className='flex flex-row gap-5 items-end w-full justify-end'>
                     <AddButton title={'Add Photos'} onClick={() => {}} />

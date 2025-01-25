@@ -2,6 +2,7 @@
 
 import Image from 'next/image'
 import { useState } from 'react'
+import { useParams, useRouter } from 'next/navigation'
 
 import iconStar from '@/icons/star.svg'
 import iconComment from '@/icons/message.svg'
@@ -49,9 +50,14 @@ const getInitials = (name: string) => {
 
 const PostCard = ({post}: {post: PostCardProps}) => {
     const [isOpenPreviewPopup, setIsOpenPreviewPopup] = useState(false)
-
     const handleOpenPreviewPopup = () => {
         setIsOpenPreviewPopup(true)
+    }
+
+    const router = useRouter()
+    const { course, term } = useParams()
+    const handlePostDetailClick = (post: any) => {
+        course && term && router.push(`/space/${course}/${term}/${post.id}`)
     }
 
     return (
@@ -94,7 +100,7 @@ const PostCard = ({post}: {post: PostCardProps}) => {
                         </button>
                         <button
                             className={`flex flex-row items-center gap-[6px] bg-green rounded-lg py-2 px-3 text-sm font-bold text-black`}
-                            onClick={() => {}}
+                            onClick={() => {handlePostDetailClick(post)}}
                         >
                             <span>See Details</span>
                             <Image src={iconRightArrow} alt='' />
