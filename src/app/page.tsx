@@ -42,7 +42,7 @@ export default function Home() {
         <UtilSection />
         <div className="flex flex-col gap-6">
           {POST.map((post) => (
-            <PostCard key={post.id} post={post}  />
+            <PostCard key={post.id} post={post} />
           ))}
         </div>
       </div>
