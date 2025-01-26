@@ -9,7 +9,7 @@ import PopularPosts from "@/components/home/popular/posts";
 import PopularTags from "@/components/home/popular/tags";
 import UtilSection from "@/components/home/utils";
 
-const POST = [
+export const POST = [
     {
         id: 0,
         title: 'I have found the ultimate test cases for this assignment',

@@ -20,7 +20,7 @@ const Reaction = ({count, icon}:{count: number, icon: string}) => {
     )
 }
 
-const Tag = ({tag}:{tag: string}) => {
+export const Tag = ({tag}:{tag: string}) => {
     return (
         <button className='bg-grey rounded-[20px] px-[10px] py-1 text-xs font-semibold'>
             {tag}
