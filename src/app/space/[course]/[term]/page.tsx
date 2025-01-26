@@ -38,26 +38,26 @@ interface PostData {
 }
 
 const CoursePage = () => {
-  const params = useParams(); // Lấy các tham số từ URL
-  const { postId } = params as { postId: string }; // Lấy postId từ params
+  const params = useParams(); 
+  const { course, term } = params as { course: string; term: string }; 
 
   const [POST, setPosts] = useState<PostData[]>([]);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await fetch(`http://127.0.0.1:3000/posts/${postId}`);
+        const res = await fetch(`http://127.0.0.1:3000/posts`);
         const json: Post[] = await res.json();
 
         const formattedPosts: PostData[] = json.map((item) => ({
           id: item.id,
           title: item.title,
-          tags: ["assignment1", "ultimate", "infinity void", "programming"], // Gắn cứng tags mẫu
+          tags: ["assignment1", "ultimate", "infinity void", "programming"], 
           description: item.description,
           date: item.created_at,
           author: item.user_mail,
           reactions: {
-            star: 145, // Mock dữ liệu reactions
+            star: 145, 
             comment: 56,
             view: 324,
             badge: 2,
@@ -70,10 +70,8 @@ const CoursePage = () => {
       }
     };
 
-    if (postId) {
-      fetchData();
-    }
-  }, [postId]);
+    fetchData();
+  }, [course, term]);
 
   return (
     <div className="min-h-screen bg-white text-black pr-10 pt-5 pb-10 flex flex-row gap-5">
