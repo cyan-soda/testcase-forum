@@ -11,6 +11,7 @@ import PreviewPopup from '@/components/shared/popup-preview'
 import { PostCardProps, Tag } from "@/components/home/card"
 import { LikeButton, CommentButton, BadgeButton } from "@/components/shared/buttons"
 import Comment from "../comments"
+import SimilarPosts from "../similar-posts"
 
 const getInitials = (name: string) => {
     const names = name.split(' ')
@@ -91,6 +92,14 @@ const COMMENTS = [
         content: 'Comment 3',
         parent_id: null,
     }
+]
+
+const POSTS = [
+    { title: "I put my minimum effort into creating this set of test cases for you guys, but I promise it works for 90% of this assignment.", author: "Dang Hoang", link: "#" },
+    { title: "I put my minimum effort into creating this set of test cases for you guys, but I promise it works for 90% of this assignment.", author: "Son Nguyen", link: "#" },
+    { title: "I put my minimum effort into creating this set of test cases for you guys, but I promise it works for 90% of this assignment.", author: "Dang Hoang", link: "#" },
+    { title: "I put my minimum effort into creating this set of test cases for you guys, but I promise it works for 90% of this assignment.", author: "Son Nguyen", link: "#" },
+    { title: "I put my minimum effort into creating this set of test cases for you guys, but I promise it works for 90% of this assignment.", author: "Dang Hoang", link: "#" },
 ]
 
 export type CommentProps = {
@@ -200,8 +209,10 @@ const PostDetails = ({ post }: { post: PostCardProps }) => {
                             </div>
                         )}
                         {activeTab === 'similar' && (
-                            <div>
-                                Similar Posts
+                            <div className="flex flex-col gap-5 w-full">
+                                {POSTS.map((post, index) => (
+                                    <SimilarPosts key={index} title={post.title} author={post.author} link={post.link} />
+                                ))}
                             </div>
                         )}
                     </div>
