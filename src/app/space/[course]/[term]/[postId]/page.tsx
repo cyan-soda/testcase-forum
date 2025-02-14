@@ -7,6 +7,7 @@ import { useState } from "react";
 import iconArrow from '@/icons/arrow--right.svg'
 import PostDetails from "@/components/post/details";
 import { POST } from "../page";
+import RunCode from "@/components/post/run-code";
 
 const Tab = ({ title, isActive, onClick }: { title: string, isActive: boolean, onClick: () => void }) => {
     return (
@@ -56,15 +57,12 @@ const PostDetailPage = () => {
                 </div>
 
                 <div className="w-full bg-grey rounded-2xl p-7">
-                    {activeTab === 'details' && (
+                    {/* {activeTab === 'details' && (
                         <PostDetails post={POST[parseInt(postId)]} />
-                    )}
+                    )} */}
 
                     {activeTab === 'runCode' && (
-                        <div className="">
-                            <h2>Run Code</h2>
-                            <p>This is where the user can run code related to the post.</p>
-                        </div>
+                        <RunCode  />
                     )}
                 </div>
             </div>

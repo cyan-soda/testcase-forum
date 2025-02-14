@@ -3,81 +3,15 @@
 import Image from "next/image"
 import { useState } from "react"
 
-import iconLike from '@/icons/like.svg'
-import iconDislike from '@/icons/dislike.svg'
-import iconLikeActive from '@/icons/like-active.svg'
-import iconDislikeActive from '@/icons/dislike-active.svg'
-import iconCommnent from '@/icons/message.svg'
-import iconBadge from '@/icons/medal-star.svg'
 import iconSave from '@/icons/save-2.svg'
 import iconHide from '@/icons/eye-slash.svg'
 import iconReport from '@/icons/danger.svg'
 
 import PreviewPopup from '@/components/shared/popup-preview'
 import { PostCardProps, Tag } from "@/components/home/card"
-
-const LikeButton = () => {
-    const [liked, setLiked] = useState(false)
-    const [disliked, setDisliked] = useState(false)
-    const [count, setCount] = useState(0)
-
-    const handleLike = () => {
-        if (liked) {
-            setLiked(false)
-            setCount(count - 1)
-        } else {
-            setLiked(true)
-            setCount(count + 1)
-        }
-        if (disliked) {
-            setDisliked(false);
-            setCount(count + 1);
-        }
-    }
-
-    const handleDislike = () => {
-        if (disliked) {
-            setDisliked(false)
-            setCount(count + 1)
-        } else {
-            setDisliked(true)
-            setCount(count - 1)
-        }
-        if (liked) {
-            setLiked(false);
-            setCount(count - 1);
-        }
-    }
-    return (
-        <div className="flex flex-row items-center gap-2 bg-grey rounded-lg px-4 py-2">
-            <button onClick={handleLike}>
-                <Image src={liked ? iconLikeActive : iconLike} alt="" width={24} height={24} />
-            </button>
-            <span>{count}</span>
-            <button onClick={handleDislike}>
-                <Image src={disliked ? iconDislikeActive : iconDislike} alt="" width={24} height={24} />
-            </button>
-        </div>
-    )
-}
-
-const CommentButton = ({ count, isOpenComment, setIsOpenComment }: { count: number, isOpenComment: boolean, setIsOpenComment: () => void }) => {
-    return (
-        <button className="flex flex-row items-center gap-2 bg-grey rounded-lg px-4 py-2" onClick={setIsOpenComment}>
-            <Image src={iconCommnent} alt="" width={24} height={24} />
-            <span>{count}</span>
-        </button>
-    )
-}
-
-const BadgeButton = ({ count, isOpenBadge, setIsOpenBadge }: { count: number, isOpenBadge: boolean, setIsOpenBadge: () => void }) => {
-    return (
-        <button className="flex flex-row items-center gap-2 bg-grey rounded-lg px-4 py-2" onClick={setIsOpenBadge}>
-            <Image src={iconBadge} alt="" width={24} height={24} />
-            <span>{count}</span>
-        </button>
-    )
-}
+import { LikeButton, CommentButton, BadgeButton } from "@/components/shared/buttons"
+import Comment from "../comments"
+import SimilarPosts from "../similar-posts"
 
 const getInitials = (name: string) => {
     const names = name.split(' ')
@@ -95,6 +29,88 @@ const Tab = ({ title, isActive, onClick }: { title: string, isActive: boolean, o
             {title}
         </button>
     )
+}
+
+const COMMENTS = [
+    {
+        id: 0,
+        author: 'Naomi',
+        date: '3 days ago',
+        like_count: 5,
+        comment_count: 5,
+        badge_count: 2,
+        content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
+        parent_id: null,
+    },
+    {
+        id: 1,
+        author: 'Naomi',
+        date: '2 days ago',
+        like_count: 15,
+        comment_count: 2,
+        badge_count: 0,
+        content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
+        parent_id: 0,
+    },
+    {
+        id: 2,
+        author: 'Naomi',
+        date: '1 days ago',
+        like_count: 15,
+        comment_count: 2,
+        badge_count: 0,
+        content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
+        parent_id: 1,
+    },
+    {
+        id: 3,
+        author: 'Naomi',
+        date: '2 days ago',
+        like_count: 15,
+        comment_count: 2,
+        badge_count: 0,
+        content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
+        parent_id: 0,
+    },
+    {
+        id: 4,
+        author: 'Naomi',
+        date: '2 days ago',
+        like_count: 15,
+        comment_count: 2,
+        badge_count: 0,
+        content: 'Comment 2',
+        parent_id: null,
+    },
+    {
+        id: 5,
+        author: 'Naomi',
+        date: '2 days ago',
+        like_count: 15,
+        comment_count: 2,
+        badge_count: 0,
+        content: 'Comment 3',
+        parent_id: null,
+    }
+]
+
+const POSTS = [
+    { title: "I put my minimum effort into creating this set of test cases for you guys, but I promise it works for 90% of this assignment.", author: "Dang Hoang", link: "#" },
+    { title: "I put my minimum effort into creating this set of test cases for you guys, but I promise it works for 90% of this assignment.", author: "Son Nguyen", link: "#" },
+    { title: "I put my minimum effort into creating this set of test cases for you guys, but I promise it works for 90% of this assignment.", author: "Dang Hoang", link: "#" },
+    { title: "I put my minimum effort into creating this set of test cases for you guys, but I promise it works for 90% of this assignment.", author: "Son Nguyen", link: "#" },
+    { title: "I put my minimum effort into creating this set of test cases for you guys, but I promise it works for 90% of this assignment.", author: "Dang Hoang", link: "#" },
+]
+
+export type CommentProps = {
+    id: number,
+    author: string,
+    date: string,
+    like_count: number,
+    comment_count: number,
+    badge_count: number,
+    content: string,
+    parent_id: number | null,
 }
 
 const PostDetails = ({ post }: { post: PostCardProps }) => {
@@ -117,6 +133,7 @@ const PostDetails = ({ post }: { post: PostCardProps }) => {
                 <div className="flex flex-col gap-5 pb-5 items-center w-full border-b border-black">
                     <div className="flex flex-col gap-2 w-full">
                         <div className="flex flex-row items-center justify-between w-full">
+                            {/* user's name, avatar & active status */}
                             <div className='flex flex-row gap-[10px] items-center justify-start'>
                                 <div className='rounded-full bg-grey h-10 w-10 text-black flex items-center justify-center'>{getInitials(post.author)}</div>
                                 <div className='flex flex-col items-start'>
@@ -124,7 +141,6 @@ const PostDetails = ({ post }: { post: PostCardProps }) => {
                                         <span className='text-base font-semibold flex-1'>{post.author}</span>
                                         <div className='bg-green rounded-full h-[6px] w-[6px]'></div>
                                     </div>
-                                    {/* <span className='text-sm font-normal'>{post.date}</span> */}
                                 </div>
                             </div>
                             <div className="flex flex-row items-center gap-4">
@@ -155,7 +171,7 @@ const PostDetails = ({ post }: { post: PostCardProps }) => {
                     </div>
                     <div className="flex flex-row items-center justify-between w-full">
                         <div className="flex flex-row items-center gap-3">
-                            <LikeButton />
+                            <LikeButton like_count={0} />
                             <CommentButton count={5} isOpenComment={isOpenComment} setIsOpenComment={() => { setIsOpenComment(!isOpenComment) }} />
                             <BadgeButton count={2} isOpenBadge={isOpenBadge} setIsOpenBadge={() => { setIsOpenBadge(!isOpenBadge) }} />
                         </div>
@@ -182,13 +198,21 @@ const PostDetails = ({ post }: { post: PostCardProps }) => {
                     </div>
                     <div className="w-full">
                         {activeTab === 'comments' && (
-                            <div>
-                                Comments
+                            <div className="flex flex-col gap-10 w-full">
+                                {COMMENTS.map((comment, index) => (
+                                    comment.parent_id === null ? (
+                                        <Comment key={index} comment={comment} />
+                                    ) : (
+                                        null
+                                    )
+                                ))}
                             </div>
                         )}
                         {activeTab === 'similar' && (
-                            <div>
-                                Similar Posts
+                            <div className="flex flex-col gap-5 w-full">
+                                {POSTS.map((post, index) => (
+                                    <SimilarPosts key={index} title={post.title} author={post.author} link={post.link} />
+                                ))}
                             </div>
                         )}
                     </div>
