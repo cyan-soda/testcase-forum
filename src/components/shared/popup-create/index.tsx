@@ -60,7 +60,7 @@ const CreatePostPopup = (props: CreatePopupProps) => {
     }
 
     return (
-        <PopupWrapper isOpen={props.isOpen} onClose={props.onClose} title={'Preview Testcase'}>
+        <PopupWrapper isOpen={props.isOpen} onClose={props.onClose} title={'Create a New Post'}>
             <div className='w-full min-w-[1000px] flex flex-col gap-5 pt-5 items-center'>
                 <span className='text-xl leading-8 font-semibold text-left w-full'>Add some basic information about your post</span>
                 <Item title={'Title *'} />
