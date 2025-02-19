@@ -20,6 +20,11 @@ interface Post {
     view: number;
     badge: number;
   };
+  testcase: {
+    input: string;
+    expected: string;
+  };
+
 }
 
 interface PostData {
@@ -35,6 +40,10 @@ interface PostData {
     view: number;
     badge: number;
   };
+    testcase: {
+        input: string;
+        expected: string;
+    };
 }
 
 const CoursePage = () => {
@@ -61,6 +70,10 @@ const CoursePage = () => {
             comment: 56,
             view: 324,
             badge: 2,
+          },
+          testcase: {
+            input: item.testcase.input,
+            expected: item.testcase.expected,
           },
         }));
 

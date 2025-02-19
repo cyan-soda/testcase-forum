@@ -41,6 +41,10 @@ export type PostCardProps = {
         view: number;
         badge: number;
     }
+    testcase: {
+        input: string;
+        expected: string;
+    }
 }
 
 const getInitials = (name: string) => {
@@ -52,6 +56,7 @@ const PostCard = ({post}: {post: PostCardProps}) => {
     const [isOpenPreviewPopup, setIsOpenPreviewPopup] = useState(false)
     const handleOpenPreviewPopup = () => {
         setIsOpenPreviewPopup(true)
+        
     }
 
     const router = useRouter()
@@ -108,7 +113,7 @@ const PostCard = ({post}: {post: PostCardProps}) => {
                     </div>
                 </div>
             </div>
-            <PreviewPopup isOpen={isOpenPreviewPopup} onClose={() => setIsOpenPreviewPopup(false)} />
+            <PreviewPopup isOpen={isOpenPreviewPopup} onClose={() => setIsOpenPreviewPopup(false)} testcase={post.testcase}/>
         </>
     )
 }
