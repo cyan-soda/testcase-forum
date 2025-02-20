@@ -1,0 +1,20 @@
+{
+    "utils": {
+        "search_text_placeholder": "Type here to search...",
+        "search_tag_placeholder": "Search by tags...",
+        "filter_placeholder": "Filter by..."
+    },
+    "cards": {
+        "preview_button": "Preview Testcases",
+        "details_button": "See Details",
+        "time": "days ago"
+    },
+    "discussion_section": {
+        "title": "Popular Discussions",
+        "by": "by"
+    },
+    "tags_section": {
+        "title": "Popular Tags",
+        "content": "posts created about this topic"
+    }
+}

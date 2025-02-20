@@ -4,13 +4,21 @@ import { getLanguage } from '@/utils/local-storage'
 
 import HEADER_EN from '@/locales/en/header.json'
 import HEADER_VI from '@/locales/vi/header.json'
+import SIDEBAR_EN from '@/locales/en/sidebar.json'
+import SIDEBAR_VI from '@/locales/vi/sidebar.json'
+import HOME_EN from '@/locales/en/home.json'
+import HOME_VI from '@/locales/vi/home.json'
 
 const resources = {
     en: {
-        header: HEADER_EN
+        header: HEADER_EN,
+        sidebar: SIDEBAR_EN,
+        home: HOME_EN
     },
     vi: {
-        header: HEADER_VI
+        header: HEADER_VI,
+        sidebar: SIDEBAR_VI,
+        home: HOME_VI
     }
 }
 

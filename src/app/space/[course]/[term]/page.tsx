@@ -16,7 +16,7 @@ export const POST = [
         tags: ['assignment1', 'ultimate', 'infinity void', 'programming'],
         description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.',
         author: 'Naomi Nguyen',
-        date: '2 days ago',
+        date: '20/02/2025',
         reactions: {
             star: 145,
             comment: 56,
@@ -30,7 +30,7 @@ export const POST = [
         tags: ['assignment1', 'question', 'programming'],
         description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.',
         author: 'Naomi Nguyen',
-        date: '2 days ago',
+        date: '20/02/2025',
         reactions: {
             star: 145,
             comment: 56,

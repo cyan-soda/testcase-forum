@@ -1,0 +1,20 @@
+{
+    "utils": {
+        "search_text_placeholder": "Nhập để tìm kiếm...",
+        "search_tag_placeholder": "Tìm kiếm theo thẻ...",
+        "filter_placeholder": "Lọc bài viết..."
+    },
+    "cards": {
+        "preview_button": "Xem trước Testcases",
+        "details_button": "Xem chi tiết",
+        "time": "ngày trước"
+    },
+    "discussion_section": {
+        "title": "Thảo luận phổ biến",
+        "by": "của"
+    },
+    "tags_section": {
+        "title": "Thẻ phổ biến",
+        "content": "bài viết được tạo về chủ đề này"
+    }
+}
