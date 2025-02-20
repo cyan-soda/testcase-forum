@@ -1,0 +1,20 @@
+{
+    "tabs": {
+        "home": "Home",
+        "archive": "Archive",
+        "ranking": "Ranking",
+        "calendar": "Calendar"
+    },
+    "create_button": "Create Post",
+    "language": "Language",
+    "language_options": {
+        "en": "English",
+        "vi": "Vietnamese"
+    },
+    "account_options": {
+        "login": "Login",
+        "register": "Register",
+        "logout": "Logout",
+        "profile": "Profile"
+    }
+}
