@@ -1,0 +1,20 @@
+{
+    "tabs": {
+        "home": "Trang chủ",
+        "archive": "Lưu trữ",
+        "ranking": "Xếp hạng",
+        "calendar": "Lịch"
+    },
+    "create_button": "Tạo bài viết",
+    "language": "Ngôn ngữ",
+    "language_options": {
+        "en": "Tiếng Anh",
+        "vi": "Tiếng Việt"
+    },
+    "account_options": {
+        "login": "Đăng nhập",
+        "register": "Đăng ký",
+        "logout": "Đăng xuất",
+        "profile": "Trang cá nhân"
+    }
+}
