@@ -3,10 +3,15 @@
 import { NAV_ITEMS } from "@/constants/header.constants"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import Image from "next/image"
 
 import iconDownArrow from '@/icons/down-arrow.svg'
+import iconGlobe from '@/icons/globe.svg'
 import CreatePostPopup from "@/components/shared/popup-create"
+import { useTranslation } from "react-i18next"
+import { changeLanguage } from "i18next"
+import { setLanguage } from "@/utils/local-storage"
 
 const USER_INFO = {
     name: 'Naomi Nguyen',
@@ -21,6 +26,9 @@ const Header = () => {
     const router = useRouter()
     const [activeLink, setActiveLink] = useState('')
     const [isOpenCreatePopup, setIsOpenCreatePopup] = useState(false)
+    const languages = [{ name: 'en', abbr: 'ENG' }, { name: 'vi', abbr: 'VIE' }]
+    const [lang, setLang] = useState('VIE')
+    const { t } = useTranslation('header')
 
     useEffect(() => {
         const savedLink = localStorage.getItem('activeLink')
@@ -35,6 +43,12 @@ const Header = () => {
 
     const handleCreatePost = () => {
         setIsOpenCreatePopup(true)
+    }
+
+    const handleChangeLanguage = (lang: string, abbr: string) => {
+        changeLanguage(lang)
+        setLanguage(lang)
+        setLang(abbr)
     }
 
     return (
@@ -53,18 +67,18 @@ const Header = () => {
                                     } hover:bg-grey hover:text-black hover:transition-all hover:duration-300 focus:outline-none`}
                                 onClick={() => handleClick(item.link)}
                             >
-                                {item.title}
+                                {t(`tabs.${item.title as "home" | "archive" | "ranking" | "calendar"}`)}
                             </button>
                         ))}
                     </div>
                     <div className="flex flex-row gap-8 items-center flex-end">
                         <button
-                            className={`p-4 rounded-md text-black bg-green hover:bg-grey text-sm font-semibold transition-all duration-300`}
+                            className={`p-4 rounded-md text-black bg-green hover:bg-grey text-base font-semibold transition-all duration-300`}
                             onClick={() => { handleCreatePost() }}
                         >
-                            Create Post
+                            {t('create_button')}
                         </button>
-                        <div className="flex flex-row p-[10px] gap-8 items-center justify-center rounded-md bg-white hover:bg-grey transition-all duration-300 cursor-pointer">
+                        <div className="flex flex-row px-[10px] py-2 gap-8 items-center justify-center rounded-md bg-white hover:bg-grey transition-all duration-300 cursor-pointer">
                             <div className="flex flex-row gap-3 items-center">
                                 <div className="bg-green rounded-md p-2">
                                     <p className="text-base font-semibold">{getInitials(USER_INFO.name)}</p>
@@ -72,6 +86,21 @@ const Header = () => {
                                 <p className="text-base font-normal">{USER_INFO.name}</p>
                             </div>
                             <Image src={iconDownArrow} alt="" />
+                        </div>
+                        <div className="-ml-4 flex flex-row items-center gap-[10px] rounded-md bg-white hover:bg-grey transition-all duration-300 cursor-pointer p-4">
+                            <Image src={iconGlobe} alt="" width={16} height={16} />
+                            <DropdownMenu>
+                                <DropdownMenuTrigger>{lang}</DropdownMenuTrigger>
+                                <DropdownMenuContent className="">
+                                    <DropdownMenuLabel>{t("language")}</DropdownMenuLabel>
+                                    <DropdownMenuSeparator />
+                                    {languages.map((language, index) => (
+                                        <DropdownMenuItem key={index} onClick={() => handleChangeLanguage(language.name, language.abbr)} >
+                                            {t(`language_options.${language.name as "en" | "vi"}`)}
+                                        </DropdownMenuItem>
+                                    ))}
+                                </DropdownMenuContent>
+                            </DropdownMenu>
                         </div>
                     </div>
                 </div>

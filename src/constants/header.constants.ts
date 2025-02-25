@@ -1,22 +1,22 @@
 export const NAV_ITEMS = [
     {
         id: 0,
-        title: "Home",
+        title: "home",
         link: "/",
     },
     {
         id: 1,
-        title: "Archive",
+        title: "archive",
         link: "/archive",
     }, 
     {
         id: 2, 
-        title: "Ranking",
+        title: "ranking",
         link: "/ranking",
     },
     {
         id: 3,
-        title: "Calendar",
+        title: "calendar",
         link: "/calendar",
     }
 ]

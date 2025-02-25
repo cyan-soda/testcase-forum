@@ -10,6 +10,7 @@ import iconView from '@/icons/eye.svg'
 import iconBadge from '@/icons/medal-star.svg'
 import iconRightArrow from '@/icons/arrow--right.svg'
 import PreviewPopup from '@/components/shared/popup-preview'
+import { useTranslation } from 'react-i18next'
 
 const Reaction = ({count, icon}:{count: number, icon: string}) => {
     return (
@@ -65,6 +66,8 @@ const PostCard = ({post}: {post: PostCardProps}) => {
         course && term && router.push(`/space/${course}/${term}/${post.id}`)
     }
 
+    const { t } = useTranslation('home')
+
     return (
         <>
             <div className="w-full flex flex-row gap-6 bg-white text-black px-6 py-5 rounded-2xl border border-black border-b-[3px]">
@@ -101,13 +104,13 @@ const PostCard = ({post}: {post: PostCardProps}) => {
                             className={`bg-grey rounded-lg py-2 px-3 text-sm font-bold text-black`}
                             onClick={() => {handleOpenPreviewPopup()}}
                         >
-                            Preview Testcases
+                            {t('cards.preview_button')}
                         </button>
                         <button
                             className={`flex flex-row items-center gap-[6px] bg-green rounded-lg py-2 px-3 text-sm font-bold text-black`}
                             onClick={() => {handlePostDetailClick(post)}}
                         >
-                            <span>See Details</span>
+                            <span>{t('cards.details_button')}</span>
                             <Image src={iconRightArrow} alt='' />
                         </button>
                     </div>

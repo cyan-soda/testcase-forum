@@ -6,11 +6,13 @@ import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import Image from "next/image";
 import iconHouse from '@/icons/house.svg';
+import { useTranslation } from "react-i18next";
+import { t } from "i18next";
 
 const SIDEBAR_ITEMS = [
     {
         id: 0,
-        title: 'My Spaces',
+        title: 'my_spaces',
         course_titles: [
             { id: 0, title: "Introduction to Programming", term: "242", code: "CO1005" },
             { id: 1, title: "Discrete Mathematics", term: "242", code: "CO1007" },
@@ -20,7 +22,7 @@ const SIDEBAR_ITEMS = [
     },
     {
         id: 1,
-        title: 'All Spaces',
+        title: 'all_spaces',
         course_titles: [
             { id: 0, title: "Introduction to Programming", term: "242", code: "CO1005" },
             { id: 1, title: "Discrete Mathematics", term: "242", code: "CO1007" },
@@ -37,9 +39,9 @@ type SidebarGroupProps = {
 }
 
 const SidebarGroup = ({ id, title, courses }: SidebarGroupProps) => {
-    const router = useRouter();
-    const { course, term } = useParams(); 
-    const [activeTab, setActiveTab] = useState<string>("");
+    const router = useRouter()
+    const { course, term } = useParams()
+    const [activeTab, setActiveTab] = useState<string>("")
 
     useEffect(() => {
         // const id = searchParams.get("id");
@@ -80,11 +82,18 @@ const SidebarGroup = ({ id, title, courses }: SidebarGroupProps) => {
 };
 
 const Sidebar = () => {
+    const { t } = useTranslation('sidebar')
+
     return (
         <div className="h-full bg-white border-r-2 border-grey">
             <div className="flex flex-col items-start justify-start">
                 {SIDEBAR_ITEMS.map((item) => (
-                    <SidebarGroup key={item.id} id={item.id} title={item.title} courses={item.course_titles} />
+                    <SidebarGroup 
+                        key={item.id} 
+                        id={item.id} 
+                        title={t(item.title as "my_spaces" | "all_spaces")} 
+                        courses={item.course_titles} 
+                    />
                 ))}
             </div>
         </div>
