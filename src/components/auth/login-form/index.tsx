@@ -1,7 +1,8 @@
 'use client'
 
 import Link from "next/link"
-import { useSearchParams } from "next/navigation"
+import { useSearchParams, useRouter } from "next/navigation"
+import { useEffect } from "react"
 import { useForm, SubmitHandler } from "react-hook-form"
 import * as yup from "yup"
 import { yupResolver } from "@hookform/resolvers/yup"
@@ -35,7 +36,34 @@ const LoginForm = () => {
     const searchParams = useSearchParams()
 
     // const { login } = useAuth() // todo: useAuth hook is not implemented yet
+    const router = useRouter()
 
+    useEffect(() => {
+        console.log("useEffect is running...");
+        const code = searchParams.get("code");
+        console.log("OAuth Code:", code);
+    
+        if (code) {
+            fetch("http://localhost:3000/auth/google", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ code })
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log("Google Login Success:", data);
+                if(data.token){
+                    localStorage.setItem("token", data.token);
+                    localStorage.setItem("user", JSON.stringify(data.user));
+                }
+                router.push("/");
+            })
+            .catch(error => console.error("Error exchanging code for token:", error));
+        }
+    }, [searchParams, router]);
+    
     const {
         register,
         handleSubmit,
@@ -57,6 +85,22 @@ const LoginForm = () => {
             console.error(error)
         }
     }
+
+    const handleGoogleLogin = () => {
+        const clientId = "182609794636-igdvt8f9221jvibt6qg4gr9s63ip8nv6.apps.googleusercontent.com";
+        const redirectUri = "http://localhost:3001/auth/log-in";
+        const scope = "email profile";
+    
+        const authUrl = `https://accounts.google.com/o/oauth2/auth?` +
+            `client_id=${clientId}&` +
+            `redirect_uri=${encodeURIComponent(redirectUri)}&` +
+            `response_type=code&` +
+            `scope=${encodeURIComponent(scope)}&` +
+            `access_type=offline&` +
+            `prompt=consent`;
+    
+        window.location.href = authUrl;
+    };
 
     return (
         <form className="text-start w-full max-w-[800px] px-8 py-12 rounded-md bg-grey shadow-sm" onSubmit={handleSubmit(onSubmit)}>
@@ -122,7 +166,11 @@ const LoginForm = () => {
                     type="submit"
                     className="w-full p-2 text-center justify-center rounded-lg text-base font-semibold text-white bg-blue-500 hover:bg-blue-400"
                 >
+                    <button 
+                        onClick={handleGoogleLogin}
+                        type="button">
                     Login with Google
+                    </button>
                 </Link>
                 <div className="text-center">
                     <span className="me-2 text-black font-normal">Have not registered?</span>{" "}
