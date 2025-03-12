@@ -30,7 +30,17 @@ const Tab = ({ title, isActive, onClick }: { title: string, isActive: boolean, o
         </button>
     )
 }
-
+interface Comment {
+    id: string;
+    parent_id: string | null;
+    author: string;
+    content: string;
+    created_at: string;
+    like_count: 5,
+    comment_count: 5,
+    badge_count: 2,
+    date: '3 days ago',
+}
 const COMMENTS = [
     {
         id: 0,
@@ -218,7 +228,7 @@ const PostDetails = ({ post }: { post: PostCardProps }) => {
                     </div>
                 </div>
             </div>
-            <PreviewPopup isOpen={isOpenPreviewPopup} onClose={() => setIsOpenPreviewPopup(false)} />
+            <PreviewPopup isOpen={isOpenPreviewPopup} onClose={() => setIsOpenPreviewPopup(false)} testcase={post.testcase}/>
         </>
     )
 }
