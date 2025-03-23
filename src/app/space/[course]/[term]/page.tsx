@@ -63,8 +63,15 @@ const CoursePage = () => {
           title: item.title,
           tags: ["assignment1", "ultimate", "infinity void", "programming"], 
           description: item.description,
-          date: item.created_at,
-          author: item.user_mail,
+          date: new Date(item.created_at).toLocaleString('en-US', {
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit',
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: false, // Use 24-hour format; remove this line for 12-hour format
+          }),
+          author: item.user_mail.split('@')[0],
           reactions: {
             star: 145, 
             comment: 56,

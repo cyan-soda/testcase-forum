@@ -69,15 +69,25 @@ const CreatePostPopup = (props: CreatePopupProps) => {
     const [description, setDescription] = useState('')
     const [input, setInput] = useState('')
     const [expected, setExpected] = useState('')
+    const storedUser = localStorage.getItem("user");
+    if (!storedUser) {
+        console.error("Người dùng chưa đăng nhập!");
+        return;
+    }
+
+    const user = JSON.parse(storedUser);
+    const email = user.mail;
     const handleUploadPost = async () => {
+        console.log(email);
         const postData = {
             title,
-            tags: tags.split(',').map(tag => tag.trim()), // Tách tags thành mảng
+            tags: tags.split(',').map(tag => tag.trim()),
             description,
             testcase: {
                 input,
                 expected: expected,
             },
+            user_mail: email,
         }
 
         try {
@@ -87,7 +97,7 @@ const CreatePostPopup = (props: CreatePopupProps) => {
                 },
             })
             console.log('Post uploaded successfully:', response.data)
-            props.onClose() // Đóng popup sau khi upload thành công
+            props.onClose()
         } catch (error) {
             if (axios.isAxiosError(error)) {
                 console.error('Axios error:', error.response?.data || error.message)

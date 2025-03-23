@@ -6,6 +6,7 @@ import { useEffect } from "react"
 import { useForm, SubmitHandler } from "react-hook-form"
 import * as yup from "yup"
 import { yupResolver } from "@hookform/resolvers/yup"
+import { useAuth } from "@/context/auth"
 
 interface ILoginForm {
     email: string,
@@ -37,6 +38,7 @@ const LoginForm = () => {
 
     // const { login } = useAuth() // todo: useAuth hook is not implemented yet
     const router = useRouter()
+    const { login } = useAuth();
 
     useEffect(() => {
         console.log("useEffect is running...");
@@ -55,39 +57,75 @@ const LoginForm = () => {
             .then(data => {
                 console.log("Google Login Success:", data);
                 if(data.token){
-                    localStorage.setItem("token", data.token);
-                    localStorage.setItem("user", JSON.stringify(data.user));
+                    login(data.token, data.user);
+                    // localStorage.setItem("token", data.token);
+                    // localStorage.setItem("user", JSON.stringify(data.user));
                 }
+                // login(data.token, data.user);
                 router.push("/");
             })
             .catch(error => console.error("Error exchanging code for token:", error));
         }
     }, [searchParams, router]);
     
+    // const {
+    //     register,
+    //     handleSubmit,
+    //     setValue,
+    //     formState: { errors, isSubmitting, isLoading }
+    // } = useForm<ILoginForm>({
+    //     resolver: yupResolver(loginSchema),
+    //     defaultValues: {
+    //         email: '',
+    //         password: '',
+    //         remember: false
+    //     }
+    // })
+
+    // const onSubmit: SubmitHandler<ILoginForm> = async (data) => {
+    //     try {
+    //         // await login(data) // todo: useAuth hook is not implemented yet
+    //     } catch (error) {
+    //         console.error(error)
+    //     }
+    // }
+
     const {
         register,
         handleSubmit,
-        setValue,
-        formState: { errors, isSubmitting, isLoading }
+        formState: { errors, isSubmitting },
     } = useForm<ILoginForm>({
         resolver: yupResolver(loginSchema),
         defaultValues: {
-            email: '',
-            password: '',
-            remember: false
-        }
-    })
+            email: "",
+            password: "",
+            remember: false,
+        },
+    });
 
     const onSubmit: SubmitHandler<ILoginForm> = async (data) => {
         try {
-            // await login(data) // todo: useAuth hook is not implemented yet
+            const response = await fetch("http://localhost:3000/auth/login", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(data),
+            });
+
+            if (!response.ok) {
+                throw new Error("Login failed! Please check your credentials.");
+            }
+
+            const result = await response.json();
+            login(result.token, result.user); // ✅ Lưu thông tin vào AuthContext
+            router.push("/");
         } catch (error) {
-            console.error(error)
+            console.error("Login error:", error);
+            // alert(error.message);
         }
-    }
+    };
 
     const handleGoogleLogin = () => {
-        const clientId = "182609794636-igdvt8f9221jvibt6qg4gr9s63ip8nv6.apps.googleusercontent.com";
+        const clientId = "xxxxxxxxxxxxxxxxx.apps.googleusercontent.com";
         const redirectUri = "http://localhost:3001/auth/log-in";
         const scope = "email profile";
     

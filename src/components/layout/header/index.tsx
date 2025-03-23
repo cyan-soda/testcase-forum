@@ -13,19 +13,24 @@ import { useTranslation } from "react-i18next"
 import { changeLanguage } from "i18next"
 import { setLanguage } from "@/utils/local-storage"
 
-const USER_INFO = {
-    name: 'Naomi Nguyen',
-}
+// const USER_INFO = {
+//     name: 'ZZZ NGUYEN',
+// }
 
-const getInitials = (name: string) => {
-    const names = name.split(' ')
-    return names.map((n) => n[0]).join('')
-}
+// const getInitials = (name: string) => {
+//     const names = name.split(' ')
+//     return names.map((n) => n[0]).join('')
+// }
+
+const getInitials = (firstName: string, lastName: string) => {
+    return `${firstName.charAt(0)}${lastName.charAt(0)}`.toUpperCase();
+};
 
 const Header = () => {
     const router = useRouter()
     const [activeLink, setActiveLink] = useState('')
     const [isOpenCreatePopup, setIsOpenCreatePopup] = useState(false)
+    const [user, setUser] = useState<{ firstName: string; lastName: string } | null>(null);
     const languages = [{ name: 'en', abbr: 'ENG' }, { name: 'vi', abbr: 'VIE' }]
     const [lang, setLang] = useState('VIE')
     const { t } = useTranslation('header')
@@ -33,6 +38,19 @@ const Header = () => {
     useEffect(() => {
         const savedLink = localStorage.getItem('activeLink')
         if (savedLink) setActiveLink(savedLink)
+
+        const storedUser = localStorage.getItem('user');
+        if (storedUser) {
+            try {
+                const parsedUser = JSON.parse(storedUser);
+                setUser({
+                    firstName: parsedUser.first_name || '',
+                    lastName: parsedUser.last_name || '',
+                });
+            } catch (error) {
+                console.error("Error parsing user data:", error);
+            }
+        }
     }, [])
 
     const handleClick = (link: string) => {
@@ -81,9 +99,9 @@ const Header = () => {
                         <div className="flex flex-row px-[10px] py-2 gap-8 items-center justify-center rounded-md bg-white hover:bg-grey transition-all duration-300 cursor-pointer">
                             <div className="flex flex-row gap-3 items-center">
                                 <div className="bg-green rounded-md p-2">
-                                    <p className="text-base font-semibold">{getInitials(USER_INFO.name)}</p>
+                                    <p className="text-base font-semibold">{user ? getInitials(user.firstName, user.lastName) : "?"}</p>
                                 </div>
-                                <p className="text-base font-normal">{USER_INFO.name}</p>
+                                <p className="text-base font-normal">{user ? `${user.firstName} ${user.lastName}` : "Guest"}</p>
                             </div>
                             <Image src={iconDownArrow} alt="" />
                         </div>
