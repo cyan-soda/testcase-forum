@@ -11,14 +11,14 @@ import PreviewPopup from '@/components/shared/popup-preview'
 import { PostCardProps, Tag } from "@/components/home/card"
 import { LikeButton, CommentButton, BadgeButton } from "@/components/shared/buttons"
 import Comment from "../comments"
-import SimilarPosts from "../similar-posts"
+import RecPosts from "../rec-posts"
 
 const getInitials = (name: string) => {
     const names = name.split(' ')
     return names.map((n) => n[0]).join('')
 }
 
-const Tab = ({ title, isActive, onClick }: { title: string, isActive: boolean, onClick: () => void }) => {
+const Tab = ({ title, isActive, count, onClick }: { title: string, isActive: boolean, count?: number, onClick: () => void }) => {
     return (
         <button
             className={`text-sm font-bold rounded-lg 
@@ -26,7 +26,7 @@ const Tab = ({ title, isActive, onClick }: { title: string, isActive: boolean, o
                 hover:bg-white hover:text-black transition-all duration-200`}
             onClick={onClick}
         >
-            {title}
+            {title} {count ? `(${count})` : ''}
         </button>
     )
 }
@@ -212,7 +212,7 @@ const PostDetails = ({ post }: { post: PostCardProps }) => {
                     <div className="flex flex-row items-center justify-between w-full">
                         <div className="flex flex-row items-center gap-3">
                             <LikeButton like_count={0} />
-                            <CommentButton count={5} isOpenComment={isOpenComment} setIsOpenComment={() => { setIsOpenComment(!isOpenComment) }} />
+                            {/* <CommentButton count={5} isOpenComment={isOpenComment} setIsOpenComment={() => { setIsOpenComment(!isOpenComment) }} /> */}
                             <BadgeButton count={2} isOpenBadge={isOpenBadge} setIsOpenBadge={() => { setIsOpenBadge(!isOpenBadge) }} />
                         </div>
                         <button
@@ -229,11 +229,13 @@ const PostDetails = ({ post }: { post: PostCardProps }) => {
                             title="Comments"
                             isActive={activeTab === 'comments'}
                             onClick={() => handleToggleTab('comments')}
+                            count={COMMENTS.length}
                         />
                         <Tab
-                            title="Similar Posts"
+                            title="Related Posts"
                             isActive={activeTab === 'similar'}
                             onClick={() => handleToggleTab('similar')}
+                            count={POSTS.length}
                         />
                     </div>
                     <div className="w-full">
@@ -247,7 +249,7 @@ const PostDetails = ({ post }: { post: PostCardProps }) => {
                         {activeTab === 'similar' && (
                             <div className="flex flex-col gap-5 w-full">
                                 {POSTS.map((post, index) => (
-                                    <SimilarPosts key={index} title={post.title} author={post.author} link={post.link} />
+                                    <RecPosts key={index} title={post.title} author={post.author} link={post.link} />
                                 ))}
                             </div>
                         )}

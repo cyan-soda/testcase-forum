@@ -12,6 +12,7 @@ import CreatePostPopup from "@/components/shared/popup-create"
 import { useTranslation } from "react-i18next"
 import { changeLanguage } from "i18next"
 import { setLanguage } from "@/utils/local-storage"
+import DuplicatePopup from "@/components/shared/popup-duplicate"
 
 // const USER_INFO = {
 //     name: 'ZZZ NGUYEN',
@@ -123,7 +124,7 @@ const Header = () => {
                     </div>
                 </div>
             </div>
-            <CreatePostPopup isOpen={isOpenCreatePopup} onClose={() => setIsOpenCreatePopup(false)} />
+            <CreatePostPopup isOpen={isOpenCreatePopup} onClose={() => {setIsOpenCreatePopup(false); console.log(isOpenCreatePopup)}} />
         </>
     )
 }

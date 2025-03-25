@@ -7,6 +7,8 @@ import Image from 'next/image'
 import PopupWrapper from '../popup-wrapper'
 
 import iconUpload from '@/icons/export.svg'
+import DuplicatePopup from "@/components/shared/popup-duplicate"
+
 
 type CreatePopupProps = {
     isOpen: boolean
@@ -33,7 +35,7 @@ const Item = (props: ItemProps) => {
     )
 }
 
-const AddButton = ({title, onClick}: {title: string, onClick: () => void}) => {
+const AddButton = ({ title, onClick }: { title: string, onClick: () => void }) => {
     return (
         <button
             className={`px-2 py-1 rounded-lg bg-white text-xs font-semibold`}
@@ -54,9 +56,9 @@ const ContentItem = (props: ItemProps) => {
                                     onChange={props.onChange}>
                 </textarea>
                 <div className='flex flex-row gap-5 items-end w-full justify-end'>
-                    <AddButton title={'Add Photos'} onClick={() => {}} />
-                    <AddButton title={'Add Links'} onClick={() => {}} />
-                    <AddButton title={'Add Markdown'} onClick={() => {}} />
+                    <AddButton title={'Add Photos'} onClick={() => { }} />
+                    <AddButton title={'Add Links'} onClick={() => { }} />
+                    <AddButton title={'Add Markdown'} onClick={() => { }} />
                 </div>
             </div>
         </div>
@@ -106,6 +108,8 @@ const CreatePostPopup = (props: CreatePopupProps) => {
             }
         }
     }
+
+    const [isOpenDuplicatePopup, setIsOpenDuplicatePopup] = useState(false)
 
     return (
         <PopupWrapper isOpen={props.isOpen} onClose={props.onClose} title={'Create a New Post'}>

@@ -2,7 +2,7 @@ import Image from 'next/image'
 
 import iconRightArrow from '@/icons/arrow--right.svg'
 
-const SimilarPosts = ({ title, author, link }: {title: string, author: string, link: string}) => {
+const RecPosts = ({ title, author, link }: {title: string, author: string, link: string}) => {
     return (
         <div className="flex flex-row items-center justify-between w-full cursor-pointer bg-grey hover:bg-opacity-60 p-3 pr-6 rounded-lg">
             <div className="flex flex-col items-start gap-[6px]">
@@ -14,4 +14,4 @@ const SimilarPosts = ({ title, author, link }: {title: string, author: string, l
     )
 }
 
-export default SimilarPosts
+export default RecPosts

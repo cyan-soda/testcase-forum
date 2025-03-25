@@ -26,11 +26,11 @@ const Field = ({ label, value }: { label: string, value?: string }) => {
     )
 }
 
-const SimilarCaseItem = ({ title, author, link }: { title: string, author: string, link: string }) => {
+const RecPostItem = ({ title, author, link }: { title: string, author: string, link: string }) => {
     return (
         <div className="flex flex-row items-start gap-4 w-full cursor-pointer hover:bg-grey p-3 rounded-lg">
             <div className="flex flex-col items-start gap-[6px]">
-                <span className="text-sm font-semibold hover:underline">{title}</span>
+                <span className="text-sm font-semibold">{title}</span>
                 <span className="text-xs font-normal">{author}</span>
             </div>
             <Image src={iconRightArrow} alt="" width={20} height={20} />
@@ -115,10 +115,10 @@ const RunCode = ({ testcase, execution }: { testcase?: TestCaseProps, execution?
                     </div>
                 </div>
                 <div className="rounded-lg border border-black py-5 px-3 w-2/5">
-                    <span className="text-xl font-semibold p-3">Similar Cases</span>
+                    <span className="text-xl font-semibold p-3">Recommended Posts</span>
                     <div className="flex flex-col gap-1 mt-3">
                         {CaseItems.map((item, index) => (
-                            <SimilarCaseItem key={index} title={item.title} author={item.author} link={item.link} />
+                            <RecPostItem key={index} title={item.title} author={item.author} link={item.link} />
                         ))}
                     </div>
                 </div>
