@@ -2,12 +2,31 @@
 
 import Image from "next/image";
 import { useParams, useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 import iconArrow from '@/icons/arrow--right.svg'
 import PostDetails from "@/components/post/details";
-import { POST } from "../page";
+// import { POST } from "../page";
 import RunCode from "@/components/post/run-code";
+
+interface PostData {
+    id: string;
+    title: string;
+    tags: string[];
+    description: string;
+    date: string;
+    author: string;
+    reactions: {
+        star: number;
+        comment: number;
+        view: number;
+        badge: number;
+    };
+    testcase: {
+        input: string;
+        expected: string;
+    };
+}
 
 const Tab = ({ title, isActive, onClick }: { title: string, isActive: boolean, onClick: () => void }) => {
     return (
@@ -27,7 +46,46 @@ const PostDetailPage = () => {
     const router = useRouter()
 
     const [activeTab, setActiveTab] = useState<'details' | 'runCode'>('details')
+    const [post, setPost] = useState<PostData | null>(null);
+    const [loading, setLoading] = useState<boolean>(true);
 
+    useEffect(() => {
+        const fetchPost = async () => {
+            if (!postId) return;
+
+            try {
+                const res = await fetch(`http://127.0.0.1:3000/post/${postId}`);
+                const data = await res.json();
+
+                const formattedPost: PostData = {
+                    id: data.id,
+                    title: data.title,
+                    tags: ["assignment1", "ultimate", "infinity void", "programming"], 
+                    description: data.description,
+                    date: data.created_at,
+                    author: data.user_mail,
+                    reactions: {
+                        star: 145,
+                        comment: 56,
+                        view: 324,
+                        badge: 2,
+                    },
+                    testcase: {
+                        input: data.testcase.input,
+                        expected: data.testcase.expected,
+                    },
+                };
+                console.log(formattedPost)
+                setPost(formattedPost);
+            } catch (error) {
+                console.error("Failed to fetch post data:", error);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchPost();
+    }, [postId]);
     const handleToggleTab = (tab: 'details' | 'runCode') => {
         setActiveTab(tab)
     }
@@ -58,7 +116,7 @@ const PostDetailPage = () => {
 
                 <div className="w-full bg-grey rounded-2xl p-7">
                     {activeTab === 'details' && (
-                        <PostDetails post={POST[parseInt(postId)]} />
+                        post && <PostDetails post={post} />
                     )}
 
                     {activeTab === 'runCode' && (

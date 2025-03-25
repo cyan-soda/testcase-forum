@@ -49,7 +49,6 @@ const CaseItems = [
 const RunCode = ({ testcase, execution }: { testcase?: TestCaseProps, execution?: ExecutionProps }) => {
     const [fileName, setFileName] = useState('')
     const handleUploadFiles = (event: React.ChangeEvent<HTMLInputElement>) => { 
-        // handle upload files
         if (event && event.target && event.target.files) {
             const file = event.target.files[0]
             if (file) {

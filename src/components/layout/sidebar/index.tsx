@@ -15,11 +15,21 @@ const SIDEBAR_ITEMS = [
         title: 'my_spaces',
         course_titles: [
             { id: 0, title: "Introduction to Programming", term: "242", code: "CO1005" },
-            { id: 1, title: "Discrete Mathematics", term: "242", code: "CO1007" },
-            { id: 2, title: "Data Structures and Algorithms", term: "242", code: "CO2003" },
-            { id: 3, title: "Principal of Programming Languages", term: "242", code: "CO3005" }
+            // { id: 1, title: "Discrete Mathematics", term: "242", code: "CO1007" },
+            // { id: 2, title: "Data Structures and Algorithms", term: "242", code: "CO2003" },
+            // { id: 3, title: "Principal of Programming Languages", term: "242", code: "CO3005" }
         ],
     },
+    // {
+    //     id: 1,
+    //     title: 'all_spaces',
+    //     course_titles: [
+    //         { id: 0, title: "Introduction to Programming", term: "242", code: "CO1005" },
+    //         { id: 1, title: "Discrete Mathematics", term: "242", code: "CO1007" },
+    //         { id: 2, title: "Data Structures and Algorithms", term: "242", code: "CO2003" },
+    //         { id: 3, title: "Principal of Programming Languages", term: "242", code: "CO3005" }
+    //     ],
+    // },
     // {
     //     id: 1,
     //     title: 'all_spaces',

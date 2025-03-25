@@ -10,6 +10,7 @@ import "./globals.css";
 import Header from "@/components/layout/header";
 import Sidebar from "@/components/layout/sidebar";
 import { usePathname } from "next/navigation";
+import { AuthProvider } from "@/context/auth";
 
 const APP_NAME = "Testcase Forum"
 const APP_DESCRIPTION = "A forum designed for sharing testcases and discussions among HCMUT students."
@@ -38,6 +39,7 @@ export default function RootLayout({
       <body
         className={`${inter.className}`}
       >
+        <AuthProvider>
         <I18nextProvider i18n={i18n}>
           <div className='relative min-h-[100dvh] w-full bg-white text-black'>
             <Header />
@@ -59,6 +61,7 @@ export default function RootLayout({
             </div>
           </div>
         </I18nextProvider>
+        </AuthProvider>
       </body>
     </html>
   );

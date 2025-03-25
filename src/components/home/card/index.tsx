@@ -30,7 +30,7 @@ export const Tag = ({tag}:{tag: string}) => {
 }
 
 export type PostCardProps = {
-    id: number;
+    id: string;
     title: string;
     tags: string[];
     description: string;
@@ -41,6 +41,10 @@ export type PostCardProps = {
         comment: number;
         view: number;
         badge: number;
+    }
+    testcase: {
+        input: string;
+        expected: string;
     }
 }
 
@@ -53,6 +57,7 @@ const PostCard = ({post}: {post: PostCardProps}) => {
     const [isOpenPreviewPopup, setIsOpenPreviewPopup] = useState(false)
     const handleOpenPreviewPopup = () => {
         setIsOpenPreviewPopup(true)
+        
     }
 
     const router = useRouter()
@@ -111,7 +116,7 @@ const PostCard = ({post}: {post: PostCardProps}) => {
                     </div>
                 </div>
             </div>
-            <PreviewPopup isOpen={isOpenPreviewPopup} onClose={() => setIsOpenPreviewPopup(false)} />
+            <PreviewPopup isOpen={isOpenPreviewPopup} onClose={() => setIsOpenPreviewPopup(false)} testcase={post.testcase}/>
         </>
     )
 }

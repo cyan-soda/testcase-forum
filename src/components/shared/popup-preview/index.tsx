@@ -5,6 +5,10 @@ import PopupWrapper from '../popup-wrapper'
 type PreviewPopupProps = {
     isOpen: boolean
     onClose: () => void
+    testcase: {
+        input: string;
+        expected: string;
+    }
 }
 
 type ItemProps = {
@@ -27,8 +31,8 @@ const PreviewPopup = (props: PreviewPopupProps) => {
     return (
         <PopupWrapper isOpen={props.isOpen} onClose={props.onClose} title={'Preview Testcase'}>
             <div className='w-full min-w-[1000px] flex flex-col gap-5 pt-5 items-start'>
-                <Item title={'Input'} value={'123456'} />
-                <Item title={'Output'} value={'True'} />
+                <Item title={'Input'} value={props.testcase.input} />
+                <Item title={'Output'} value={props.testcase.expected} />
             </div>
         </PopupWrapper>
     )
