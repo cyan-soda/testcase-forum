@@ -13,15 +13,8 @@ import { useTranslation } from "react-i18next"
 import { changeLanguage } from "i18next"
 import { setLanguage } from "@/utils/local-storage"
 import DuplicatePopup from "@/components/shared/popup-duplicate"
-
-// const USER_INFO = {
-//     name: 'ZZZ NGUYEN',
-// }
-
-// const getInitials = (name: string) => {
-//     const names = name.split(' ')
-//     return names.map((n) => n[0]).join('')
-// }
+import { useUserStore } from "@/store/user/user-store"
+import { useAuthStore } from "@/store/auth/auth-store"
 
 const getInitials = (firstName: string, lastName: string) => {
     return `${firstName.charAt(0)}${lastName.charAt(0)}`.toUpperCase();
@@ -31,27 +24,16 @@ const Header = () => {
     const router = useRouter()
     const [activeLink, setActiveLink] = useState('')
     const [isOpenCreatePopup, setIsOpenCreatePopup] = useState(false)
-    const [user, setUser] = useState<{ firstName: string; lastName: string } | null>(null);
     const languages = [{ name: 'en', abbr: 'ENG' }, { name: 'vi', abbr: 'VIE' }]
     const [lang, setLang] = useState('VIE')
     const { t } = useTranslation('header')
 
+    const { user } = useUserStore()
+    const { isAuthenticated, logOut } = useAuthStore()
+
     useEffect(() => {
         const savedLink = localStorage.getItem('activeLink')
         if (savedLink) setActiveLink(savedLink)
-
-        const storedUser = localStorage.getItem('user');
-        if (storedUser) {
-            try {
-                const parsedUser = JSON.parse(storedUser);
-                setUser({
-                    firstName: parsedUser.first_name || '',
-                    lastName: parsedUser.last_name || '',
-                });
-            } catch (error) {
-                console.error("Error parsing user data:", error);
-            }
-        }
     }, [])
 
     const handleClick = (link: string) => {
@@ -98,18 +80,37 @@ const Header = () => {
                             {t('create_button')}
                         </button>
                         <div className="flex flex-row px-[10px] py-2 gap-8 items-center justify-center rounded-md bg-white hover:bg-grey transition-all duration-300 cursor-pointer">
-                            <div className="flex flex-row gap-3 items-center">
-                                <div className="bg-green rounded-md p-2">
-                                    <p className="text-base font-semibold">{user ? getInitials(user.firstName, user.lastName) : "?"}</p>
-                                </div>
-                                <p className="text-base font-normal">{user ? `${user.firstName} ${user.lastName}` : "Guest"}</p>
+                            <div className="">
+                                <DropdownMenu>
+                                    <DropdownMenuTrigger className="flex flex-row gap-3 items-center focus:border-none">
+                                        <div className="bg-green rounded-md p-2">
+                                            <p className="text-base font-semibold">{isAuthenticated && user ? getInitials(user.first_name, user.last_name) : "?"}</p>
+                                        </div>
+                                        <p className="text-base font-normal">{isAuthenticated && user ? `${user.first_name} ${user.last_name}` : "Guest"}</p>
+                                        <Image src={iconDownArrow} alt="" />
+                                    </DropdownMenuTrigger>
+                                    <DropdownMenuContent>
+                                        <DropdownMenuItem onClick={() => { router.push('/profile') }}>
+                                            'profile'
+                                        </DropdownMenuItem>
+                                        <DropdownMenuSeparator />
+                                        <DropdownMenuItem onClick={() => { router.push('/auth/log-in') }}>
+                                            'login'
+                                        </DropdownMenuItem>
+                                        <DropdownMenuSeparator />
+                                        <DropdownMenuItem onClick={() => { logOut(); router.push('/') }}>
+                                            'logout'
+                                        </DropdownMenuItem>
+                                    </DropdownMenuContent>
+                                </DropdownMenu>
                             </div>
-                            <Image src={iconDownArrow} alt="" />
                         </div>
                         <div className="-ml-4 flex flex-row items-center gap-[10px] rounded-md bg-white hover:bg-grey transition-all duration-300 cursor-pointer p-4">
-                            <Image src={iconGlobe} alt="" width={16} height={16} />
                             <DropdownMenu>
-                                <DropdownMenuTrigger>{lang}</DropdownMenuTrigger>
+                                <DropdownMenuTrigger className="flex flex-row gap-[10px] items-center focus:border-none">
+                                    <Image src={iconGlobe} alt="" width={16} height={16} />
+                                    <span>{lang}</span>                                   
+                                </DropdownMenuTrigger>
                                 <DropdownMenuContent className="">
                                     <DropdownMenuLabel>{t("language")}</DropdownMenuLabel>
                                     <DropdownMenuSeparator />
@@ -124,7 +125,7 @@ const Header = () => {
                     </div>
                 </div>
             </div>
-            <CreatePostPopup isOpen={isOpenCreatePopup} onClose={() => {setIsOpenCreatePopup(false); console.log(isOpenCreatePopup)}} />
+            <CreatePostPopup isOpen={isOpenCreatePopup} onClose={() => { setIsOpenCreatePopup(false); console.log(isOpenCreatePopup) }} />
         </>
     )
 }

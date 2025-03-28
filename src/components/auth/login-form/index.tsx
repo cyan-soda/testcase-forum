@@ -8,6 +8,7 @@ import * as yup from "yup"
 import { yupResolver } from "@hookform/resolvers/yup"
 import { useAuthStore } from "@/store/auth/auth-store"
 import { authService } from "@/service/auth"
+import { useUserStore } from "@/store/user/user-store"
 
 interface ILoginForm {
     email: string,
@@ -37,57 +38,29 @@ const loginSchema = yup.object().shape({
 const LoginForm = () => {
     const searchParams = useSearchParams()
     const router = useRouter()
-    const { logIn, logOut } = useAuthStore()
+    const { logIn } = useAuthStore()
+    const { setUser } = useUserStore()
 
-    // useEffect(() => {
-    //     console.log("useEffect is running...");
-    //     const code = searchParams.get("code");
-    //     console.log("OAuth Code:", code);
-    
-    //     if (code) {
-    //         fetch("http://localhost:3000/auth/google", {
-    //             method: "POST",
-    //             headers: {
-    //                 "Content-Type": "application/json"
-    //             },
-    //             body: JSON.stringify({ code })
-    //         })
-    //         .then(response => response.json())
-    //         .then(data => {
-    //             console.log("Google Login Success:", data);
-    //             if(data.token){
-    //                 login(data.token, data.user);
-    //                 // localStorage.setItem("token", data.token);
-    //                 // localStorage.setItem("user", JSON.stringify(data.user));
-    //             }
-    //             // login(data.token, data.user);
-    //             router.push("/");
-    //         })
-    //         .catch(error => console.error("Error exchanging code for token:", error));
-    //     }
-    // }, [searchParams, router]);
-    
-    // const {
-    //     register,
-    //     handleSubmit,
-    //     setValue,
-    //     formState: { errors, isSubmitting, isLoading }
-    // } = useForm<ILoginForm>({
-    //     resolver: yupResolver(loginSchema),
-    //     defaultValues: {
-    //         email: '',
-    //         password: '',
-    //         remember: false
-    //     }
-    // })
+    useEffect(() => {
+        const fetchGoogleLogin = async () => {
+            const code = searchParams.get("code")
+            if (code) {
+                try {
+                    const res = await authService.loginGoogle(code)
+                    console.log("Google Login Success:", res)
+                    if (res.token) {
+                        logIn(res.token, res.user)
+                        setUser(res.user)
+                        router.push("/")
+                    }
+                } catch (error) {
+                    console.error("Error exchanging code for token:", error)
+                }
+            }
+        };
 
-    // const onSubmit: SubmitHandler<ILoginForm> = async (data) => {
-    //     try {
-    //         // await login(data) // todo: useAuth hook is not implemented yet
-    //     } catch (error) {
-    //         console.error(error)
-    //     }
-    // }
+        fetchGoogleLogin();
+    }, [searchParams, router]);
 
     const {
         register,
@@ -104,14 +77,16 @@ const LoginForm = () => {
 
     const onSubmit: SubmitHandler<ILoginForm> = async (data) => {
         try {
-            const res = await authService.loginGoogle()
-
-            if (!res.ok) {
-                throw new Error("Login failed! Please check your credentials.");
+            const code = searchParams.get("code");
+            console.log("OAuth Code:", code);
+            if (!code) {
+                throw new Error("No OAuth code found in URL.");
             }
-
-            const result = await res.json();
+    
+            const result = await authService.loginGoogle(code);
+    
             logIn(result.token, result.user);
+            setUser(result.user);
             console.log("Login successful:", result);
             router.push("/");
         } catch (error) {
