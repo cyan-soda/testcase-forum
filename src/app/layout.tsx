@@ -10,7 +10,7 @@ import "./globals.css";
 import Header from "@/components/layout/header";
 import Sidebar from "@/components/layout/sidebar";
 import { usePathname } from "next/navigation";
-import { AuthProvider } from "@/context/auth";
+import AppProvider from "@/providers/app-provider";
 
 const APP_NAME = "Testcase Forum"
 const APP_DESCRIPTION = "A forum designed for sharing testcases and discussions among HCMUT students."
@@ -39,29 +39,29 @@ export default function RootLayout({
       <body
         className={`${inter.className}`}
       >
-        <AuthProvider>
-        <I18nextProvider i18n={i18n}>
-          <div className='relative min-h-[100dvh] w-full bg-white text-black'>
-            <Header />
-            <div className='relative z-0 flex flex-row w-full h-full gap-5'>
-              {!hideSidebar ? (
-                <>
-                  <div className='w-1/6'>
-                    <Sidebar />
-                  </div>
-                  <div className="w-5/6">
+        <AppProvider>
+          <I18nextProvider i18n={i18n}>
+            <div className='relative min-h-[100dvh] w-full bg-white text-black'>
+              <Header />
+              <div className='relative z-0 flex flex-row w-full h-full gap-5'>
+                {!hideSidebar ? (
+                  <>
+                    <div className='w-1/6'>
+                      <Sidebar />
+                    </div>
+                    <div className="w-5/6">
+                      {children}
+                    </div>
+                  </>
+                ) : (
+                  <div className="w-full h-full ">
                     {children}
                   </div>
-                </>
-              ) : (
-                <div className="w-full h-full ">
-                  {children}
-                </div>
-              )}
+                )}
+              </div>
             </div>
-          </div>
-        </I18nextProvider>
-        </AuthProvider>
+          </I18nextProvider>
+        </AppProvider>
       </body>
     </html>
   );

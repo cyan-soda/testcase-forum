@@ -229,7 +229,7 @@ const PostDetails = ({ post }: { post: PostCardProps }) => {
                             title="Comments"
                             isActive={activeTab === 'comments'}
                             onClick={() => handleToggleTab('comments')}
-                            count={COMMENTS.length}
+                            count={comments.length}
                         />
                         <Tab
                             title="Related Posts"

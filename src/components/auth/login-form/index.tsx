@@ -6,7 +6,8 @@ import { useEffect } from "react"
 import { useForm, SubmitHandler } from "react-hook-form"
 import * as yup from "yup"
 import { yupResolver } from "@hookform/resolvers/yup"
-import { useAuth } from "@/context/auth"
+import { useAuthStore } from "@/store/auth/auth-store"
+import { authService } from "@/service/auth"
 
 interface ILoginForm {
     email: string,
@@ -35,38 +36,36 @@ const loginSchema = yup.object().shape({
 
 const LoginForm = () => {
     const searchParams = useSearchParams()
-
-    // const { login } = useAuth() // todo: useAuth hook is not implemented yet
     const router = useRouter()
-    const { login } = useAuth();
+    const { logIn, logOut } = useAuthStore()
 
-    useEffect(() => {
-        console.log("useEffect is running...");
-        const code = searchParams.get("code");
-        console.log("OAuth Code:", code);
+    // useEffect(() => {
+    //     console.log("useEffect is running...");
+    //     const code = searchParams.get("code");
+    //     console.log("OAuth Code:", code);
     
-        if (code) {
-            fetch("http://localhost:3000/auth/google", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({ code })
-            })
-            .then(response => response.json())
-            .then(data => {
-                console.log("Google Login Success:", data);
-                if(data.token){
-                    login(data.token, data.user);
-                    // localStorage.setItem("token", data.token);
-                    // localStorage.setItem("user", JSON.stringify(data.user));
-                }
-                // login(data.token, data.user);
-                router.push("/");
-            })
-            .catch(error => console.error("Error exchanging code for token:", error));
-        }
-    }, [searchParams, router]);
+    //     if (code) {
+    //         fetch("http://localhost:3000/auth/google", {
+    //             method: "POST",
+    //             headers: {
+    //                 "Content-Type": "application/json"
+    //             },
+    //             body: JSON.stringify({ code })
+    //         })
+    //         .then(response => response.json())
+    //         .then(data => {
+    //             console.log("Google Login Success:", data);
+    //             if(data.token){
+    //                 login(data.token, data.user);
+    //                 // localStorage.setItem("token", data.token);
+    //                 // localStorage.setItem("user", JSON.stringify(data.user));
+    //             }
+    //             // login(data.token, data.user);
+    //             router.push("/");
+    //         })
+    //         .catch(error => console.error("Error exchanging code for token:", error));
+    //     }
+    // }, [searchParams, router]);
     
     // const {
     //     register,
@@ -105,31 +104,28 @@ const LoginForm = () => {
 
     const onSubmit: SubmitHandler<ILoginForm> = async (data) => {
         try {
-            const response = await fetch("http://localhost:3000/auth/login", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(data),
-            });
+            const res = await authService.loginGoogle()
 
-            if (!response.ok) {
+            if (!res.ok) {
                 throw new Error("Login failed! Please check your credentials.");
             }
 
-            const result = await response.json();
-            login(result.token, result.user); // ✅ Lưu thông tin vào AuthContext
+            const result = await res.json();
+            logIn(result.token, result.user);
+            console.log("Login successful:", result);
             router.push("/");
         } catch (error) {
             console.error("Login error:", error);
-            // alert(error.message);
         }
     };
 
     const handleGoogleLogin = () => {
-        const clientId = "xxxxxxxxxxxxxxxxx.apps.googleusercontent.com";
+        const clientId = `${process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID}`;
+        console.log("Google Client ID:", clientId);
         const redirectUri = "http://localhost:3001/auth/log-in";
         const scope = "email profile";
     
-        const authUrl = `https://accounts.google.com/o/oauth2/auth?` +
+        const authUrl = `https://accounts.google.com/o/oauth2/v2/auth?` +
             `client_id=${clientId}&` +
             `redirect_uri=${encodeURIComponent(redirectUri)}&` +
             `response_type=code&` +

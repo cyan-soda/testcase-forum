@@ -72,41 +72,41 @@ const CreatePostPopup = (props: CreatePopupProps) => {
     const [input, setInput] = useState('')
     const [expected, setExpected] = useState('')
     const storedUser = localStorage.getItem("user");
-    if (!storedUser) {
-        console.error("Người dùng chưa đăng nhập!");
-        return;
-    }
+    // if (!storedUser) {
+    //     console.error("Người dùng chưa đăng nhập!");
+    //     return;
+    // }
 
-    const user = JSON.parse(storedUser);
-    const email = user.mail;
+    const user = storedUser ? JSON.parse(storedUser) : null;
+    // const email = user.mail;
     const handleUploadPost = async () => {
-        console.log(email);
-        const postData = {
-            title,
-            tags: tags.split(',').map(tag => tag.trim()),
-            description,
-            testcase: {
-                input,
-                expected: expected,
-            },
-            user_mail: email,
-        }
+        // console.log(email);
+        // const postData = {
+        //     title,
+        //     tags: tags.split(',').map(tag => tag.trim()),
+        //     description,
+        //     testcase: {
+        //         input,
+        //         expected: expected,
+        //     },
+        //     user_mail: email,
+        // }
 
-        try {
-            const response = await axios.post('http://127.0.0.1:3000/create', postData, {
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-            })
-            console.log('Post uploaded successfully:', response.data)
-            props.onClose()
-        } catch (error) {
-            if (axios.isAxiosError(error)) {
-                console.error('Axios error:', error.response?.data || error.message)
-            } else {
-                console.error('Unexpected error:', error)
-            }
-        }
+        // try {
+        //     const response = await axios.post('http://127.0.0.1:3000/create', postData, {
+        //         headers: {
+        //             'Content-Type': 'application/json',
+        //         },
+        //     })
+        //     console.log('Post uploaded successfully:', response.data)
+        //     props.onClose()
+        // } catch (error) {
+        //     if (axios.isAxiosError(error)) {
+        //         console.error('Axios error:', error.response?.data || error.message)
+        //     } else {
+        //         console.error('Unexpected error:', error)
+        //     }
+        // }
     }
 
     const [isOpenDuplicatePopup, setIsOpenDuplicatePopup] = useState(false)
