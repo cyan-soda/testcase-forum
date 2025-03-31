@@ -16,6 +16,12 @@ const SearchField = ({
             <input 
                 className={`w-full flex-grow text-sm font-normal bg-grey focus:outline-none`}
                 placeholder={placeholder}
+                value={value}
+                onChange={(e) => onChange(e.target.value)}
+                onFocus={(e) => e.target.placeholder = ""}
+                onBlur={(e) => e.target.placeholder = placeholder}
+                type="text"
+                autoComplete="off"  
             />
             <Image src={icon} alt="" className="cursor-pointer" />
         </div>
