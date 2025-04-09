@@ -66,7 +66,7 @@ export class PostService {
     }
 
     async likePost(id: string) {
-        const response = await axiosClient.post(`${this.baseUrl}/${id}/like`, {
+        const response = await axiosClient.put(`${this.baseUrl}/post/${id}/like`, {}, {
             headers: {
                 'Content-Type': 'application/json',
                 Authorization: `Bearer ${localStorage.getItem('token')}`,
@@ -83,7 +83,7 @@ export class PostService {
         formData.append("expected", expected)
         formData.append("code", code)
 
-        const response = await axiosClient.post(`${this.baseUrl}/createform`, formData, {
+        const response = await axiosClient.post(`${this.baseUrl}/create`, formData, {
             headers: {
                 "Content-Type": "multipart/form-data",
                 Authorization: `Bearer ${localStorage.getItem('token')}`,

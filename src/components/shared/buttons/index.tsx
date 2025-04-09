@@ -12,45 +12,48 @@ import iconBadge from '@/icons/medal-star.svg'
 import { postService } from "@/service/post"
 
 
-export const LikeButton = ({ like_count, post_id }: { like_count: number, post_id: string }) => {
-    const [liked, setLiked] = useState(false)
-    const [count, setCount] = useState(like_count)
-    const [loading, setLoading] = useState(false)
-
-    // useEffect(() => {
-    //     setCount(like_count)
-    //     const fetchLikeStatus = async () => {
-    //         try {
-    //             const res = await postService.likePost(post_id)
-    //             setLiked(!!res?.isLiked)
-    //         } catch (error) {
-    //             console.error("Error fetching like status:", error)
-    //         }
-    //     };
-    //     fetchLikeStatus()
-    // }, [like_count, post_id]);
-
+export const LikeButton = ({ like_count, post_id, initialLiked = false } : { like_count: number, post_id: string, initialLiked?: boolean }) => {
+    const [liked, setLiked] = useState(initialLiked);
+    const [count, setCount] = useState(like_count);
+    const [loading, setLoading] = useState(false);
+  
     const handleLike = async () => {
-        try {
-            const res = await postService.likePost(post_id)
-            setLiked(!liked)
-            if (res.status === 200) {
-                setCount(liked ? count - 1 : count + 1)
-            }
-        } catch (error) {
-            console.error("Error liking the post:", error)
-        }
+      if (loading) return;
+  
+      const previousLiked = liked;
+      const previousCount = count;
+  
+      setLiked(!liked);
+      setCount(liked ? count - 1 : count + 1);
+      setLoading(true);
+  
+      try {
+        const res = await postService.likePost(post_id);
+        setLiked(res.is_like);
+        setCount(res.is_like ? previousCount + 1 : previousCount - 1);
+      } catch (error) {
+        console.error("Error liking the post:", error);
+        setLiked(previousLiked);
+        setCount(previousCount);
+      } finally {
+        setLoading(false);
+      }
     }
-
+  
     return (
-        <div className="flex flex-row items-center gap-2 bg-grey rounded-lg px-4 py-2">
-            <button onClick={handleLike}>
-                <Image src={liked ? iconLikeActive : iconLike} alt="" width={24} height={24} />
-            </button>
-            <span>{count}</span>
-        </div>
-    )
-}
+      <div className="flex flex-row items-center gap-2 bg-grey rounded-lg px-4 py-2">
+        <button onClick={handleLike} disabled={loading}>
+          <Image
+            src={liked ? iconLikeActive : iconLike}
+            alt={liked ? "Unlike" : "Like"}
+            width={24}
+            height={24}
+          />
+        </button>
+        <span>{count}</span>
+      </div>
+    );
+  };
 
 export const CommentButton = ({ count, isOpenComment, setIsOpenComment }: { count: number, isOpenComment?: boolean, setIsOpenComment?: () => void, onClick?: () => void }) => {
     return (
