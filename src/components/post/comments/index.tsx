@@ -2,17 +2,21 @@
 
 import Image from 'next/image'
 import { useState } from 'react'
+import { useParams } from 'next/navigation'
 
 import iconSend from '@/icons/send.svg'
 
 import { LikeButton, CommentButton, BadgeButton } from "@/components/shared/buttons"
 import { CommentProps } from '../details'
+import { commentService } from '@/service/comment'
+import { useUserStore } from '@/store/user/user-store'
 
 const Comment = ({ comment }: { comment: CommentProps }) => {
     const [isOpenBadge, setIsOpenBadge] = useState(false)
     const [isOpenAnswer, setIsOpenAnswer] = useState(false)
     const [replyContent, setReplyContent] = useState("");
     const [openReplies, setOpenReplies]= useState<Set<number>>(new Set())
+    
     const toggleReply = (parentId: number) => {
         parentId && setOpenReplies((prev) => {
             const newState = new Set(prev)
@@ -25,40 +29,29 @@ const Comment = ({ comment }: { comment: CommentProps }) => {
         })
     }
 
+    const { user } = useUserStore()
+    const { postId } = useParams<{ postId: string }>()
+    
     const handleReply = async () => {
-        if (!replyContent.trim()) return; // Không gửi reply rỗng
-
-        // Lấy user từ localStorage
-        const storedUser = localStorage.getItem("user");
-        if (!storedUser) {
-            console.error("Not logged in");
-            return;
-        }
-
-        const user = JSON.parse(storedUser);
-        const email = user.mail;
-
-        const replyData = {
-            user_mail: email,
-            content: replyContent,
-            post_id: comment.id,
-        };
+        if (!replyContent.trim()) return
+        if (!user) return
 
         try {
-            const response = await fetch("http://127.0.0.1:3000/comment", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(replyData),
-            });
+            const response = await commentService.createComment(
+                user?.mail || '',
+                postId,
+                replyContent,
+            )
 
-            if (!response.ok) throw new Error();
+            if (!response.ok) throw new Error()
 
-            setReplyContent("");
-            setIsOpenAnswer(false);
+            setReplyContent("")
+            setIsOpenAnswer(false)
         } catch (error) {
-            console.error(error);
+            console.error(error)
         }
-    };
+    }
+
     return (
         <div className='w-full flex flex-col gap-5 items-start'>
             <div className='w-full flex flex-col gap-[10px] items-start'>

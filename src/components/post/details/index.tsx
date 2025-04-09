@@ -12,6 +12,7 @@ import { PostCardProps, Tag } from "@/components/home/card"
 import { LikeButton, CommentButton, BadgeButton } from "@/components/shared/buttons"
 import Comment from "../comments"
 import RecPosts from "../rec-posts"
+import { commentService } from "@/service/comment"
 
 const getInitials = (name: string) => {
     const names = name.split(' ')
@@ -63,46 +64,46 @@ interface Comment {
 //         content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
 //         parent_id: 0,
 //     },
-    // {
-    //     id: 2,
-    //     author: 'Naomi',
-    //     date: '1 days ago',
-    //     like_count: 15,
-    //     comment_count: 2,
-    //     badge_count: 0,
-    //     content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
-    //     parent_id: 1,
-    // },
-    // {
-    //     id: 3,
-    //     author: 'Naomi',
-    //     date: '2 days ago',
-    //     like_count: 15,
-    //     comment_count: 2,
-    //     badge_count: 0,
-    //     content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
-    //     parent_id: 0,
-    // },
-    // {
-    //     id: 4,
-    //     author: 'Naomi',
-    //     date: '2 days ago',
-    //     like_count: 15,
-    //     comment_count: 2,
-    //     badge_count: 0,
-    //     content: 'Comment 2',
-    //     parent_id: null,
-    // },
-    // {
-    //     id: 5,
-    //     author: 'Naomi',
-    //     date: '2 days ago',
-    //     like_count: 15,
-    //     comment_count: 2,
-    //     badge_count: 0,
-    //     content: 'Comment 3',
-    //     parent_id: null,
-    // }
+// {
+//     id: 2,
+//     author: 'Naomi',
+//     date: '1 days ago',
+//     like_count: 15,
+//     comment_count: 2,
+//     badge_count: 0,
+//     content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
+//     parent_id: 1,
+// },
+// {
+//     id: 3,
+//     author: 'Naomi',
+//     date: '2 days ago',
+//     like_count: 15,
+//     comment_count: 2,
+//     badge_count: 0,
+//     content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
+//     parent_id: 0,
+// },
+// {
+//     id: 4,
+//     author: 'Naomi',
+//     date: '2 days ago',
+//     like_count: 15,
+//     comment_count: 2,
+//     badge_count: 0,
+//     content: 'Comment 2',
+//     parent_id: null,
+// },
+// {
+//     id: 5,
+//     author: 'Naomi',
+//     date: '2 days ago',
+//     like_count: 15,
+//     comment_count: 2,
+//     badge_count: 0,
+//     content: 'Comment 3',
+//     parent_id: null,
+// }
 // ]
 
 const POSTS = [
@@ -149,23 +150,22 @@ const PostDetails = ({ post }: { post: PostCardProps }) => {
         setActiveTab(tab)
     }
 
-    const fetchComments = async () => {
-        try {
-            const res = await fetch(`http://localhost:3000/post/${post.id}/comments`);
-            if (!res.ok) throw new Error("Lỗi khi tải comment");
-
-            const data = await res.json();
-            setComments(data);
-        } catch (error) {
-            console.error("Lỗi khi tải comment:", error);
-        } finally {
-            setLoading(false);
-        }
-    };
-
     useEffect(() => {
-        fetchComments();
-    }, [post.id]);
+        const fetchComments = async () => {
+            try {
+                const res = await commentService.getAllComments(post.id)
+                console.log(res)
+                setComments(res)
+                console.log("comments", comments)
+            } catch (error) {
+                console.error("Lỗi khi tải comment:", error)
+            } finally {
+                setLoading(false)
+            }
+        }
+
+        fetchComments()
+    }, [post.id])
 
     return (
         <>
@@ -229,7 +229,7 @@ const PostDetails = ({ post }: { post: PostCardProps }) => {
                             title="Comments"
                             isActive={activeTab === 'comments'}
                             onClick={() => handleToggleTab('comments')}
-                            count={comments.length}
+                            count={comments.length === 0 ? 0 : comments.length}
                         />
                         <Tab
                             title="Related Posts"
@@ -242,7 +242,7 @@ const PostDetails = ({ post }: { post: PostCardProps }) => {
                         {activeTab === 'comments' && (
                             <div className="flex flex-col gap-10 w-full">
                                 {comments.map((comment) => (
-                                        <Comment key={comment.id} comment={comment} />
+                                    <Comment key={comment.id} comment={comment} />
                                 ))}
                             </div>
                         )}
@@ -256,7 +256,7 @@ const PostDetails = ({ post }: { post: PostCardProps }) => {
                     </div>
                 </div>
             </div>
-            <PreviewPopup isOpen={isOpenPreviewPopup} onClose={() => setIsOpenPreviewPopup(false)} testcase={post.testcase}/>
+            <PreviewPopup isOpen={isOpenPreviewPopup} onClose={() => setIsOpenPreviewPopup(false)} testcase={post.testcase} />
         </>
     )
 }

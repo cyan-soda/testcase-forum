@@ -5,6 +5,7 @@ import { useState } from "react"
 
 import iconRightArrow from '@/icons/arrow--right.svg'
 import iconPlay from '@/icons/video-square.svg'
+import { codeService } from "@/service/code"
 
 type TestCaseProps = {
     input: string
@@ -47,13 +48,13 @@ const CaseItems = [
 ]
 
 const RunCode = ({ testcase, execution }: { testcase?: TestCaseProps, execution?: ExecutionProps }) => {
-    const [fileName, setFileName] = useState('')
-    const handleUploadFiles = (event: React.ChangeEvent<HTMLInputElement>) => { 
-        if (event && event.target && event.target.files) {
-            const file = event.target.files[0]
-            if (file) {
-                setFileName(file.name)
-            }
+    const [fileNames, setFileNames] = useState<string[]>([])
+    // handle upload multiple files, set fileName to the name of the files
+    const handleUploadFiles = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const files = e.target.files
+        if (files) {
+            const names = Array.from(files).map(file => file.name)
+            setFileNames(names)
         }
     }
 
@@ -72,13 +73,14 @@ const RunCode = ({ testcase, execution }: { testcase?: TestCaseProps, execution?
                     Upload Files
                     <input
                         type="file"
+                        multiple
                         className="hidden" 
                         onChange={handleUploadFiles}
                     />
                 </label>
                 <div className="flex-1 w-full flex flex-row items-center border rounded-lg border-dashed h-full p-3">
-                    {fileName 
-                        ? <span className="text-sm font-normal w-full text-center">{fileName}</span> 
+                    {fileNames.length > 0
+                        ? <span className="text-sm font-normal w-full text-center">{fileNames.join(', ')}</span> 
                         : <span className="text-sm font-normal w-full text-grey text-center">Drag and drop your file here...</span>
                     }
                 </div>

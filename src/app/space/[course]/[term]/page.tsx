@@ -10,6 +10,7 @@ import PopularTags from "@/components/home/popular/tags";
 import SearchFilterField from "@/components/home/utils/search-filter"
 import SearchTagField from "@/components/home/utils/search-tag"
 import SearchTextField from "@/components/home/utils/search-text"
+import { postService } from "@/service/post";
 
 
 interface Post {
@@ -59,10 +60,32 @@ const CoursePage = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await fetch(`http://127.0.0.1:3000/posts`);
-        const json: Post[] = await res.json();
+        const res = await postService.getAllPosts()
+        // const json: Post[] = await res.json()
 
-        const formattedPosts: PostData[] = json.map((item) => ({
+        interface ReactionData {
+          star: number;
+          comment: number;
+          view: number;
+          badge: number;
+        }
+
+        interface TestcaseData {
+          input: string;
+          expected: string;
+        }
+
+        interface RawPost {
+          id: string;
+          title: string;
+          description: string;
+          created_at: string;
+          user_mail: string;
+          reactions: ReactionData;
+          testcase: TestcaseData;
+        }
+
+        const formattedPosts: PostData[] = (res as RawPost[]).map((item: RawPost) => ({
           id: item.id,
           title: item.title,
           tags: ["assignment1", "ultimate", "infinity void", "programming"],

@@ -43,7 +43,8 @@ const Header = () => {
     }
 
     const handleCreatePost = () => {
-        setIsOpenCreatePopup(true)
+        if (user && isAuthenticated)
+            setIsOpenCreatePopup(true)
     }
 
     const handleChangeLanguage = (lang: string, abbr: string) => {
@@ -56,7 +57,7 @@ const Header = () => {
         <>
             <div className="max-w-screen sticky inset-0 z-10 bg-white px-6 py-5 shadow-[0_1px_2px_0px_rgba(0,0,0,0.1)] rounded-b-lg border-b-[3px] border-b-[#191A23]">
                 <div className="relative mx-auto flex w-full max-w-[1440px] flex-row items-center justify-start">
-                    <div className="sticky left-0 flex flex-row gap-[10px] cursor-pointer justify-start items-center">
+                    <div className="sticky left-0 flex flex-row gap-[10px] cursor-pointer justify-start items-center" onClick={() => { router.push('/') }}>
                         <div className="bg-green w-[22px] h-[22px] rounded-md"></div>
                         <span className="text-xl font-bold">tc.forum</span>
                     </div>

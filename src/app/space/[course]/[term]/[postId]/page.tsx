@@ -6,8 +6,8 @@ import { useState, useEffect } from "react";
 
 import iconArrow from '@/icons/arrow--right.svg'
 import PostDetails from "@/components/post/details";
-// import { POST } from "../page";
 import RunCode from "@/components/post/run-code";
+import { postService } from "@/service/post";
 
 interface PostData {
     id: string;
@@ -54,16 +54,15 @@ const PostDetailPage = () => {
             if (!postId) return;
 
             try {
-                const res = await fetch(`http://127.0.0.1:3000/post/${postId}`);
-                const data = await res.json();
+                const res = await postService.getPost(postId)
 
                 const formattedPost: PostData = {
-                    id: data.id,
-                    title: data.title,
+                    id: res.id,
+                    title: res.title,
                     tags: ["assignment1", "ultimate", "infinity void", "programming"], 
-                    description: data.description,
-                    date: data.created_at,
-                    author: data.user_mail,
+                    description: res.description,
+                    date: res.created_at,
+                    author: res.user_mail,
                     reactions: {
                         star: 145,
                         comment: 56,
@@ -71,8 +70,8 @@ const PostDetailPage = () => {
                         badge: 2,
                     },
                     testcase: {
-                        input: data.testcase.input,
-                        expected: data.testcase.expected,
+                        input: res.testcase.input,
+                        expected: res.testcase.expected_output,
                     },
                 };
                 console.log(formattedPost)
@@ -86,6 +85,7 @@ const PostDetailPage = () => {
 
         fetchPost();
     }, [postId]);
+
     const handleToggleTab = (tab: 'details' | 'runCode') => {
         setActiveTab(tab)
     }
