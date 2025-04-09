@@ -9,6 +9,7 @@ import { yupResolver } from "@hookform/resolvers/yup"
 import { useAuthStore } from "@/store/auth/auth-store"
 import { authService } from "@/service/auth"
 import { useUserStore } from "@/store/user/user-store"
+import { useTranslation } from "react-i18next"
 
 interface ILoginForm {
     email: string,
@@ -40,6 +41,7 @@ const LoginForm = () => {
     const router = useRouter()
     const { logIn } = useAuthStore()
     const { setUser } = useUserStore()
+    const { t } = useTranslation('login')
 
     useEffect(() => {
         const fetchGoogleLogin = async () => {
@@ -116,7 +118,7 @@ const LoginForm = () => {
             <div className="flex flex-col gap-4 items-center justify-center">
                 <div className="w-full">
                     <label className="font-semibold text-sm" htmlFor="LoginEmail">
-                        Email:
+                        {t('email')}
                     </label>
                     <input
                         id="LoginEmail"
@@ -129,7 +131,7 @@ const LoginForm = () => {
                 </div>
                 <div className="w-full">
                     <label className="font-semibold text-sm" htmlFor="LoginPassword">
-                        Password:
+                        {t('password')}
                     </label>
                     <input
                         id="LoginPassword"
@@ -149,12 +151,12 @@ const LoginForm = () => {
                             {...register('remember')}
                         />
                         <label className="font-medium text-sm" htmlFor="RememberMe">
-                            Remember me
+                            {t('options.remember_me')}
                         </label>
                     </div>
                     <p className="font-medium text-sm text-blue-500 hover:underline">
                         <Link href={'/auth/forgot-password'}>
-                            Forgot password?
+                            {t('options.forgot_password')}
                         </Link>
                     </p>
                 </div>
@@ -163,11 +165,11 @@ const LoginForm = () => {
                     type="submit"
                     className="w-full p-2 rounded-lg text-base font-semibold text-white bg-black disabled:bg-grey hover:bg-opacity-80"
                 >
-                    {isSubmitting ? "Logging in..." : "Login"}
+                    {isSubmitting ? t('loading_text') : t('options.login')}
                 </button>
                 <div className="flex flex-row items-center gap-6 w-full">
                     <hr className="w-full border-t-2 border-gray-300" />
-                    <p className="text-center">or</p>
+                    <p className="text-center">{t('or')}</p>
                     <hr className="w-full border-t-2 border-gray-300" />
                 </div>
                 <Link
@@ -178,16 +180,16 @@ const LoginForm = () => {
                     <button 
                         onClick={handleGoogleLogin}
                         type="button">
-                    Login with Google
+                        {t('options.login_with_google')}
                     </button>
                 </Link>
                 <div className="text-center">
-                    <span className="me-2 text-black font-normal">Have not registered?</span>{" "}
+                    <span className="me-2 text-black font-normal">{t('register_text')}</span>{" "}
                     <Link
                         href={'/auth/register'}
                         className="inline-block font-semibold text-black dark:text-white hover:underline"    
                     >
-                        Register now
+                        {t('options.register')}
                     </Link>
                 </div>
             </div>

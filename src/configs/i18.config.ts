@@ -8,17 +8,21 @@ import SIDEBAR_EN from '@/locales/en/sidebar.json'
 import SIDEBAR_VI from '@/locales/vi/sidebar.json'
 import HOME_EN from '@/locales/en/home.json'
 import HOME_VI from '@/locales/vi/home.json'
+import LOGIN_EN from '@/locales/en/login.json'
+import LOGIN_VI from '@/locales/vi/login.json'
 
 const resources = {
     en: {
         header: HEADER_EN,
         sidebar: SIDEBAR_EN,
-        home: HOME_EN
+        home: HOME_EN,
+        login: LOGIN_EN,
     },
     vi: {
         header: HEADER_VI,
         sidebar: SIDEBAR_VI,
-        home: HOME_VI
+        home: HOME_VI,
+        login: LOGIN_VI,
     }
 }
 

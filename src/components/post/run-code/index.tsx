@@ -6,6 +6,7 @@ import { useState } from "react"
 import iconRightArrow from '@/icons/arrow--right.svg'
 import iconPlay from '@/icons/video-square.svg'
 import { codeService } from "@/service/code"
+import { useParams } from "next/navigation"
 
 type TestCaseProps = {
     input: string
@@ -49,12 +50,40 @@ const CaseItems = [
 
 const RunCode = ({ testcase, execution }: { testcase?: TestCaseProps, execution?: ExecutionProps }) => {
     const [fileNames, setFileNames] = useState<string[]>([])
-    // handle upload multiple files, set fileName to the name of the files
-    const handleUploadFiles = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const files = e.target.files
-        if (files) {
-            const names = Array.from(files).map(file => file.name)
-            setFileNames(names)
+    const [files, setFiles] = useState<File[]>([])
+    const [isUploaded, setIsUploaded] = useState(false)
+    const { postId } = useParams<{ postId: string }>()
+
+    const handleUploadFiles = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const selectedFiles = e.target.files
+        if (selectedFiles) {
+            const fileArray = Array.from(selectedFiles)
+            setFiles(fileArray)
+            setFileNames(fileArray.map(file => file.name))
+
+            try {
+                const uploadResponse = await codeService.submitCodeFile(fileArray)
+                console.log("Files uploaded:", uploadResponse)
+                if (uploadResponse.success) {
+                    setIsUploaded(true)
+                    alert("Files uploaded successfully!")
+                }
+            } catch (error) {
+                console.error("Upload failed:", error)
+            }
+        }
+    }
+
+    const handleRunCode = async () => {
+        if (!isUploaded) {
+            alert("Please upload your files first!")
+            return
+        }
+        try {
+            const result = await codeService.runCode(postId)
+            console.log("Execution result:", result)
+        } catch (error) {
+            console.error("Run code failed:", error)
         }
     }
 
@@ -64,7 +93,7 @@ const RunCode = ({ testcase, execution }: { testcase?: TestCaseProps, execution?
             <div className="flex flex-row items-center gap-3 w-full mb-6 mt-3 text-base font-bold">
                 <button
                     className={`flex flex-row gap-2 px-4 py-3 rounded-lg bg-green`}
-                    onClick={() => { }}
+                    onClick={() => {handleRunCode}}
                 >
                     Run Code
                     <Image src={iconPlay} alt="" width={20} height={20} />

@@ -1,0 +1,14 @@
+{
+    "email": "Email",
+    "password": "Mật khẩu",
+    "options": {
+        "remember_me": "Ghi nhớ tôi",
+        "forgot_password": "Quên mật khẩu?",
+        "login": "Đăng nhập",
+        "register": "Đăng ký ngay",
+        "login_with_google": "Đăng nhập bằng Google"
+    },
+    "register_text": "Chưa có tài khoản?",
+    "or": "hoặc",
+    "loading_text": "Đang đăng nhập..."
+}

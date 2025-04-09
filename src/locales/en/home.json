@@ -16,5 +16,12 @@
     "tags_section": {
         "title": "Popular Tags",
         "content": "posts created about this topic"
+    },
+    "filter_options": {
+        "all": "All",
+        "new": "Newest",
+        "old": "Oldest",
+        "a_z": "A to Z",
+        "z_a": "Z to A"
     }
 }

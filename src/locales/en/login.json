@@ -1,0 +1,14 @@
+{
+    "email": "Email",
+    "password": "Password",
+    "options": {
+        "remember_me": "Remember me",
+        "forgot_password": "Forgot password?",
+        "login": "Login",
+        "register": "Register now",
+        "login_with_google": "Login with Google"
+    },
+    "register_text": "Have not registered yet?",
+    "or": "or",
+    "loading_text": "Logging in..."
+}

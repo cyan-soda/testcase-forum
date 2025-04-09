@@ -16,5 +16,12 @@
     "tags_section": {
         "title": "Thẻ phổ biến",
         "content": "bài viết được tạo về chủ đề này"
+    },
+    "filter_options": {
+        "all": "Tất cả",
+        "new": "Mới nhất",
+        "old": "Cũ nhất",
+        "a_z": "Từ A đến Z",
+        "z_a": "Từ Z đến A"
     }
 }

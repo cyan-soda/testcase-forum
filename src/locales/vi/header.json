@@ -16,5 +16,6 @@
         "register": "Đăng ký",
         "logout": "Đăng xuất",
         "profile": "Trang cá nhân"
-    }
+    },
+    "guest_placeholder": "Khách"
 }

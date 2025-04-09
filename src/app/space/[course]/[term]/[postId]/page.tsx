@@ -9,24 +9,7 @@ import PostDetails from "@/components/post/details";
 import RunCode from "@/components/post/run-code";
 import { postService } from "@/service/post";
 
-interface PostData {
-    id: string;
-    title: string;
-    tags: string[];
-    description: string;
-    date: string;
-    author: string;
-    reactions: {
-        star: number;
-        comment: number;
-        view: number;
-        badge: number;
-    };
-    testcase: {
-        input: string;
-        expected: string;
-    };
-}
+import { TPost } from "@/types/post";
 
 const Tab = ({ title, isActive, onClick }: { title: string, isActive: boolean, onClick: () => void }) => {
     return (
@@ -46,7 +29,7 @@ const PostDetailPage = () => {
     const router = useRouter()
 
     const [activeTab, setActiveTab] = useState<'details' | 'runCode'>('details')
-    const [post, setPost] = useState<PostData | null>(null);
+    const [post, setPost] = useState<TPost | null>(null);
     const [loading, setLoading] = useState<boolean>(true);
 
     useEffect(() => {
@@ -55,27 +38,8 @@ const PostDetailPage = () => {
 
             try {
                 const res = await postService.getPost(postId)
-
-                const formattedPost: PostData = {
-                    id: res.id,
-                    title: res.title,
-                    tags: ["assignment1", "ultimate", "infinity void", "programming"], 
-                    description: res.description,
-                    date: res.created_at,
-                    author: res.user_mail,
-                    reactions: {
-                        star: 145,
-                        comment: 56,
-                        view: 324,
-                        badge: 2,
-                    },
-                    testcase: {
-                        input: res.testcase.input,
-                        expected: res.testcase.expected_output,
-                    },
-                };
-                console.log(formattedPost)
-                setPost(formattedPost);
+                console.log(res)
+                setPost(res as TPost);
             } catch (error) {
                 console.error("Failed to fetch post data:", error);
             } finally {

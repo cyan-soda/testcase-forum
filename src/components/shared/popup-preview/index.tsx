@@ -6,8 +6,10 @@ type PreviewPopupProps = {
     isOpen: boolean
     onClose: () => void
     testcase: {
-        input: string;
-        expected: string;
+        post_id?: string
+        input: string
+        expected: string
+        code: string
     }
 }
 

@@ -8,15 +8,19 @@ import iconHide from '@/icons/eye-slash.svg'
 import iconReport from '@/icons/danger.svg'
 
 import PreviewPopup from '@/components/shared/popup-preview'
-import { PostCardProps, Tag } from "@/components/home/card"
+import { Tag } from "@/components/home/card"
 import { LikeButton, CommentButton, BadgeButton } from "@/components/shared/buttons"
 import Comment from "../comments"
 import RecPosts from "../rec-posts"
 import { commentService } from "@/service/comment"
+import { TPost } from "@/types/post"
 
 const getInitials = (name: string) => {
+    if (!name) return ''
+    if (name.length === 0) return ''
     const names = name.split(' ')
-    return names.map((n) => n[0]).join('')
+    if (names.length === 1) return names[0][0]
+    return `${names[names.length - 1][0]}${names[0][0]}`
 }
 
 const Tab = ({ title, isActive, count, onClick }: { title: string, isActive: boolean, count?: number, onClick: () => void }) => {
@@ -43,69 +47,6 @@ interface Comment {
     date: '3 days ago',
 }
 
-// const COMMENTS = [
-//     {
-//         id: 0,
-//         author: 'Naomi',
-//         date: '3 days ago',
-//         like_count: 5,
-//         comment_count: 5,
-//         badge_count: 2,
-//         content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
-//         parent_id: null,
-//     },
-//     {
-//         id: 1,
-//         author: 'Naomi',
-//         date: '2 days ago',
-//         like_count: 15,
-//         comment_count: 2,
-//         badge_count: 0,
-//         content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
-//         parent_id: 0,
-//     },
-// {
-//     id: 2,
-//     author: 'Naomi',
-//     date: '1 days ago',
-//     like_count: 15,
-//     comment_count: 2,
-//     badge_count: 0,
-//     content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
-//     parent_id: 1,
-// },
-// {
-//     id: 3,
-//     author: 'Naomi',
-//     date: '2 days ago',
-//     like_count: 15,
-//     comment_count: 2,
-//     badge_count: 0,
-//     content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
-//     parent_id: 0,
-// },
-// {
-//     id: 4,
-//     author: 'Naomi',
-//     date: '2 days ago',
-//     like_count: 15,
-//     comment_count: 2,
-//     badge_count: 0,
-//     content: 'Comment 2',
-//     parent_id: null,
-// },
-// {
-//     id: 5,
-//     author: 'Naomi',
-//     date: '2 days ago',
-//     like_count: 15,
-//     comment_count: 2,
-//     badge_count: 0,
-//     content: 'Comment 3',
-//     parent_id: null,
-// }
-// ]
-
 const POSTS = [
     { title: "I put my minimum effort into creating this set of test cases for you guys, but I promise it works for 90% of this assignment.", author: "Dang Hoang", link: "#" },
     { title: "I put my minimum effort into creating this set of test cases for you guys, but I promise it works for 90% of this assignment.", author: "Son Nguyen", link: "#" },
@@ -125,8 +66,28 @@ export type CommentProps = {
     parent_id: number | null,
 }
 
-const PostDetails = ({ post }: { post: PostCardProps }) => {
-    post.date = new Date(post.date).toLocaleString('en-US', {
+const CodeMarkdownArea = ({ code }: { code: string }) => {
+    const lines = (code || "No code provided").split('\n')
+    return (
+        <div className="rounded-lg bg-grey px-3 py-3 text-sm font-mono w-full">
+            <pre className="whitespace-pre-wrap break-words">
+                {lines.map((line, index) => (
+                    <div key={index} className="flex">
+                        <span className="text-gray-400 w-8 text-right pr-3 select-none">
+                            {index + 1}
+                        </span>
+                        <span className="flex-1 whitespace-pre-wrap break-words">
+                            {line || '\u00A0'}
+                        </span>
+                    </div>
+                ))}
+            </pre>
+        </div>
+    )
+}
+
+const PostDetails = ({ post }: { post: TPost }) => {
+    post.last_modified = new Date(post.last_modified).toLocaleString('en-US', {
         year: 'numeric',
         month: '2-digit',
         day: '2-digit',
@@ -170,7 +131,7 @@ const PostDetails = ({ post }: { post: PostCardProps }) => {
     return (
         <>
             <div className="min-h-screen bg-white text-black p-5 rounded-xl flex flex-col gap-5 items-center">
-                <div className="flex flex-col gap-5 pb-5 items-center w-full border-b border-black">
+                <div className="flex flex-col gap-2 pb-5 items-center w-full border-b border-black">
                     <div className="flex flex-col gap-2 w-full">
                         <div className="flex flex-row items-center justify-between w-full">
                             {/* user's name, avatar & active status */}
@@ -192,44 +153,56 @@ const PostDetails = ({ post }: { post: PostCardProps }) => {
                         <div className="w-full flex flex-row items-start gap-2">
                             <div className="flex flex-row items-center gap-[2px]">
                                 <span className="text-xs font-semibold">Posted</span>
-                                <span className="text-xs font-normal">{post.date}</span>
+                                <span className="text-xs font-normal">{post.last_modified}</span>
                             </div>
                             <div className="flex flex-row items-center gap-[2px]">
                                 <span className="text-xs font-semibold">Modified</span>
-                                <span className="text-xs font-normal">{post.date}</span>
+                                <span className="text-xs font-normal">{post.last_modified}</span>
                             </div>
                         </div>
                         <span className="text-xl font-semibold">{post.title}</span>
                         <div className='flex flex-row gap-[10px] mt-[2px]'>
-                            {post.tags.map((tag, index) => (
+                            {post.tags?.map((tag, index) => (
                                 <Tag key={index} tag={tag} />
                             ))}
                         </div>
                     </div>
-                    <div className="text-sm font-light">
+
+                    <div className="text-sm font-light text-left w-full">
                         {post.description}
                     </div>
-                    <div className="flex flex-row items-center justify-between w-full">
-                        <div className="flex flex-row items-center gap-3">
-                            <LikeButton like_count={0} />
-                            {/* <CommentButton count={5} isOpenComment={isOpenComment} setIsOpenComment={() => { setIsOpenComment(!isOpenComment) }} /> */}
-                            <BadgeButton count={2} isOpenBadge={isOpenBadge} setIsOpenBadge={() => { setIsOpenBadge(!isOpenBadge) }} />
+                    <div className="flex flex-col items-start gap-2 w-full my-2 p-4 border rounded-lg">
+                        <div className="grid grid-cols-[8rem_1fr] items-center gap-2 w-full">
+                            <span className="text-sm font-semibold">Input:</span>
+                            <span className="bg-grey py-2 px-3 rounded-lg">{post.testcase.input}</span>
                         </div>
-                        <button
+                        <div className="grid grid-cols-[8rem_1fr] items-center gap-2 w-full">
+                            <span className="text-sm font-semibold">Expected Output:</span>
+                            <span className="bg-grey py-2 px-3 rounded-lg">{post.testcase.expected}</span>
+                        </div>
+                    </div>
+                    <CodeMarkdownArea code={post.testcase.code} />
+                    <div className="flex flex-row items-center justify-between w-full mt-2">
+                        <div className="flex flex-row items-center gap-3">
+                            <LikeButton like_count={post.interaction?.like_count} post_id={post.id} />
+                            {/* <CommentButton count={5} isOpenComment={isOpenComment} setIsOpenComment={() => { setIsOpenComment(!isOpenComment) }} /> */}
+                            <BadgeButton count={post.interaction?.verified_teacher_mail ? 1 : 0} isOpenBadge={isOpenBadge} setIsOpenBadge={() => { setIsOpenBadge(!isOpenBadge) }} />
+                        </div>
+                        {/* <button
                             className={`bg-grey rounded-lg py-2 px-3 text-sm font-bold text-black`}
                             onClick={() => { handleOpenPreviewPopup() }}
                         >
                             Preview Testcases
-                        </button>
+                        </button> */}
                     </div>
                 </div>
-                <div className="flex flex-col gap-7 w-full">
+                <div className="flex flex-col gap-5 w-full">
                     <div className="flex flex-row items-start gap-3 w-full">
                         <Tab
                             title="Comments"
                             isActive={activeTab === 'comments'}
                             onClick={() => handleToggleTab('comments')}
-                            count={comments.length === 0 ? 0 : comments.length}
+                            count={post.interaction?.comment_count}
                         />
                         <Tab
                             title="Related Posts"
@@ -241,6 +214,24 @@ const PostDetails = ({ post }: { post: PostCardProps }) => {
                     <div className="w-full">
                         {activeTab === 'comments' && (
                             <div className="flex flex-col gap-10 w-full">
+                                <div className='w-full flex flex-row items-center justify-between gap-3'>
+                                    <div className='w-full px-5 py-3 bg-grey text-black rounded-lg'>
+                                        <textarea
+                                            className='bg-grey w-full text-sm font-normal focus-within:outline-none'
+                                            placeholder='Type here to comment...'
+                                            rows={3}
+                                        // value={replyContent}
+                                        // onChange={(e) => setReplyContent(e.target.value)}
+                                        >
+                                        </textarea>
+                                    </div>
+                                    <button
+                                        className={`bg-green rounded-lg py-3 px-4 text-sm font-bold text-black`}
+                                    // onClick={handleReply}
+                                    >
+                                        Submit
+                                    </button>
+                                </div>
                                 {comments.map((comment) => (
                                     <Comment key={comment.id} comment={comment} />
                                 ))}

@@ -1,21 +1,25 @@
 export type TPost = {
     id: string,
+    user_mail: string,
+    author: string,
+    subject: string,
     title: string,
     description: string,
+    last_modified: string,
     testcase: {
+        post_id: string,
         input: string,
-        expected_output: string
+        expected: string,
+        code: string,
     },
-    user_id?: string,
-    created_at?: string,
-    updated_at?: string,
-    user?: {
-        id: string,
-        mail: string,
-        first_name: string,
-        last_name: string,
-        avatar: string,
-        maso: string,
-        role: string
+    tags: string[],
+    post_type: 0 | 1 | 2,
+    interaction: {
+        like_count: number,
+        comment_count: number,
+        like_id: string | null,
+        verified_teacher_mail: string | null,
+        view_count: number,
+        run_count: number,
     }
 }

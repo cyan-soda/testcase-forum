@@ -11,108 +11,56 @@ import SearchFilterField from "@/components/home/utils/search-filter"
 import SearchTagField from "@/components/home/utils/search-tag"
 import SearchTextField from "@/components/home/utils/search-text"
 import { postService } from "@/service/post";
-
-
-interface Post {
-  id: string;
-  title: string;
-  description: string;
-  created_at: string;
-  user_mail: string;
-  reactions: {
-    star: number;
-    comment: number;
-    view: number;
-    badge: number;
-  };
-  testcase: {
-    input: string;
-    expected: string;
-  };
-
-}
-
-interface PostData {
-  id: string;
-  title: string;
-  tags: string[];
-  description: string;
-  date: string;
-  author: string;
-  reactions: {
-    star: number;
-    comment: number;
-    view: number;
-    badge: number;
-  };
-  testcase: {
-    input: string;
-    expected: string;
-  };
-}
+import { useTranslation } from "react-i18next";
+import { TPost } from "@/types/post";
 
 const CoursePage = () => {
   const params = useParams();
   const { course, term } = params as { course: string; term: string };
 
-  const [POST, setPosts] = useState<PostData[]>([]);
+  const [POST, setPosts] = useState<TPost[]>([]);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const res = await postService.getAllPosts()
-        // const json: Post[] = await res.json()
-
-        interface ReactionData {
-          star: number;
-          comment: number;
-          view: number;
-          badge: number;
+        console.log("Post page: ", res)
+        if (res) {
+          const formattedPosts: TPost[] = (res as TPost[]).map((item: TPost) => ({
+            id: item.id,
+            user_mail: item.user_mail,
+            author: item.author,
+            subject: item.subject,
+            title: item.title,
+            description: item.description,
+            last_modified: new Date(item.last_modified).toLocaleString('en-US', {
+              year: 'numeric',
+              month: '2-digit',
+              day: '2-digit',
+              hour: '2-digit',
+              minute: '2-digit',
+              hour12: false,
+            }),
+            testcase: {
+              post_id: item.testcase.post_id || "",
+              input: item.testcase.input || "",
+              expected: item.testcase.expected || "",
+              code: item.testcase.code,
+            },
+            tags: ["assignment1", "ultimate", "infinity void", "programming"],
+            post_type: 0,
+            interaction: {
+              like_count: item.interaction.like_count || 0,
+              comment_count: item.interaction.comment_count || 0,
+              like_id: item.interaction.like_id,
+              verified_teacher_mail: item.interaction.verified_teacher_mail,
+              view_count: item.interaction.view_count || 0,
+              run_count: item.interaction.run_count || 0,
+            },
+          }));
+          setPosts(formattedPosts);
+          console.log(formattedPosts);
         }
-
-        interface TestcaseData {
-          input: string;
-          expected: string;
-        }
-
-        interface RawPost {
-          id: string;
-          title: string;
-          description: string;
-          created_at: string;
-          user_mail: string;
-          reactions: ReactionData;
-          testcase: TestcaseData;
-        }
-
-        const formattedPosts: PostData[] = (res as RawPost[]).map((item: RawPost) => ({
-          id: item.id,
-          title: item.title,
-          tags: ["assignment1", "ultimate", "infinity void", "programming"],
-          description: item.description,
-          date: new Date(item.created_at).toLocaleString('en-US', {
-            year: 'numeric',
-            month: '2-digit',
-            day: '2-digit',
-            hour: '2-digit',
-            minute: '2-digit',
-            hour12: false, // Use 24-hour format; remove this line for 12-hour format
-          }),
-          author: item.user_mail.split('@')[0],
-          reactions: {
-            star: 145,
-            comment: 56,
-            view: 324,
-            badge: 2,
-          },
-          testcase: {
-            input: item.testcase.input,
-            expected: item.testcase.expected,
-          },
-        }));
-
-        setPosts(formattedPosts);
-        console.log(formattedPosts);
       } catch (error) {
         console.error("Failed to fetch data:", error);
       }
@@ -122,7 +70,7 @@ const CoursePage = () => {
   }, [course, term]);
 
   // Filtered posts based on search text
-  const [filteredPosts, setFilteredPosts] = useState<PostData[]>(POST);
+  const [filteredPosts, setFilteredPosts] = useState<TPost[]>(POST);
   const [searchText, setSearchText] = useState<string>("");
 
   useEffect(() => {
@@ -161,17 +109,20 @@ const CoursePage = () => {
   }
 
   // Filtered posts based on filter
-  const SORT_OPTIONS = ["Newest", "Oldest", "A-Z", "Z-A"];
+  const { t } = useTranslation("home")
+  const SORT_OPTIONS = [t('filter_options.all'), t('filter_options.new'), t('filter_options.old'), t('filter_options.a_z'), t('filter_options.z_a')];
   const [sortFilter, setSortFilter] = useState<string>("");
   const handleFilterChange = (selected: string) => {
     setSortFilter(selected);
     setFilteredPosts((prevPosts) => {
       const sortedPosts = [...prevPosts];
       switch (selected) {
+        case "All":
+          return POST;
         case "Newest":
-          return sortedPosts.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+          return sortedPosts.sort((a, b) => new Date(b.last_modified).getTime() - new Date(a.last_modified).getTime());
         case "Oldest":
-          return sortedPosts.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+          return sortedPosts.sort((a, b) => new Date(a.last_modified).getTime() - new Date(b.last_modified).getTime());
         case "A-Z":
           return sortedPosts.sort((a, b) => a.title.localeCompare(b.title));
         case "Z-A":

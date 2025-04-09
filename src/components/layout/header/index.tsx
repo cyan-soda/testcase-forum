@@ -87,20 +87,20 @@ const Header = () => {
                                         <div className="bg-green rounded-md p-2">
                                             <p className="text-base font-semibold">{isAuthenticated && user ? getInitials(user.first_name, user.last_name) : "?"}</p>
                                         </div>
-                                        <p className="text-base font-normal">{isAuthenticated && user ? `${user.first_name} ${user.last_name}` : "Guest"}</p>
+                                        <p className="text-base font-normal">{isAuthenticated && user ? `${user.first_name} ${user.last_name}` : t('guest_placeholder')}</p>
                                         <Image src={iconDownArrow} alt="" />
                                     </DropdownMenuTrigger>
                                     <DropdownMenuContent>
-                                        <DropdownMenuItem onClick={() => { router.push('/profile') }}>
-                                            'profile'
+                                        <DropdownMenuItem onClick={() => { router.push('/profile') }} className="hover:cursor-pointer">
+                                            {t('account_options.profile')}
                                         </DropdownMenuItem>
                                         <DropdownMenuSeparator />
-                                        <DropdownMenuItem onClick={() => { router.push('/auth/log-in') }}>
-                                            'login'
+                                        <DropdownMenuItem onClick={() => { router.push('/auth/log-in') }} className="hover:cursor-pointer">
+                                            {t('account_options.login')}
                                         </DropdownMenuItem>
                                         <DropdownMenuSeparator />
-                                        <DropdownMenuItem onClick={() => { logOut(); router.push('/') }}>
-                                            'logout'
+                                        <DropdownMenuItem onClick={() => { logOut(); router.push('/') }} className="hover:cursor-pointer">
+                                            {t('account_options.logout')}
                                         </DropdownMenuItem>
                                     </DropdownMenuContent>
                                 </DropdownMenu>
@@ -116,7 +116,7 @@ const Header = () => {
                                     <DropdownMenuLabel>{t("language")}</DropdownMenuLabel>
                                     <DropdownMenuSeparator />
                                     {languages.map((language, index) => (
-                                        <DropdownMenuItem key={index} onClick={() => handleChangeLanguage(language.name, language.abbr)} >
+                                        <DropdownMenuItem key={index} onClick={() => handleChangeLanguage(language.name, language.abbr)} className="hover:cursor-pointer">
                                             {t(`language_options.${language.name as "en" | "vi"}`)}
                                         </DropdownMenuItem>
                                     ))}

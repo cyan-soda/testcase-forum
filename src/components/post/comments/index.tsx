@@ -74,7 +74,7 @@ const Comment = ({ comment }: { comment: CommentProps }) => {
                 </div>
                 <div className='flex flex-row items-center justify-between w-full'>
                     <div className="flex flex-row items-center gap-3">
-                        <LikeButton like_count={comment.like_count} />
+                        <LikeButton like_count={comment.like_count} post_id={postId} />
                         <CommentButton count={comment.comment_count} onClick={() => comment.parent_id && toggleReply(comment.parent_id)} />
                         <BadgeButton count={comment.badge_count} isOpenBadge={isOpenBadge} setIsOpenBadge={() => { setIsOpenBadge(!isOpenBadge) }} />
                     </div>

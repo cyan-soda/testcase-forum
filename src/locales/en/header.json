@@ -16,5 +16,6 @@
         "register": "Register",
         "logout": "Logout",
         "profile": "Profile"
-    }
+    },
+    "guest_placeholder": "Guest"
 }
