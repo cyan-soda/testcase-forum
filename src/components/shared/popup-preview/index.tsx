@@ -34,7 +34,7 @@ const PreviewPopup = (props: PreviewPopupProps) => {
         <PopupWrapper isOpen={props.isOpen} onClose={props.onClose} title={'Preview Testcase'}>
             <div className='w-full min-w-[1000px] flex flex-col gap-5 pt-5 items-start'>
                 <Item title={'Input'} value={props.testcase.input} />
-                <Item title={'Output'} value={props.testcase.expected} />
+                <Item title={'Expected Output'} value={props.testcase.expected} />
             </div>
         </PopupWrapper>
     )
