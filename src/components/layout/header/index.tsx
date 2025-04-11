@@ -5,14 +5,14 @@ import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import Image from "next/image"
-
+import dynamic from "next/dynamic"
 import iconDownArrow from '@/icons/down-arrow.svg'
 import iconGlobe from '@/icons/globe.svg'
-import CreatePostPopup from "@/components/shared/popup-create"
+const CreatePostPopup = dynamic(() => import('@/components/shared/popup-create'), { ssr: false })
 import { useTranslation } from "react-i18next"
 import { changeLanguage } from "i18next"
 import { setLanguage } from "@/utils/local-storage"
-import DuplicatePopup from "@/components/shared/popup-duplicate"
+// import DuplicatePopup from "@/components/shared/popup-duplicate"
 import { useUserStore } from "@/store/user/user-store"
 import { useAuthStore } from "@/store/auth/auth-store"
 

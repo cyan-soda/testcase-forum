@@ -1,4 +1,5 @@
-import PopupWrapper from '../popup-wrapper'
+import dynamic from 'next/dynamic'
+const PopupWrapper = dynamic(() => import('@/components/shared/popup-wrapper'), { ssr: false })
 
 type DuplicatePopupProps = {
     isOpen: boolean

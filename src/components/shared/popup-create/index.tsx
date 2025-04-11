@@ -6,11 +6,13 @@ import * as yup from "yup"
 import { yupResolver } from "@hookform/resolvers/yup"
 
 import Image from 'next/image'
-import PopupWrapper from '../popup-wrapper'
+import dynamic from 'next/dynamic'
 
 import iconUpload from '@/icons/export.svg'
 import { useUserStore } from '@/store/user/user-store'
 import { postService } from '@/service/post'
+
+const PopupWrapper = dynamic(() => import('@/components/shared/popup-wrapper'), { ssr: false })
 
 interface CreatePopupProps {
     isOpen: boolean

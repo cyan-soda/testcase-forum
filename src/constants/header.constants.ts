@@ -9,14 +9,14 @@ export const NAV_ITEMS = [
         title: "archive",
         link: "/archive",
     }, 
-    {
-        id: 2, 
-        title: "ranking",
-        link: "/ranking",
-    },
-    {
-        id: 3,
-        title: "calendar",
-        link: "/calendar",
-    }
+    // {
+    //     id: 2, 
+    //     title: "ranking",
+    //     link: "/ranking",
+    // },
+    // {
+    //     id: 3,
+    //     title: "calendar",
+    //     link: "/calendar",
+    // }
 ]

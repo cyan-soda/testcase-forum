@@ -3,13 +3,13 @@
 import Image from 'next/image'
 import { useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
-
+import dynamic from 'next/dynamic'
 import iconStar from '@/icons/star.svg'
 import iconComment from '@/icons/message.svg'
 import iconView from '@/icons/eye.svg'
 import iconBadge from '@/icons/medal-star.svg'
 import iconRightArrow from '@/icons/arrow--right.svg'
-import PreviewPopup from '@/components/shared/popup-preview'
+const PreviewPopup = dynamic(() => import('@/components/shared/popup-preview'), { ssr: false })
 import { useTranslation } from 'react-i18next'
 import { TPost } from '@/types/post'
 import { usePostStore } from '@/store/post/post-store'

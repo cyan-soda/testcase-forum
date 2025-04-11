@@ -2,12 +2,12 @@
 
 import Image from "next/image"
 import { useState, useEffect } from "react"
-
+import dynamic from "next/dynamic"
 import iconSave from '@/icons/save-2.svg'
 import iconHide from '@/icons/eye-slash.svg'
 import iconReport from '@/icons/danger.svg'
 
-import PreviewPopup from '@/components/shared/popup-preview'
+const PreviewPopup = dynamic(() => import('@/components/shared/popup-preview'), { ssr: false })
 import { Tag } from "@/components/home/card"
 import { LikeButton, CommentButton, BadgeButton } from "@/components/shared/buttons"
 import Comment from "../comments"
