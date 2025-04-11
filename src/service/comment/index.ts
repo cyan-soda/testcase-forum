@@ -11,17 +11,17 @@ export const commentService = {
         return response.data
     },
     createComment: async (
-        user_mail: string,
+        // user_mail: string,
         post_id: string,
         content: string,
     ) => {
         const response = await axiosClient.post(`http://localhost:3000/comment`, {
-            user_mail,
+            // user_mail,
             post_id,
             content,
         }, {
             headers: {
-                'Content-Type': 'application/json',
+                'Content-Type': 'multipart/form-data',
                 Authorization: `Bearer ${localStorage.getItem('token')}`,
             },
         })
@@ -38,15 +38,13 @@ export const commentService = {
     },
     updateComment: async (
         comment_id: string,
-        user_mail: string,
         content: string,
     ) => {
         const response = await axiosClient.put(`http://localhost:3000/comment/${comment_id}`, {
-            user_mail,
             content,
         }, {
             headers: {
-                'Content-Type': 'application/json',
+                'Content-Type': 'multipart/form-data',
                 Authorization: `Bearer ${localStorage.getItem('token')}`,
             },
         })

@@ -14,6 +14,8 @@ import Comment from "../comments"
 import RecPosts from "../rec-posts"
 import { commentService } from "@/service/comment"
 import { TPost } from "@/types/post"
+import CommentEditor from "../comment-editor"
+import { TComment } from "@/types/comment"
 
 const getInitials = (name: string) => {
     if (!name) return ''
@@ -55,17 +57,6 @@ const POSTS = [
     { title: "I put my minimum effort into creating this set of test cases for you guys, but I promise it works for 90% of this assignment.", author: "Dang Hoang", link: "#" },
 ]
 
-export type CommentProps = {
-    id: number,
-    author: string,
-    date: string,
-    like_count: number,
-    comment_count: number,
-    badge_count: number,
-    content: string,
-    parent_id: number | null,
-}
-
 const CodeMarkdownArea = ({ code }: { code: string }) => {
     const lines = (code || "No code provided").split('\n')
     return (
@@ -95,7 +86,7 @@ const PostDetails = ({ post }: { post: TPost }) => {
         minute: '2-digit',
         hour12: false,
     });
-    const [comments, setComments] = useState<CommentProps[]>([]);
+    const [comments, setComments] = useState<TComment[]>([]);
     const [loading, setLoading] = useState(true);
 
     const [isOpenComment, setIsOpenComment] = useState(false)
@@ -115,9 +106,7 @@ const PostDetails = ({ post }: { post: TPost }) => {
         const fetchComments = async () => {
             try {
                 const res = await commentService.getAllComments(post.id)
-                console.log(res)
                 setComments(res)
-                console.log("comments", comments)
             } catch (error) {
                 console.error("Lỗi khi tải comment:", error)
             } finally {
@@ -202,7 +191,7 @@ const PostDetails = ({ post }: { post: TPost }) => {
                             title="Comments"
                             isActive={activeTab === 'comments'}
                             onClick={() => handleToggleTab('comments')}
-                            count={post.interaction?.comment_count}
+                            count={comments.length}
                         />
                         <Tab
                             title="Related Posts"
@@ -213,34 +202,37 @@ const PostDetails = ({ post }: { post: TPost }) => {
                     </div>
                     <div className="w-full">
                         {activeTab === 'comments' && (
-                            <div className="flex flex-col gap-10 w-full">
-                                <div className='w-full flex flex-row items-center justify-between gap-3'>
-                                    <div className='w-full px-5 py-3 bg-grey text-black rounded-lg'>
-                                        <textarea
-                                            className='bg-grey w-full text-sm font-normal focus-within:outline-none'
-                                            placeholder='Type here to comment...'
-                                            rows={3}
-                                        // value={replyContent}
-                                        // onChange={(e) => setReplyContent(e.target.value)}
-                                        >
-                                        </textarea>
-                                    </div>
-                                    <button
-                                        className={`bg-green rounded-lg py-3 px-4 text-sm font-bold text-black`}
-                                    // onClick={handleReply}
-                                    >
-                                        Submit
-                                    </button>
-                                </div>
-                                {comments.map((comment) => (
-                                    <Comment key={comment.id} comment={comment} />
-                                ))}
+                            <div className="flex flex-col gap-5 w-full">
+                                {/* comment editor */}
+                                <CommentEditor
+                                    postId={post.id}
+                                    onCommentCreated={() => {
+                                        setLoading(true)
+                                        commentService.getAllComments(post.id).then(res => {
+                                            setComments(res)
+                                            setLoading(false)
+                                        })
+                                    }}
+                                />
+                                {comments
+                                    .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
+                                    .map((comment) => (
+                                        <Comment
+                                            key={comment.id}
+                                            comment={comment}
+                                        />
+                                    ))}
                             </div>
                         )}
                         {activeTab === 'similar' && (
                             <div className="flex flex-col gap-5 w-full">
                                 {POSTS.map((post, index) => (
-                                    <RecPosts key={index} title={post.title} author={post.author} link={post.link} />
+                                    <RecPosts
+                                        key={index}
+                                        title={post.title}
+                                        author={post.author}
+                                        link={post.link}
+                                    />
                                 ))}
                             </div>
                         )}
