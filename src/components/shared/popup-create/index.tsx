@@ -114,7 +114,7 @@ const CreatePostPopup = (props: CreatePopupProps) => {
 
     const onSubmit: SubmitHandler<ICreatePostForm> = async (data) => {
         try {
-            console.log("Posting as user:", user?.mail)
+            // console.log("Posting as user:", user?.mail)
             const response = await postService.createPostForm(
                 data.title,
                 data.description || "",
@@ -122,7 +122,7 @@ const CreatePostPopup = (props: CreatePopupProps) => {
                 data.expected,
                 data.code
             )
-            console.log("Post uploaded successfully:", response)
+            // console.log("Post uploaded successfully:", response)
             reset()
             props.onClose()
         } catch (error) {

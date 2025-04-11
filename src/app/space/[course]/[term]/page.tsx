@@ -13,12 +13,14 @@ import SearchTextField from "@/components/home/utils/search-text";
 import { postService } from "@/service/post";
 import { useTranslation } from "react-i18next";
 import { TPost } from "@/types/post";
+import { usePostStore } from "@/store/post/post-store";
+import { set } from "react-hook-form";
 
 const CoursePage = () => {
   const params = useParams();
   const { course, term } = params as { course: string; term: string };
-
-  const [POST, setPosts] = useState<TPost[]>([]);
+  const { posts, setPosts } = usePostStore()
+  // const [POST, setPosts] = useState<TPost[]>([]);
   const [filteredPosts, setFilteredPosts] = useState<TPost[]>([]);
   const [searchText, setSearchText] = useState<string>("");
   const [tags, setTags] = useState<string[]>([]);
@@ -39,7 +41,8 @@ const CoursePage = () => {
     const fetchData = async () => {
       try {
         const res = await postService.getAllPosts();
-        console.log("Post page: ", res);
+        setPosts(res as TPost[]);
+        // console.log("Post page: ", res);
         if (res) {
           const formattedPosts: TPost[] = (res as TPost[]).map((item: TPost) => ({
             id: item.id,
@@ -74,7 +77,7 @@ const CoursePage = () => {
             },
           }));
           setPosts(formattedPosts);
-          console.log("Formatted posts:", formattedPosts);
+          // console.log("Formatted posts:", formattedPosts);
         }
       } catch (error) {
         console.error("Failed to fetch data:", error);
@@ -86,7 +89,7 @@ const CoursePage = () => {
 
   // Combine all filters
   useEffect(() => {
-    let result = [...POST];
+    let result = [...posts];
 
     // Apply search text filter
     if (searchText) {
@@ -125,7 +128,7 @@ const CoursePage = () => {
     }
 
     setFilteredPosts(result);
-  }, [POST, searchText, tags, sortFilter]);
+  }, [posts, searchText, tags, sortFilter]);
 
   // Search text handler
   const debounced = useDebouncedCallback((text: string) => {
@@ -170,7 +173,7 @@ const CoursePage = () => {
         </div>
         <div className="flex flex-col gap-6">
           {filteredPosts.map((post) => (
-            <PostCard key={post.id} post={post} />
+            <PostCard key={post.id} post_id={post.id} />
           ))}
         </div>
       </div>

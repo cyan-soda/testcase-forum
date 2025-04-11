@@ -8,6 +8,7 @@ import iconArrow from '@/icons/arrow--right.svg'
 import PostDetails from "@/components/post/details";
 import RunCode from "@/components/post/run-code";
 import { postService } from "@/service/post";
+import { usePostStore } from "@/store/post/post-store";
 
 import { TPost } from "@/types/post";
 
@@ -27,28 +28,28 @@ const Tab = ({ title, isActive, onClick }: { title: string, isActive: boolean, o
 const PostDetailPage = () => {
     const { space, course, term, postId } = useParams<{ space: string, course: string, term: string, postId: string }>()
     const router = useRouter()
+    const post = usePostStore((state) => state.posts.find((post) => post.id === postId)) as TPost
 
     const [activeTab, setActiveTab] = useState<'details' | 'runCode'>('details')
-    const [post, setPost] = useState<TPost | null>(null);
+    // const [post, setPost] = useState<TPost | null>(null);
     const [loading, setLoading] = useState<boolean>(true);
 
-    useEffect(() => {
-        const fetchPost = async () => {
-            if (!postId) return;
+    // useEffect(() => {
+    //     const fetchPost = async () => {
+    //         if (!postId) return;
 
-            try {
-                const res = await postService.getPost(postId)
-                console.log(res)
-                setPost(res as TPost);
-            } catch (error) {
-                console.error("Failed to fetch post data:", error);
-            } finally {
-                setLoading(false);
-            }
-        };
+    //         try {
+    //             const res = await postService.getPost(postId)
+    //             // setPost(res as TPost);
+    //         } catch (error) {
+    //             console.error("Failed to fetch post data:", error);
+    //         } finally {
+    //             setLoading(false);
+    //         }
+    //     };
 
-        fetchPost();
-    }, [postId]);
+    //     fetchPost();
+    // }, [postId]);
 
     const handleToggleTab = (tab: 'details' | 'runCode') => {
         setActiveTab(tab)
@@ -80,7 +81,7 @@ const PostDetailPage = () => {
 
                 <div className="w-full bg-grey rounded-2xl p-7">
                     {activeTab === 'details' && (
-                        post && <PostDetails post={post} />
+                        post && <PostDetails post_id={post.id} />
                     )}
 
                     {activeTab === 'runCode' && (

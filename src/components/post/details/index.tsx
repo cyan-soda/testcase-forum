@@ -16,6 +16,7 @@ import { commentService } from "@/service/comment"
 import { TPost } from "@/types/post"
 import CommentEditor from "../comment-editor"
 import { TComment } from "@/types/comment"
+import { usePostStore } from "@/store/post/post-store"
 
 const getInitials = (name: string) => {
     if (!name) return ''
@@ -29,8 +30,7 @@ const Tab = ({ title, isActive, count, onClick }: { title: string, isActive: boo
     return (
         <button
             className={`text-sm font-bold rounded-lg 
-                ${isActive ? 'text-white bg-black' : 'text-black bg-grey'} py-2 px-[10px]
-                hover:bg-white hover:text-black transition-all duration-200`}
+                ${isActive ? 'text-white bg-black' : 'text-black bg-grey'} py-2 px-[10px]`}
             onClick={onClick}
         >
             {title} {count ? `(${count})` : ''}
@@ -77,7 +77,10 @@ const CodeMarkdownArea = ({ code }: { code: string }) => {
     )
 }
 
-const PostDetails = ({ post }: { post: TPost }) => {
+const PostDetails = ({ post_id }: { post_id: string }) => {
+    const post = usePostStore().getPostById((post_id)) as TPost
+    if (!post) return null;
+
     post.last_modified = new Date(post.last_modified).toLocaleString('en-US', {
         year: 'numeric',
         month: '2-digit',
@@ -86,8 +89,9 @@ const PostDetails = ({ post }: { post: TPost }) => {
         minute: '2-digit',
         hour12: false,
     });
+
     const [comments, setComments] = useState<TComment[]>([]);
-    const [loading, setLoading] = useState(true);
+    const [loadingComment, setLoadingComment] = useState(true);
 
     const [isOpenComment, setIsOpenComment] = useState(false)
     const [isOpenBadge, setIsOpenBadge] = useState(false)
@@ -110,7 +114,7 @@ const PostDetails = ({ post }: { post: TPost }) => {
             } catch (error) {
                 console.error("Lỗi khi tải comment:", error)
             } finally {
-                setLoading(false)
+                setLoadingComment(false)
             }
         }
 
@@ -149,7 +153,7 @@ const PostDetails = ({ post }: { post: TPost }) => {
                                 <span className="text-xs font-normal">{post.last_modified}</span>
                             </div>
                         </div>
-                        <span className="text-xl font-semibold">{post.title}</span>
+                        <span className="text-xl font-semibold mt-2">{post.title}</span>
                         <div className='flex flex-row gap-[10px] mt-[2px]'>
                             {post.tags?.map((tag, index) => (
                                 <Tag key={index} tag={tag} />
@@ -157,7 +161,7 @@ const PostDetails = ({ post }: { post: TPost }) => {
                         </div>
                     </div>
 
-                    <div className="text-sm font-light text-left w-full">
+                    <div className="text-sm font-light text-left w-full mt-4 mb-2">
                         {post.description}
                     </div>
                     <div className="flex flex-col items-start gap-2 w-full my-2 p-4 border rounded-lg">
@@ -207,10 +211,10 @@ const PostDetails = ({ post }: { post: TPost }) => {
                                 <CommentEditor
                                     postId={post.id}
                                     onCommentCreated={() => {
-                                        setLoading(true)
+                                        setLoadingComment(true)
                                         commentService.getAllComments(post.id).then(res => {
                                             setComments(res)
-                                            setLoading(false)
+                                            setLoadingComment(false)
                                         })
                                     }}
                                 />

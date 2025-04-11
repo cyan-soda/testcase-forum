@@ -59,7 +59,7 @@ const SidebarGroup = ({ id, title, courses }: SidebarGroupProps) => {
         // const term = searchParams.get("term");
         if (course && term) {
             setActiveTab(`${course}-${term}`);
-            console.log(`${course}-${term}`);
+            // console.log(`${course}-${term}`);
         }
     }, [course, term]);
 

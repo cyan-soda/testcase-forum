@@ -12,6 +12,7 @@ import iconRightArrow from '@/icons/arrow--right.svg'
 import PreviewPopup from '@/components/shared/popup-preview'
 import { useTranslation } from 'react-i18next'
 import { TPost } from '@/types/post'
+import { usePostStore } from '@/store/post/post-store'
 
 const Reaction = ({ count, icon }: { count: number, icon: string }) => {
     return (
@@ -36,7 +37,8 @@ const getInitials = (name: string) => {
     return `${names[names.length - 1][0]}${names[0][0]}`
 }
 
-const PostCard = ({ post }: { post: TPost }) => {
+const PostCard = ({ post_id }: { post_id: string }) => {
+    const post = usePostStore((state) => state.posts.find((post) => post.id === post_id)) as TPost
     const [isOpenPreviewPopup, setIsOpenPreviewPopup] = useState(false)
     const handleOpenPreviewPopup = () => {
         setIsOpenPreviewPopup(true)

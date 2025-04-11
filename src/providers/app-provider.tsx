@@ -12,10 +12,10 @@ export default function AppProvider({ children }: { children: React.ReactNode })
     const allowedPaths = ['/auth']
     const { isAuthenticated, logIn, logOut, googleAuthCode } = useAuthStore()
 
-    console.log('authcode from app-provider:', googleAuthCode)
-    console.log('isAuthenticated from app-provider:', isAuthenticated)
+    // console.log('authcode from app-provider:', googleAuthCode)
+    // console.log('isAuthenticated from app-provider:', isAuthenticated)
     const token = localStorage.getItem('token')
-    console.log('token from app-provider:', token)
+    // console.log('token from app-provider:', token)
 
     useEffect(() => {
         const authenticateUser = async () => {
@@ -24,11 +24,11 @@ export default function AppProvider({ children }: { children: React.ReactNode })
             }
 
             if (googleAuthCode) {
-                console.log('OAuth Code from app-provider:', googleAuthCode)
+                // console.log('OAuth Code from app-provider:', googleAuthCode)
                 try {
                     const response = await authService.loginGoogle(googleAuthCode)
                     const data = await response.json()
-                    console.log('Google Login Success:', data)
+                    // console.log('Google Login Success:', data)
                     if (data.token) {
                         logIn(data.token, data.user)
                     }

@@ -49,7 +49,7 @@ const LoginForm = () => {
             if (code) {
                 try {
                     const res = await authService.loginGoogle(code)
-                    console.log("Google Login Success:", res)
+                    // console.log("Google Login Success:", res)
                     if (res.token) {
                         logIn(res.token, res.user)
                         setUser(res.user)
@@ -80,7 +80,7 @@ const LoginForm = () => {
     const onSubmit: SubmitHandler<ILoginForm> = async (data) => {
         try {
             const code = searchParams.get("code");
-            console.log("OAuth Code:", code);
+            // console.log("OAuth Code:", code);
             if (!code) {
                 throw new Error("No OAuth code found in URL.");
             }
@@ -89,7 +89,7 @@ const LoginForm = () => {
     
             logIn(result.token, result.user);
             setUser(result.user);
-            console.log("Login successful:", result);
+            // console.log("Login successful:", result);
             router.push("/");
         } catch (error) {
             console.error("Login error:", error);
@@ -98,7 +98,7 @@ const LoginForm = () => {
 
     const handleGoogleLogin = () => {
         const clientId = `${process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID}`;
-        console.log("Google Client ID:", clientId);
+        // console.log("Google Client ID:", clientId);
         const redirectUri = "http://localhost:3001/auth/log-in";
         const scope = "email profile";
     
