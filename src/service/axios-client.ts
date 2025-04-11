@@ -5,7 +5,7 @@ const baseURL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000/'
 const axiosClient = axios.create({
     baseURL: baseURL,
     headers: {
-        'Content-Type': 'application/json',
+        Authorization: `Bearer ${localStorage.getItem('token')}`,
     },
 })
 

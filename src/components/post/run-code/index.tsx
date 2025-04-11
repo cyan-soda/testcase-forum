@@ -7,6 +7,7 @@ import iconRightArrow from '@/icons/arrow--right.svg'
 import iconPlay from '@/icons/video-square.svg'
 import { codeService } from "@/service/code"
 import { useParams } from "next/navigation"
+import { set } from "react-hook-form"
 
 type TestCaseProps = {
     input: string
@@ -49,28 +50,38 @@ const CaseItems = [
 ]
 
 const RunCode = ({ testcase, execution }: { testcase?: TestCaseProps, execution?: ExecutionProps }) => {
-    const [fileNames, setFileNames] = useState<string[]>([])
-    const [files, setFiles] = useState<File[]>([])
+    const [fileNames, setFileNames] = useState<{ hFile?: string, cppFile?: string }>({})
     const [isUploaded, setIsUploaded] = useState(false)
     const { postId } = useParams<{ postId: string }>()
 
     const handleUploadFiles = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const selectedFiles = e.target.files
-        if (selectedFiles) {
-            const fileArray = Array.from(selectedFiles)
-            setFiles(fileArray)
-            setFileNames(fileArray.map(file => file.name))
+        if (!selectedFiles) return
 
-            try {
-                const uploadResponse = await codeService.submitCodeFile(fileArray)
-                console.log("Files uploaded:", uploadResponse)
-                if (uploadResponse.success) {
-                    setIsUploaded(true)
-                    alert("Files uploaded successfully!")
-                }
-            } catch (error) {
-                console.error("Upload failed:", error)
-            }
+        const files = Array.from(selectedFiles)
+        const hFile = files.find(file => file.name.endsWith('.h'))
+        const cppFile = files.find(file => file.name.endsWith('.cpp'))
+
+        if (!hFile || !cppFile) {
+            alert("Please upload both a .h and a .cpp file")
+            return
+        }
+
+        setFileNames({
+            hFile: hFile.name,
+            cppFile: cppFile.name
+        })
+
+        try {
+            const uploadResponse = await codeService.submitCodeFile(hFile, cppFile)
+            setIsUploaded(true)    
+            // if (uploadResponse.status === 200) {
+            //     setIsUploaded(true)
+            //     alert("Files uploaded successfully!")
+            // }
+        } catch (error) {
+            console.error("Upload failed:", error)
+            alert("Failed to upload files")
         }
     }
 
@@ -81,9 +92,14 @@ const RunCode = ({ testcase, execution }: { testcase?: TestCaseProps, execution?
         }
         try {
             const result = await codeService.runCode(postId)
+            if (result.error) {
+                alert(`Error: ${result.error}`)
+                return
+            }
             console.log("Execution result:", result)
         } catch (error) {
             console.error("Run code failed:", error)
+            alert("Failed to run code")
         }
     }
 
@@ -92,8 +108,8 @@ const RunCode = ({ testcase, execution }: { testcase?: TestCaseProps, execution?
             <span className="font-semibold text-2xl">Try it out!</span>
             <div className="flex flex-row items-center gap-3 w-full mb-6 mt-3 text-base font-bold">
                 <button
-                    className={`flex flex-row gap-2 px-4 py-3 rounded-lg bg-green`}
-                    onClick={() => {handleRunCode}}
+                    className="flex flex-row gap-2 px-4 py-3 rounded-lg bg-green"
+                    onClick={handleRunCode}
                 >
                     Run Code
                     <Image src={iconPlay} alt="" width={20} height={20} />
@@ -103,14 +119,19 @@ const RunCode = ({ testcase, execution }: { testcase?: TestCaseProps, execution?
                     <input
                         type="file"
                         multiple
-                        className="hidden" 
+                        accept=".h,.cpp"
+                        className="hidden"
                         onChange={handleUploadFiles}
                     />
                 </label>
                 <div className="flex-1 w-full flex flex-row items-center border rounded-lg border-dashed h-full p-3">
-                    {fileNames.length > 0
-                        ? <span className="text-sm font-normal w-full text-center">{fileNames.join(', ')}</span> 
-                        : <span className="text-sm font-normal w-full text-grey text-center">Drag and drop your file here...</span>
+                    {fileNames.hFile || fileNames.cppFile
+                        ? <span className="text-sm font-normal w-full text-center">
+                            {fileNames.hFile}{fileNames.cppFile ? `, ${fileNames.cppFile}` : ''}
+                        </span>
+                        : <span className="text-sm font-normal w-full text-grey text-center">
+                            Drag and drop your .h and .cpp files here...
+                        </span>
                     }
                 </div>
             </div>
@@ -130,7 +151,7 @@ const RunCode = ({ testcase, execution }: { testcase?: TestCaseProps, execution?
                         </div>
                     </div>
                     {/* overview, graphs */}
-                    <div className="flex flex-col p-4 items-start rounded-lg border border-black w-full">
+                    {/* <div className="flex flex-col p-4 items-start rounded-lg border border-black w-full">
                         <span className="text-xl font-semibold">Overview</span>
                         <div className="w-full flex flex-row items-center justify-between">
                             <div className="mt-3 flex flex-row gap-3 items-center">
@@ -143,7 +164,7 @@ const RunCode = ({ testcase, execution }: { testcase?: TestCaseProps, execution?
                                 <span className="font-semibold">Pass Rate: <span className="font-normal">{"9.96"}%</span></span>
                             </div>
                         </div>
-                    </div>
+                    </div> */}
                 </div>
                 <div className="rounded-lg border border-black py-5 px-3 w-2/5">
                     <span className="text-xl font-semibold p-3">Recommended Posts</span>

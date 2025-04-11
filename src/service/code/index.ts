@@ -1,29 +1,35 @@
-import axiosClient from "../axios-client"
+import axiosClient from "../axios-client";
 
 export const codeService = {
-    // should send data in form data format of 2 files, with a bearer token
-    submitCodeFile: async (
-        files: File[],
-    ) => {
-        const formData = new FormData()
-        files.forEach((file) => {
-            formData.append('files', file)
-        })
-        const response = await axiosClient.post('http://localhost:3000/upload', formData, {
-            headers: {
-                'Content-Type': 'multipart/form-data',
-                'Authorization': `Bearer ${localStorage.getItem('token')}`
-            }
-        })
-        return response.data
-    },
-    runCode: async (post_id: string) => {
-        const response = await axiosClient.post(`http://localhost:3000/runcode/${post_id}`, {}, {
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${localStorage.getItem('token')}`
-            }
-        })
-        return response.data
+  submitCodeFile: async (hFile: File, cppFile: File) => {
+    const formData = new FormData();
+    formData.append('h_file', hFile);
+    formData.append('cpp_file', cppFile);
+
+    try {
+      const response = await axiosClient.post('/upload', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        //   Authorization: `Bearer ${localStorage.getItem('token')}`,
+        },
+      });
+      return response.data;
+    } catch (error: any) {
+      throw new Error(error.response?.data?.message || 'Upload failed');
     }
-}
+  },
+
+  runCode: async (post_id: string) => {
+    try {
+      const response = await axiosClient.post(`/runcode/${post_id}`, {}, {
+        headers: {
+          'Content-Type': 'application/json',
+        //   Authorization: `Bearer ${localStorage.getItem('token')}`,
+        },
+      });
+      return response.data;
+    } catch (error: any) {
+      throw new Error(error.response?.data?.error || 'Run code failed');
+    }
+  },
+};
