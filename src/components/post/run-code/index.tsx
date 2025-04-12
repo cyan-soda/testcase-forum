@@ -130,13 +130,13 @@ const RunCode = ({ }: {}) => {
                         onChange={handleUploadFiles}
                     />
                 </label>
-                <div className="flex-1 w-full flex flex-row items-center border rounded-lg border-dashed h-full p-3">
+                <div className="flex-1 w-full flex flex-row items-center border-black border rounded-lg border-dashed h-full p-3">
                     {fileNames.hFile || fileNames.cppFile
                         ? <span className="text-sm font-normal w-full text-center">
                             {fileNames.hFile}{fileNames.cppFile ? `, ${fileNames.cppFile}` : ''}
                         </span>
-                        : <span className="text-sm font-normal w-full text-grey text-center">
-                            Drag and drop your .h and .cpp files here...
+                        : <span className="text-sm font-normal w-full text-center">
+                            No files uploaded yet. Please upload your .h and .cpp files.
                         </span>
                     }
                 </div>

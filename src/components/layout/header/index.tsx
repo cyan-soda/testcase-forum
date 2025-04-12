@@ -58,11 +58,14 @@ const Header = () => {
         <>
             <div className="max-w-screen sticky inset-0 z-10 bg-white px-6 py-5 shadow-[0_1px_2px_0px_rgba(0,0,0,0.1)] rounded-b-lg border-b-[3px] border-b-[#191A23]">
                 <div className="relative mx-auto flex w-full max-w-[1440px] flex-row items-center justify-start">
-                    <div className="sticky left-0 flex flex-row gap-[10px] cursor-pointer justify-start items-center" onClick={() => { router.push('/') }}>
+                    <div className="sticky left-0 flex flex-row gap-4 cursor-pointer justify-start items-center" onClick={() => { router.push('/') }}>
                         <div className="bg-green w-[22px] h-[22px] rounded-md"></div>
-                        <span className="text-xl font-bold">tc.forum</span>
+                        <div className="flex flex-col items-start justify-start text-lg leading-tight font-bold">
+                            <span>Testcase</span>
+                            <span>Forum</span>
+                        </div>
                     </div>
-                    <div className="flex flex-row gap-[10px] ml-10 justify-start flex-grow">
+                    <div className="flex flex-row gap-[10px] ml-24 justify-start flex-grow">
                         {NAV_ITEMS.map((item) => (
                             <button
                                 key={item.id}
@@ -111,7 +114,7 @@ const Header = () => {
                             <DropdownMenu>
                                 <DropdownMenuTrigger className="flex flex-row gap-[10px] items-center focus:border-none">
                                     <Image src={iconGlobe} alt="" width={16} height={16} />
-                                    <span>{lang}</span>                                   
+                                    <span>{lang}</span>
                                 </DropdownMenuTrigger>
                                 <DropdownMenuContent className="">
                                     <DropdownMenuLabel>{t("language")}</DropdownMenuLabel>
