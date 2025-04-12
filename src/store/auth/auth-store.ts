@@ -1,3 +1,5 @@
+'use-client'
+
 import { TUser } from '@/types/user'
 import { create } from 'zustand'
 import { persist, createJSONStorage } from 'zustand/middleware'

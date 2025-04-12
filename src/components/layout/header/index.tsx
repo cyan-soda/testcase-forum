@@ -11,7 +11,7 @@ import iconGlobe from '@/icons/globe.svg'
 const CreatePostPopup = dynamic(() => import('@/components/shared/popup-create'), { ssr: false })
 import { useTranslation } from "react-i18next"
 import { changeLanguage } from "i18next"
-import { setLanguage } from "@/utils/local-storage"
+import { useLanguage } from "@/utils/local-storage"
 // import DuplicatePopup from "@/components/shared/popup-duplicate"
 import { useUserStore } from "@/store/user/user-store"
 import { useAuthStore } from "@/store/auth/auth-store"
@@ -47,6 +47,7 @@ const Header = () => {
             setIsOpenCreatePopup(true)
     }
 
+    const { language, setLanguage } = useLanguage()
     const handleChangeLanguage = (lang: string, abbr: string) => {
         changeLanguage(lang)
         setLanguage(lang)

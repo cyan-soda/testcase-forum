@@ -42,7 +42,7 @@ const CoursePage = () => {
       try {
         const res = await postService.getAllPosts();
         setPosts(res as TPost[]);
-        // console.log("Post page: ", res);
+        console.log("Post page: ", res);
         if (res) {
           const formattedPosts: TPost[] = (res as TPost[]).map((item: TPost) => ({
             id: item.id,

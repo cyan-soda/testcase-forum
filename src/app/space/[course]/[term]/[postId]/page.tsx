@@ -85,7 +85,7 @@ const PostDetailPage = () => {
                     )}
 
                     {activeTab === 'runCode' && (
-                        <RunCode  />
+                        <RunCode />
                     )}
                 </div>
             </div>

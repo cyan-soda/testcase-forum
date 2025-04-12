@@ -1,3 +1,5 @@
+'use-client'
+
 import axiosClient from "../axios-client"
 
 export const commentService = {

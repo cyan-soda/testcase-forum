@@ -7,24 +7,13 @@ import iconRightArrow from '@/icons/arrow--right.svg'
 import iconPlay from '@/icons/video-square.svg'
 import { codeService } from "@/service/code"
 import { useParams } from "next/navigation"
-import { set } from "react-hook-form"
-
-type TestCaseProps = {
-    input: string
-    expected: string
-    total: number
-    pass: number
-}
-
-type ExecutionProps = {
-    isPassed: boolean
-}
+import { usePostStore } from "@/store/post/post-store"
 
 const Field = ({ label, value }: { label: string, value?: string }) => {
     return (
         <div className="flex flex-col items-start gap-2 w-full">
-            <span className="font-normal text-xs">{label}</span>
-            <div className="rounded-lg bg-grey px-[10px] py-3 text-sm font-semibold w-full">{value}</div>
+            <span className="text-xs font-semibold">{label}</span>
+            <div className="rounded-lg bg-grey px-[10px] py-3 text-sm w-full" style={{ whiteSpace: 'pre-wrap' }}>{value}</div>
         </div>
     )
 }
@@ -49,41 +38,47 @@ const CaseItems = [
     { title: "I put my minimum effort into creating this set of test cases for you guys, but I promise it works for 90% of this assignment.", author: "Dang Hoang", link: "#" },
 ]
 
-const RunCode = ({ testcase, execution }: { testcase?: TestCaseProps, execution?: ExecutionProps }) => {
+const RunCode = ({ }: {}) => {
     const [fileNames, setFileNames] = useState<{ hFile?: string, cppFile?: string }>({})
     const [isUploaded, setIsUploaded] = useState(false)
     const { postId } = useParams<{ postId: string }>()
+    const [runState, setRunState] = useState<0 | 1 | 2>(0) // 0: not run, 1: passed, 2: failed
+    const [output, setOutput] = useState<string>('None')
+    const post = usePostStore().getPostById(postId)
+    const [loadingRunCode, setLoadingRunCode] = useState<boolean>(false)
 
     const handleUploadFiles = async (e: React.ChangeEvent<HTMLInputElement>) => {
-        const selectedFiles = e.target.files
-        if (!selectedFiles) return
+        const selectedFiles = e.target.files;
+        if (!selectedFiles) return;
 
-        const files = Array.from(selectedFiles)
-        const hFile = files.find(file => file.name.endsWith('.h'))
-        const cppFile = files.find(file => file.name.endsWith('.cpp'))
+        const files = Array.from(selectedFiles);
+        const hFile = files.find(file => file.name.endsWith('.h'));
+        const cppFile = files.find(file => file.name.endsWith('.cpp'));
 
         if (!hFile || !cppFile) {
-            alert("Please upload both a .h and a .cpp file")
-            return
+            alert("Please upload both a .h and a .cpp file");
+            return;
         }
 
         setFileNames({
             hFile: hFile.name,
-            cppFile: cppFile.name
-        })
+            cppFile: cppFile.name,
+        });
 
         try {
-            const uploadResponse = await codeService.submitCodeFile(hFile, cppFile)
-            setIsUploaded(true)    
-            // if (uploadResponse.status === 200) {
-            //     setIsUploaded(true)
-            //     alert("Files uploaded successfully!")
-            // }
-        } catch (error) {
-            console.error("Upload failed:", error)
-            alert("Failed to upload files")
+            const uploadResponse = await codeService.submitCodeFile(hFile, cppFile);
+            console.log("Upload response:", uploadResponse); // Debug log
+            if (uploadResponse.success) {
+                setIsUploaded(true);
+                alert("Files uploaded successfully!");
+            } else {
+                alert(`Upload failed: ${uploadResponse.message || "Unknown error"}`);
+            }
+        } catch (error: any) {
+            console.error("Upload error:", error.message, error); // Debug log
+            alert(`Failed to upload files: ${error.message || "Unknown error"}`);
         }
-    }
+    };
 
     const handleRunCode = async () => {
         if (!isUploaded) {
@@ -91,17 +86,27 @@ const RunCode = ({ testcase, execution }: { testcase?: TestCaseProps, execution?
             return
         }
         try {
+            setLoadingRunCode(true)
+            setRunState(0)
             const result = await codeService.runCode(postId)
             if (result.error) {
                 alert(`Error: ${result.error}`)
                 return
             }
+            if (result.status === 200) {
+                setRunState(result.score === 1 ? 1 : 2)
+                setOutput(result.log)
+            }
             console.log("Execution result:", result)
         } catch (error) {
             console.error("Run code failed:", error)
             alert("Failed to run code")
+        } finally {
+            setLoadingRunCode(false)
         }
     }
+
+
 
     return (
         <div className="min-h-screen w-full bg-white text-black p-5 rounded-xl">
@@ -110,8 +115,9 @@ const RunCode = ({ testcase, execution }: { testcase?: TestCaseProps, execution?
                 <button
                     className="flex flex-row gap-2 px-4 py-3 rounded-lg bg-green"
                     onClick={handleRunCode}
+                    disabled={loadingRunCode}
                 >
-                    Run Code
+                    {loadingRunCode ? 'Running...' : 'Run Code'}
                     <Image src={iconPlay} alt="" width={20} height={20} />
                 </button>
                 <label className="cursor-pointer px-4 py-3 rounded-lg bg-grey flex items-center gap-2">
@@ -140,15 +146,28 @@ const RunCode = ({ testcase, execution }: { testcase?: TestCaseProps, execution?
                     {/* test results */}
                     <div className="flex flex-col p-4 items-start rounded-lg border border-black w-full">
                         <span className="text-xl font-semibold">Test Results</span>
-                        <div className="mt-3 flex flex-row gap-3 items-center">
-                            <div className={`${execution?.isPassed ? 'bg-green' : 'bg-grey'} px-2 py-1 rounded-lg text-xs font-bold`}>Passed</div>
-                            <div className={`${!execution?.isPassed ? 'bg-green' : 'bg-grey'} px-2 py-1 rounded-lg text-xs font-bold`}>Failed</div>
-                        </div>
-                        <div className="mt-5 flex flex-col gap-2 items-start w-full">
-                            <Field label="Input" value={"1234567"} />
-                            <Field label="Expected Output" value={"True"} />
-                            <Field label="Output" value={"False"} />
-                        </div>
+                        {loadingRunCode ? (
+                            <div className="w-full flex flex-col gap-1 items-center justify-center h-full">
+                                <span className="text-sm font-normal">Executing...</span>
+                                <span className="text-sm font-normal">Please wait a few seconds.</span>
+                                {/* Loading spinner */}
+                                <div className="flex items-center justify-center my-3">
+                                    <div className="w-5 h-5 border-2 border-t-transparent border-black rounded-full animate-spin"></div>
+                                </div>
+                            </div>
+                        ) : (
+                            <>
+                                <div className="mt-3 flex flex-row gap-3 items-center">
+                                    <div className={`${runState === 1 ? 'bg-green' : 'bg-grey'} px-2 py-1 rounded-lg text-xs font-bold`}>Passed</div>
+                                    <div className={`${runState === 2 ? 'bg-black text-white' : 'bg-grey'} px-2 py-1 rounded-lg text-xs font-bold`}>Failed</div>
+                                </div>
+                                <div className="mt-5 flex flex-col gap-2 items-start w-full">
+                                    <Field label="Input" value={post?.testcase.input} />
+                                    <Field label="Expected Output" value={post?.testcase.expected} />
+                                    <Field label="Output" value={output.split('\n').join('\n')} />
+                                </div>
+                            </>
+                        )}
                     </div>
                     {/* overview, graphs */}
                     {/* <div className="flex flex-col p-4 items-start rounded-lg border border-black w-full">

@@ -10,6 +10,7 @@ import Header from "@/components/layout/header";
 import Sidebar from "@/components/layout/sidebar";
 import { usePathname } from "next/navigation";
 import AppProvider from "@/providers/app-provider";
+import { LanguageProvider } from "@/providers/language-provider";
 
 const APP_NAME = "Testcase Forum"
 const APP_DESCRIPTION = "A forum designed for sharing testcases and discussions among HCMUT students."
@@ -40,6 +41,7 @@ export default function RootLayout({
       >
         {/* <AppProvider> */}
           <I18nextProvider i18n={i18n}>
+            <LanguageProvider>
             <div className='relative min-h-[100dvh] w-full bg-white text-black'>
               <Header />
               <div className='relative z-0 flex flex-row w-full h-full gap-5'>
@@ -59,6 +61,8 @@ export default function RootLayout({
                 )}
               </div>
             </div>
+            </LanguageProvider>
+            
           </I18nextProvider>
         {/* </AppProvider> */}
       </body>
