@@ -94,6 +94,16 @@ export class PostService {
 
         return response.data;
     }
+
+    async clickPost(post_id: string, post_type: number) {
+        const response = await axiosClient.post(`${this.baseUrl}/posts/read`, {post_id, post_type}, {
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${localStorage.getItem('token')}`,
+            },
+        });
+        return response.data;
+    }
 }
 
 export const postService = new PostService();

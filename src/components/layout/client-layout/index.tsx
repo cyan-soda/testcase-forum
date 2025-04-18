@@ -11,10 +11,10 @@ import { LanguageProvider } from "@/providers/language-provider";
 export default function ClientLayout({
   children,
 }: Readonly<{
-  children: React.ReactNode;
+  children: React.ReactNode
 }>) {
-  const pathname = usePathname();
-  const hideSidebar = pathname.startsWith("/auth/");
+  const pathname = usePathname()
+  const hideSidebar = pathname.startsWith('/auth') || pathname.startsWith('/archive')
 
   return (
     <AppProvider>

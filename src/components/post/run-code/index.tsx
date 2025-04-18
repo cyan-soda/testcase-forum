@@ -1,24 +1,25 @@
 'use client'
 
-import Image from "next/image"
-import { useState } from "react"
+import Image from 'next/image';
+import { useEffect, useState } from 'react';
+import iconRightArrow from '@/icons/arrow--right.svg';
+import iconPlay from '@/icons/video-square.svg';
+import { codeService } from '@/service/code';
+import { useParams } from 'next/navigation';
+import { usePostStore } from '@/store/post/post-store';
 
-import iconRightArrow from '@/icons/arrow--right.svg'
-import iconPlay from '@/icons/video-square.svg'
-import { codeService } from "@/service/code"
-import { useParams } from "next/navigation"
-import { usePostStore } from "@/store/post/post-store"
-
-const Field = ({ label, value }: { label: string, value?: string }) => {
+const Field = ({ label, value }: { label: string; value?: string }) => {
     return (
         <div className="flex flex-col items-start gap-2 w-full">
             <span className="text-xs font-semibold">{label}</span>
-            <div className="rounded-lg bg-grey px-[10px] py-3 text-sm w-full" style={{ whiteSpace: 'pre-wrap' }}>{value}</div>
+            <div className="rounded-lg bg-grey px-[10px] py-3 text-sm w-full" style={{ whiteSpace: 'pre-wrap' }}>
+                {value}
+            </div>
         </div>
-    )
-}
+    );
+};
 
-const RecPostItem = ({ title, author, link }: { title: string, author: string, link: string }) => {
+const RecPostItem = ({ title, author, link }: { title: string; author: string; link: string }) => {
     return (
         <div className="flex flex-row items-start gap-4 w-full cursor-pointer hover:bg-grey p-3 rounded-lg">
             <div className="flex flex-col items-start gap-[6px]">
@@ -27,36 +28,64 @@ const RecPostItem = ({ title, author, link }: { title: string, author: string, l
             </div>
             <Image src={iconRightArrow} alt="" width={20} height={20} />
         </div>
-    )
-}
+    );
+};
 
 const CaseItems = [
-    { title: "I put my minimum effort into creating this set of test cases for you guys, but I promise it works for 90% of this assignment.", author: "Dang Hoang", link: "#" },
-    { title: "I put my minimum effort into creating this set of test cases for you guys, but I promise it works for 90% of this assignment.", author: "Son Nguyen", link: "#" },
-    { title: "I put my minimum effort into creating this set of test cases for you guys, but I promise it works for 90% of this assignment.", author: "Dang Hoang", link: "#" },
-    { title: "I put my minimum effort into creating this set of test cases for you guys, but I promise it works for 90% of this assignment.", author: "Son Nguyen", link: "#" },
-    { title: "I put my minimum effort into creating this set of test cases for you guys, but I promise it works for 90% of this assignment.", author: "Dang Hoang", link: "#" },
-]
+    { title: 'I put my minimum effort into creating this set of test cases...', author: 'Dang Hoang', link: '#' },
+    { title: 'I put my minimum effort into creating this set of test cases...', author: 'Son Nguyen', link: '#' },
+    { title: 'I put my minimum effort into creating this set of test cases...', author: 'Dang Hoang', link: '#' },
+    { title: 'I put my minimum effort into creating this set of test cases...', author: 'Son Nguyen', link: '#' },
+    { title: 'I put my minimum effort into creating this set of test cases...', author: 'Dang Hoang', link: '#' },
+];
 
-const RunCode = ({ }: {}) => {
-    const [fileNames, setFileNames] = useState<{ hFile?: string, cppFile?: string }>({})
-    const [isUploaded, setIsUploaded] = useState(false)
-    const { postId } = useParams<{ postId: string }>()
-    const [runState, setRunState] = useState<0 | 1 | 2>(0) // 0: not run, 1: passed, 2: failed
-    const [output, setOutput] = useState<string>('None')
-    const post = usePostStore().getPostById(postId)
-    const [loadingRunCode, setLoadingRunCode] = useState<boolean>(false)
+const RunCode = () => {
+    const [fileNames, setFileNames] = useState<{ hFile?: string; cppFile?: string }>({});
+    const [isUploaded, setIsUploaded] = useState(false);
+    const [isFileExist, setIsFileExist] = useState(false);
+    const { postId } = useParams<{ postId: string }>();
+    const [runState, setRunState] = useState<0 | 1 | 2>(0); // 0: not run, 1: passed, 2: failed
+    const [output, setOutput] = useState<string>('None');
+    const post = usePostStore().getPostById(postId);
+    const [loadingRunCode, setLoadingRunCode] = useState<boolean>(false);
+
+    // Check if code files exist for the given postId
+    useEffect(() => {
+        const checkCodeFileExist = async () => {
+            try {
+                const response = await codeService.checkCodeFileExist();
+                console.log('Check file existence response status:', response); // Debug log
+                if (response === 204) {
+                    setIsFileExist(true);
+                    setIsUploaded(true); // Files exist, so code can be run
+                } else {
+                    setIsFileExist(false);
+                    setIsUploaded(false);
+                    setFileNames({});
+                }
+            } catch (error) {
+                console.error('Error checking code file existence:', error);
+                setIsFileExist(false);
+                setIsUploaded(false);
+                setFileNames({});
+            }
+        };
+
+        if (postId) {
+            checkCodeFileExist();
+        }
+    }, [postId]); // Run when postId changes
 
     const handleUploadFiles = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const selectedFiles = e.target.files;
         if (!selectedFiles) return;
 
         const files = Array.from(selectedFiles);
-        const hFile = files.find(file => file.name.endsWith('.h'));
-        const cppFile = files.find(file => file.name.endsWith('.cpp'));
+        const hFile = files.find((file) => file.name.endsWith('.h'));
+        const cppFile = files.find((file) => file.name.endsWith('.cpp'));
 
         if (!hFile || !cppFile) {
-            alert("Please upload both a .h and a .cpp file");
+            alert('Please upload both a .h and a .cpp file');
             return;
         }
 
@@ -67,46 +96,45 @@ const RunCode = ({ }: {}) => {
 
         try {
             const uploadResponse = await codeService.submitCodeFile(hFile, cppFile);
-            console.log("Upload response:", uploadResponse); // Debug log
+            console.log('Upload response:', uploadResponse); // Debug log
             if (uploadResponse.success) {
                 setIsUploaded(true);
-                alert("Files uploaded successfully!");
+                setIsFileExist(true);
+                alert('Files uploaded successfully!');
             } else {
-                alert(`Upload failed: ${uploadResponse.message || "Unknown error"}`);
+                alert(`Upload failed: ${uploadResponse.message || 'Unknown error'}`);
             }
         } catch (error: any) {
-            console.error("Upload error:", error.message, error); // Debug log
-            alert(`Failed to upload files: ${error.message || "Unknown error"}`);
+            console.error('Upload error:', error.message, error); // Debug log
+            alert(`Failed to upload files: ${error.message || 'Unknown error'}`);
         }
     };
 
     const handleRunCode = async () => {
-        if (!isUploaded) {
-            alert("Please upload your files first!")
-            return
+        if (!isFileExist) {
+            alert('Please upload your files first!');
+            return;
         }
         try {
-            setLoadingRunCode(true)
-            setRunState(0)
-            const result = await codeService.runCode(postId)
+            setLoadingRunCode(true);
+            setRunState(0);
+            const result = await codeService.runCode(postId);
             if (result.error) {
-                alert(`Error: ${result.error}`)
-                return
+                alert(`Error: ${result.error}`);
+                return;
             }
             if (result.status === 200) {
-                setRunState(result.score === 1 ? 1 : 2)
-                setOutput(result.log)
+                setRunState(result.score === 1 ? 1 : 2);
+                setOutput(result.log);
             }
-            console.log("Execution result:", result)
+            console.log('Execution result:', result);
         } catch (error) {
-            console.error("Run code failed:", error)
-            alert("Failed to run code")
+            console.error('Run code failed:', error);
+            alert('Failed to run code');
         } finally {
-            setLoadingRunCode(false)
+            setLoadingRunCode(false);
         }
-    }
-
-
+    };
 
     return (
         <div className="min-h-screen w-full bg-white text-black p-5 rounded-xl">
@@ -122,35 +150,35 @@ const RunCode = ({ }: {}) => {
                 </button>
                 <label className="cursor-pointer px-4 py-3 rounded-lg bg-grey flex items-center gap-2">
                     Upload Files
-                    <input
-                        type="file"
-                        multiple
-                        accept=".h,.cpp"
-                        className="hidden"
-                        onChange={handleUploadFiles}
-                    />
+                    <input type="file" multiple accept=".h,.cpp" className="hidden" onChange={handleUploadFiles} />
                 </label>
                 <div className="flex-1 w-full flex flex-row items-center border-black border rounded-lg border-dashed h-full p-3">
-                    {fileNames.hFile || fileNames.cppFile
-                        ? <span className="text-sm font-normal w-full text-center">
-                            {fileNames.hFile}{fileNames.cppFile ? `, ${fileNames.cppFile}` : ''}
+                    {isFileExist ? (
+                        <span className="text-sm font-normal w-full text-center">
+                            {fileNames.hFile && fileNames.cppFile
+                                ? `Files uploaded: ${fileNames.hFile}, ${fileNames.cppFile}`
+                                : 'Files exist in database. You can run the code or upload new files to replace them.'}
                         </span>
-                        : <span className="text-sm font-normal w-full text-center">
+                    ) : fileNames.hFile || fileNames.cppFile ? (
+                        <span className="text-sm font-normal w-full text-center">
+                            {fileNames.hFile}
+                            {fileNames.cppFile ? `, ${fileNames.cppFile}` : ''}
+                        </span>
+                    ) : (
+                        <span className="text-sm font-normal w-full text-center">
                             No files uploaded yet. Please upload your .h and .cpp files.
                         </span>
-                    }
+                    )}
                 </div>
             </div>
             <div className="flex flex-row items-start gap-5">
                 <div className="flex flex-col gap-5 items-start w-3/5">
-                    {/* test results */}
                     <div className="flex flex-col p-4 items-start rounded-lg border border-black w-full">
                         <span className="text-xl font-semibold">Test Results</span>
                         {loadingRunCode ? (
                             <div className="w-full flex flex-col gap-1 items-center justify-center h-full">
                                 <span className="text-sm font-normal">Executing...</span>
                                 <span className="text-sm font-normal">Please wait a few seconds.</span>
-                                {/* Loading spinner */}
                                 <div className="flex items-center justify-center my-3">
                                     <div className="w-5 h-5 border-2 border-t-transparent border-black rounded-full animate-spin"></div>
                                 </div>
@@ -169,21 +197,6 @@ const RunCode = ({ }: {}) => {
                             </>
                         )}
                     </div>
-                    {/* overview, graphs */}
-                    {/* <div className="flex flex-col p-4 items-start rounded-lg border border-black w-full">
-                        <span className="text-xl font-semibold">Overview</span>
-                        <div className="w-full flex flex-row items-center justify-between">
-                            <div className="mt-3 flex flex-row gap-3 items-center">
-                                <div className={`${execution?.isPassed ? 'bg-green' : 'bg-grey'} px-2 py-1 rounded-lg text-xs font-bold`}>Passed</div>
-                                <div className={`${!execution?.isPassed ? 'bg-green' : 'bg-grey'} px-2 py-1 rounded-lg text-xs font-bold`}>Failed</div>
-                            </div>
-                            <div className="flex flex-row items-center gap-3 text-xs">
-                                <span className="font-semibold pr-3 border-r border-black">Total: <span className="font-normal">{"1234"}</span></span>
-                                <span className="font-semibold pr-3 border-r border-black">Passed: <span className="font-normal">{"123"}</span></span>
-                                <span className="font-semibold">Pass Rate: <span className="font-normal">{"9.96"}%</span></span>
-                            </div>
-                        </div>
-                    </div> */}
                 </div>
                 <div className="rounded-lg border border-black py-5 px-3 w-2/5">
                     <span className="text-xl font-semibold p-3">Recommended Posts</span>
@@ -195,7 +208,7 @@ const RunCode = ({ }: {}) => {
                 </div>
             </div>
         </div>
-    )
-}
+    );
+};
 
-export default RunCode
+export default RunCode;

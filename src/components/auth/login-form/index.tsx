@@ -90,7 +90,7 @@ const LoginForm = () => {
             logIn(result.token, result.user);
             setUser(result.user);
             // console.log("Login successful:", result);
-            router.push("/");
+            router.push("/space");
         } catch (error) {
             console.error("Login error:", error);
         }
@@ -161,9 +161,9 @@ const LoginForm = () => {
                     </p>
                 </div>
                 <button
-                    disabled={isSubmitting}
+                    disabled={true}
                     type="submit"
-                    className="w-full p-2 rounded-lg text-base font-semibold text-white bg-black disabled:bg-grey hover:bg-opacity-80"
+                    className="w-full p-2 rounded-lg text-base font-semibold text-white bg-black disabled:bg-opacity-80 hover:bg-opacity-80"
                 >
                     {isSubmitting ? t('loading_text') : t('options.login')}
                 </button>
@@ -172,17 +172,18 @@ const LoginForm = () => {
                     <p className="text-center">{t('or')}</p>
                     <hr className="w-full border-t-2 border-gray-300" />
                 </div>
-                <Link
-                    href={''}
-                    type="submit"
+                <button
+                    // href={''}
+                    type="button"
+                    onClick={handleGoogleLogin}
                     className="w-full p-2 text-center justify-center rounded-lg text-base font-semibold text-white bg-blue-500 hover:bg-blue-400"
                 >
-                    <button 
+                    {/* <button 
                         onClick={handleGoogleLogin}
-                        type="button">
+                        type="button"> */}
                         {t('options.login_with_google')}
-                    </button>
-                </Link>
+                    {/* </button> */}
+                </button>
                 <div className="text-center">
                     <span className="me-2 text-black font-normal">{t('register_text')}</span>{" "}
                     <Link

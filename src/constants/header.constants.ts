@@ -2,7 +2,7 @@ export const NAV_ITEMS = [
     {
         id: 0,
         title: "home",
-        link: "/",
+        link: "/space",
     },
     {
         id: 1,

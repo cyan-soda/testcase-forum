@@ -14,7 +14,7 @@ const SIDEBAR_ITEMS = [
         id: 0,
         title: 'my_spaces',
         course_titles: [
-            { id: 0, title: "Introduction to Programming", term: "242", code: "CO1005" },
+            { id: 0, title: "Kỹ thuật lập trình", term: "242", code: "CO1005" },
             // { id: 1, title: "Discrete Mathematics", term: "242", code: "CO1007" },
             // { id: 2, title: "Data Structures and Algorithms", term: "242", code: "CO2003" },
             // { id: 3, title: "Principal of Programming Languages", term: "242", code: "CO3005" }
@@ -74,7 +74,7 @@ const SidebarGroup = ({ id, title, courses }: SidebarGroupProps) => {
                 <Image src={iconHouse} height={24} width={24} alt="home-icon" />
                 <p className="text-lg font-bold">{title}</p>
             </div>
-            <div className="flex flex-col gap-2 items-start justify-start">
+            <div className="flex flex-col gap-2 items-start justify-start w-full">
                 {courses.map((course) => (
                     <button
                         key={course.id}

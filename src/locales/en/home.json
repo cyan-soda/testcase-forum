@@ -23,5 +23,7 @@
         "old": "Oldest",
         "a_z": "A to Z",
         "z_a": "Z to A"
-    }
+    },
+    "login_required": "Login Required",
+    "login_required_description": "You need to login to see this content."
 }

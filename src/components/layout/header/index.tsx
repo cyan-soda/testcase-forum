@@ -39,6 +39,10 @@ const Header = () => {
     const handleClick = (link: string) => {
         setActiveLink(link)
         localStorage.setItem('activeLink', link)
+        if (link === '/archive') {
+            router.push(`/archive/${user?.id}`)
+            return
+        }
         router.push(link)
     }
 
@@ -47,7 +51,7 @@ const Header = () => {
             setIsOpenCreatePopup(true)
     }
 
-    const { language, setLanguage } = useLanguage()
+    const { setLanguage } = useLanguage()
     const handleChangeLanguage = (lang: string, abbr: string) => {
         changeLanguage(lang)
         setLanguage(lang)

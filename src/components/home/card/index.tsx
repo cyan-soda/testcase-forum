@@ -13,6 +13,7 @@ const PreviewPopup = dynamic(() => import('@/components/shared/popup-preview'), 
 import { useTranslation } from 'react-i18next'
 import { TPost } from '@/types/post'
 import { usePostStore } from '@/store/post/post-store'
+import { postService } from '@/service/post'
 
 const Reaction = ({ count, icon }: { count: number, icon: string }) => {
     return (
@@ -45,10 +46,17 @@ const PostCard = ({ post_id }: { post_id: string }) => {
 
     }
 
+
     const router = useRouter()
     const { course, term } = useParams()
     const handlePostDetailClick = (post: any) => {
         course && term && router.push(`/space/${course}/${term}/${post.id}`)
+
+        postService.clickPost(post.id, post.post_type).then((res) => {
+            // console.log('Post clicked:', res)
+        }).catch((err) => {
+            console.error('Error clicking post:', err)
+        })
     }
 
     const { t } = useTranslation('home')

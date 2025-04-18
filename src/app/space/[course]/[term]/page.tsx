@@ -15,16 +15,17 @@ import { useTranslation } from "react-i18next";
 import { TPost } from "@/types/post";
 import { usePostStore } from "@/store/post/post-store";
 import { set } from "react-hook-form";
+import { useUserStore } from "@/store/user/user-store";
 
 const CoursePage = () => {
   const params = useParams();
   const { course, term } = params as { course: string; term: string };
   const { posts, setPosts } = usePostStore()
-  // const [POST, setPosts] = useState<TPost[]>([]);
   const [filteredPosts, setFilteredPosts] = useState<TPost[]>([]);
   const [searchText, setSearchText] = useState<string>("");
   const [tags, setTags] = useState<string[]>([]);
   const [sortFilter, setSortFilter] = useState<string>("");
+  const { user } = useUserStore()
 
   // Translation and sort options at top level
   const { t } = useTranslation("home");
@@ -148,6 +149,7 @@ const CoursePage = () => {
 
   return (
     <div className="min-h-screen bg-white text-black pr-10 pt-5 pb-10 flex flex-row gap-5">
+      
       <div className="flex flex-col gap-5 w-3/4">
         <div className="w-full flex flex-col gap-3 p-5 rounded-2xl border border-black">
           <SearchTextField

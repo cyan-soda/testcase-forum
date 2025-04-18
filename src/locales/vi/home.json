@@ -23,5 +23,7 @@
         "old": "Cũ nhất",
         "a_z": "Từ A đến Z",
         "z_a": "Từ Z đến A"
-    }
+    },
+    "login_required": "Yêu cầu đăng nhập",
+    "login_required_description": "Bạn cần đăng nhập để xem nội dung này."
 }

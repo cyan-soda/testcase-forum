@@ -15,18 +15,6 @@ export const codeService = {
       },
     });
     return response.data;
-
-    // try {
-    //   const response = await axiosClient.post('/upload', formData, {
-    //     headers: {
-    //       'Content-Type': 'multipart/form-data',
-    //       Authorization: `Bearer ${localStorage.getItem('token')}`,
-    //     },
-    //   });
-    //   return response.data;
-    // } catch (error: any) {
-    //   throw new Error(error.response?.data?.message || 'Upload failed');
-    // }
   },
 
   runCode: async (post_id: string) => {
@@ -42,4 +30,18 @@ export const codeService = {
       throw new Error(error.response?.data?.error || 'Run code failed');
     }
   },
+
+  checkCodeFileExist: async () => {
+    try {
+      const response = await axiosClient.get(`/checkfile`, {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
+        },
+      });
+      return response.status;
+    } catch (error: any) {
+      throw new Error(error.response?.data?.error || 'Check code file existence failed');
+    }
+  }
 };
