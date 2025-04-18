@@ -4,7 +4,7 @@ import axiosClient from "../axios-client"
 import axios from "axios"
 
 export class PostService {
-    private baseUrl = 'http://localhost:3000';
+    private baseUrl = '/api/private';
 
     async getAllPosts() {
         const response = await axiosClient.get(`${this.baseUrl}/posts`, {

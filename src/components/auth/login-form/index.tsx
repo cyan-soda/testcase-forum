@@ -99,7 +99,7 @@ const LoginForm = () => {
     const handleGoogleLogin = () => {
         const clientId = `${process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID}`;
         // console.log("Google Client ID:", clientId);
-        const redirectUri = "http://localhost:3001/auth/log-in";
+        const redirectUri = "https://cse-tcsharing.io.vn/auth/log-in";
         const scope = "email profile";
     
         const authUrl = `https://accounts.google.com/o/oauth2/v2/auth?` +

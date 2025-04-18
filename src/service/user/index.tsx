@@ -3,7 +3,7 @@
 import axiosClient from "../axios-client"
 
 export class UserService {
-    private baseUrl = 'http://localhost:3000';
+    private baseUrl = '/api/private';
 
     getUserPosts = async () => {
         const response = await axiosClient.get(`${this.baseUrl}/user/posts`, {

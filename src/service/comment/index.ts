@@ -4,7 +4,7 @@ import axiosClient from "../axios-client"
 
 export const commentService = {
     getAllComments: async (post_id: string) => {
-        const response = await axiosClient.get(`http://localhost:3000/post/${post_id}/comments`, {
+        const response = await axiosClient.get(`/api/private/post/${post_id}/comments`, {
             headers: {
                 'Content-Type': 'application/json',
                 Authorization: `Bearer ${localStorage.getItem('token')}`,
@@ -17,7 +17,7 @@ export const commentService = {
         post_id: string,
         content: string,
     ) => {
-        const response = await axiosClient.post(`http://localhost:3000/comment`, {
+        const response = await axiosClient.post(`/api/private/comment`, {
             // user_mail,
             post_id,
             content,
@@ -30,7 +30,7 @@ export const commentService = {
         return response.data
     },
     deleteComment: async (comment_id: string) => {
-        const response = await axiosClient.delete(`http://localhost:3000/comment/${comment_id}`, {
+        const response = await axiosClient.delete(`/api/private/comment/${comment_id}`, {
             headers: {
                 'Content-Type': 'application/json',
                 Authorization: `Bearer ${localStorage.getItem('token')}`,
@@ -42,7 +42,7 @@ export const commentService = {
         comment_id: string,
         content: string,
     ) => {
-        const response = await axiosClient.put(`http://localhost:3000/comment/${comment_id}`, {
+        const response = await axiosClient.put(`/api/private/comment/${comment_id}`, {
             content,
         }, {
             headers: {
