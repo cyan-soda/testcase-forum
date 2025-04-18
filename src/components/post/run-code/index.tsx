@@ -7,7 +7,10 @@ import iconPlay from '@/icons/video-square.svg';
 import { codeService } from '@/service/code';
 import { useParams } from 'next/navigation';
 import { usePostStore } from '@/store/post/post-store';
+import { TPost } from '@/types/post';
+import { postService } from '@/service/post';
 
+// Field component (unchanged)
 const Field = ({ label, value }: { label: string; value?: string }) => {
     return (
         <div className="flex flex-col items-start gap-2 w-full">
@@ -19,10 +22,14 @@ const Field = ({ label, value }: { label: string; value?: string }) => {
     );
 };
 
+// RecPostItem component (unchanged)
 const RecPostItem = ({ title, author, link }: { title: string; author: string; link: string }) => {
     return (
-        <div className="flex flex-row items-start gap-4 w-full cursor-pointer hover:bg-grey p-3 rounded-lg">
-            <div className="flex flex-col items-start gap-[6px]">
+        <div 
+            className="flex flex-row items-start gap-4 cursor-pointer hover:bg-grey p-3 rounded-lg w-full"
+            onClick={() => window.open(link, '_blank')}
+        >
+            <div className="flex flex-col items-start gap-[6px] w-full">
                 <span className="text-sm font-semibold">{title}</span>
                 <span className="text-xs font-normal">{author}</span>
             </div>
@@ -30,14 +37,6 @@ const RecPostItem = ({ title, author, link }: { title: string; author: string; l
         </div>
     );
 };
-
-const CaseItems = [
-    { title: 'I put my minimum effort into creating this set of test cases...', author: 'Dang Hoang', link: '#' },
-    { title: 'I put my minimum effort into creating this set of test cases...', author: 'Son Nguyen', link: '#' },
-    { title: 'I put my minimum effort into creating this set of test cases...', author: 'Dang Hoang', link: '#' },
-    { title: 'I put my minimum effort into creating this set of test cases...', author: 'Son Nguyen', link: '#' },
-    { title: 'I put my minimum effort into creating this set of test cases...', author: 'Dang Hoang', link: '#' },
-];
 
 const RunCode = () => {
     const [fileNames, setFileNames] = useState<{ hFile?: string; cppFile?: string }>({});
@@ -48,16 +47,18 @@ const RunCode = () => {
     const [output, setOutput] = useState<string>('None');
     const post = usePostStore().getPostById(postId);
     const [loadingRunCode, setLoadingRunCode] = useState<boolean>(false);
+    const [loadingSuggestions, setLoadingSuggestions] = useState<boolean>(false);
+    const [suggestions, setSuggestions] = useState<TPost[]>([]);
 
     // Check if code files exist for the given postId
     useEffect(() => {
         const checkCodeFileExist = async () => {
             try {
                 const response = await codeService.checkCodeFileExist();
-                console.log('Check file existence response status:', response); // Debug log
+                console.log('Check file existence response status:', response);
                 if (response === 204) {
                     setIsFileExist(true);
-                    setIsUploaded(true); // Files exist, so code can be run
+                    setIsUploaded(true);
                 } else {
                     setIsFileExist(false);
                     setIsUploaded(false);
@@ -74,7 +75,27 @@ const RunCode = () => {
         if (postId) {
             checkCodeFileExist();
         }
-    }, [postId]); // Run when postId changes
+    }, [postId]);
+
+    // Fetch suggested posts after a code run (when output changes)
+    useEffect(() => {
+        const fetchRecommendedPosts = async () => {
+            if (runState === 0) return; // Only fetch after a code run
+            setLoadingSuggestions(true);
+            try {
+                const response = await postService.getSuggestedPosts();
+                const recommendedPosts = response.filter((item: TPost) => item.id !== postId);
+                setSuggestions(recommendedPosts);
+            } catch (error) {
+                console.error('Error fetching recommended posts:', error);
+                setSuggestions([]);
+            } finally {
+                setLoadingSuggestions(false);
+            }
+        };
+
+        fetchRecommendedPosts();
+    }, [runState, postId]); // Trigger when runState changes (after code run)
 
     const handleUploadFiles = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const selectedFiles = e.target.files;
@@ -96,7 +117,7 @@ const RunCode = () => {
 
         try {
             const uploadResponse = await codeService.submitCodeFile(hFile, cppFile);
-            console.log('Upload response:', uploadResponse); // Debug log
+            console.log('Upload response:', uploadResponse);
             if (uploadResponse.success) {
                 setIsUploaded(true);
                 setIsFileExist(true);
@@ -105,7 +126,7 @@ const RunCode = () => {
                 alert(`Upload failed: ${uploadResponse.message || 'Unknown error'}`);
             }
         } catch (error: any) {
-            console.error('Upload error:', error.message, error); // Debug log
+            console.error('Upload error:', error.message, error);
             alert(`Failed to upload files: ${error.message || 'Unknown error'}`);
         }
     };
@@ -201,9 +222,20 @@ const RunCode = () => {
                 <div className="rounded-lg border border-black py-5 px-3 w-2/5">
                     <span className="text-xl font-semibold p-3">Recommended Posts</span>
                     <div className="flex flex-col gap-1 mt-3">
-                        {CaseItems.map((item, index) => (
-                            <RecPostItem key={index} title={item.title} author={item.author} link={item.link} />
-                        ))}
+                        {loadingSuggestions ? (
+                            <div className="w-full flex flex-col gap-1 items-center justify-center h-full">
+                                <span className="text-sm font-normal">Loading recommendations...</span>
+                                <div className="flex items-center justify-center my-3">
+                                    <div className="w-5 h-5 border-2 border-t-transparent border-black rounded-full animate-spin"></div>
+                                </div>
+                            </div>
+                        ) : suggestions.length > 0 ? (
+                            suggestions.map((item, index) => (
+                                <RecPostItem key={index} title={item.title} author={item.author} link={`/space/CO1005/242/${item.id}`} />
+                            ))
+                        ) : (
+                            <span className="text-sm font-normal text-center w-full">No recommendations available.</span>
+                        )}
                     </div>
                 </div>
             </div>

@@ -104,6 +104,16 @@ export class PostService {
         });
         return response.data;
     }
+
+    async getSuggestedPosts() {
+        const response = await axiosClient.get(`${this.baseUrl}/sgposts`, {
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${localStorage.getItem('token')}`,
+            },
+        });
+        return response.data;
+    }
 }
 
 export const postService = new PostService();
