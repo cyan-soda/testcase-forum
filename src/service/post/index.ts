@@ -34,25 +34,22 @@ export class PostService {
         return response.data;
     }
 
-    async updatePost(
-        id: string,
-        user_mail: string,
-        title: string,
-        description: string,
-        testcase: { input: string; expected_output: string }
-    ) {
-        const response = await axiosClient.put(`/update/${id}`, {
-            user_mail,
-            title,
-            description,
-            testcase,
-        }, {
+    async updatePost(id: string, title: string, description: string, input: string, expected: string, code: string) {
+        const formData = new FormData()
+        formData.append("title", title)
+        formData.append("description", description)
+        formData.append("input", input)
+        formData.append("expected", expected)
+        formData.append("code", code)
+
+        const response = await axiosClient.put(`/post/${id}`, formData, {
             headers: {
-                'Content-Type': 'application/json',
+                "Content-Type": "multipart/form-data",
                 Authorization: `Bearer ${localStorage.getItem('token')}`,
             },
         });
-        return response.data;
+
+        return response.data
     }
 
     async deletePost(id: string) {

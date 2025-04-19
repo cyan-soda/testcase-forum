@@ -5,7 +5,7 @@
         "filter_placeholder": "Filter by..."
     },
     "cards": {
-        "preview_button": "Preview Testcases",
+        "preview_button": "Preview Testcase",
         "details_button": "See Details",
         "time": "days ago"
     },

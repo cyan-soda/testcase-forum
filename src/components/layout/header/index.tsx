@@ -29,7 +29,6 @@ const Header = () => {
     const { t } = useTranslation('header')
 
     const { user } = useUserStore()
-    console.log(user)
     const { isAuthenticated, logOut } = useAuthStore()
 
     useEffect(() => {
@@ -99,18 +98,26 @@ const Header = () => {
                                         <p className="text-base font-normal">{isAuthenticated && user ? `${user.first_name} ${user.last_name}` : t('guest_placeholder')}</p>
                                         <Image src={iconDownArrow} alt="" />
                                     </DropdownMenuTrigger>
-                                    <DropdownMenuContent>
-                                        <DropdownMenuItem onClick={() => { router.push('/profile') }} className="hover:cursor-pointer">
-                                            {t('account_options.profile')}
-                                        </DropdownMenuItem>
-                                        <DropdownMenuSeparator />
-                                        <DropdownMenuItem onClick={() => { router.push('/auth/log-in') }} className="hover:cursor-pointer">
-                                            {t('account_options.login')}
-                                        </DropdownMenuItem>
-                                        <DropdownMenuSeparator />
-                                        <DropdownMenuItem onClick={() => { logOut(); router.push('/') }} className="hover:cursor-pointer">
-                                            {t('account_options.logout')}
-                                        </DropdownMenuItem>
+                                    <DropdownMenuContent align="end">
+                                        <div>
+                                            {user && isAuthenticated ? (
+                                                <>
+                                                    <DropdownMenuItem onClick={() => { router.push('/profile') }} className="hover:cursor-pointer">
+                                                        {t('account_options.profile')}
+                                                    </DropdownMenuItem>
+                                                    <DropdownMenuSeparator />
+                                                    <DropdownMenuItem onClick={() => { logOut(); router.push('/') }} className="hover:cursor-pointer">
+                                                        {t('account_options.logout')}
+                                                    </DropdownMenuItem>
+                                                </>
+                                            ) : (
+                                                <>
+                                                    <DropdownMenuItem onClick={() => { router.push('/auth/log-in') }} className="hover:cursor-pointer">
+                                                        {t('account_options.login')}
+                                                    </DropdownMenuItem>
+                                                </>
+                                            )}
+                                        </div>
                                     </DropdownMenuContent>
                                 </DropdownMenu>
                             </div>
@@ -136,7 +143,7 @@ const Header = () => {
                 </div>
             </div>
             <CreatePostPopup isOpen={isOpenCreatePopup} onClose={() => { setIsOpenCreatePopup(false); console.log(isOpenCreatePopup) }} />
-            
+
         </>
     )
 }

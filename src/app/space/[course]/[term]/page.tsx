@@ -181,7 +181,7 @@ const CoursePage = () => {
       </div>
       <div className="flex flex-col gap-5 w-1/4">
         <PopularPosts />
-        <PopularTags />
+        {/* <PopularTags /> */}
       </div>
     </div>
   );

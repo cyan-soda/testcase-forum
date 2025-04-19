@@ -5,18 +5,31 @@ import { useUserStore } from "@/store/user/user-store";
 import { TPost } from "@/types/post";
 import { userService } from "@/service/user";
 import { postService } from "@/service/post";
+import { CodeMarkdownArea } from "@/components/post/details";
+import { useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import * as Yup from "yup";
+import Link from "next/link";
 
+// Validation schema using Yup
+const postSchema = Yup.object().shape({
+    title: Yup.string().required("Title is required").min(1, "Title cannot be empty"),
+    description: Yup.string().required("Description is required").min(1, "Description cannot be empty"),
+    input: Yup.string().required("Input is required").min(1, "Input cannot be empty"),
+    expected: Yup.string().required("Expected output is required").min(1, "Expected output cannot be empty"),
+    code: Yup.string().required("Code is required").min(1, "Code cannot be empty"),
+});
 
 const MyPosts = () => {
-    const { user } = useUserStore()
-    const [posts, setPosts] = useState<TPost[]>([])
-    const [loading, setLoading] = useState(true)
-    const [editingPost, setEditingPost] = useState<TPost | null>(null)
+    const { user } = useUserStore();
+    const [posts, setPosts] = useState<TPost[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [editingPost, setEditingPost] = useState<TPost | null>(null);
 
     useEffect(() => {
         const fetchPosts = async () => {
             try {
-                const res = await userService.getUserPosts()
+                const res = await userService.getUserPosts();
                 setPosts(res as TPost[]);
                 setLoading(false);
             } catch (error) {
@@ -34,10 +47,10 @@ const MyPosts = () => {
     const handleDelete = async (postId: string) => {
         if (window.confirm("Are you sure you want to delete this post?")) {
             try {
-                const res = await postService.deletePost(postId)
-                setPosts(posts.filter(post => post.id !== postId))
+                await postService.deletePost(postId);
+                setPosts(posts.filter(post => post.id !== postId));
             } catch (error) {
-                console.error("Error deleting post:", error)
+                console.error("Error deleting post:", error);
             }
         }
     };
@@ -45,25 +58,6 @@ const MyPosts = () => {
     // Handle edit post
     const handleEdit = (post: TPost) => {
         setEditingPost(post);
-    };
-
-    interface UpdatedPostData {
-        title: string,
-        description: string,
-        input: string,
-        expected: string,
-        code: string,
-    }
-
-    const handleSave = async (postId: string, updatedData: UpdatedPostData) => {
-        try {
-            // Replace with actual API call
-            // await api.put(`/posts/${postId}`, updatedData);
-            setPosts(posts.map(post => (post.id === postId ? { ...post, ...updatedData } : post)));
-            setEditingPost(null);
-        } catch (error) {
-            console.error("Error updating post:", error);
-        }
     };
 
     // Handle cancel edit
@@ -93,40 +87,54 @@ const MyPosts = () => {
             {posts.length === 0 ? (
                 <p>No posts found.</p>
             ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
+                <div className="flex flex-col items-center gap-4 w-full">
                     {posts.map(post => (
-                        <div key={post.id} className="border rounded-lg p-4 shadow-sm">
+                        <div key={post.id} className="border border-black border-b-4 rounded-2xl p-4 shadow-sm w-full">
                             {editingPost?.id === post.id ? (
                                 <EditPostForm
                                     post={editingPost}
-                                    onSave={handleSave}
+                                    onSave={(postId, updatedData) => {
+                                        setPosts(posts.map(post => (post.id === postId ? { ...post, ...updatedData } : post)));
+                                        setEditingPost(null);
+                                    }}
                                     onCancel={handleCancelEdit}
                                 />
                             ) : (
-                                <div>
-                                    <h2 className="text-xl font-semibold">{post.title}</h2>
-                                    <p className="text-gray-600">Subject: {post.subject}</p>
-                                    <p className="text-gray-600">Description: {post.description}</p>
+                                <div className="space-y-2">
+                                    <div className="flex flex-row items-center justify-between w-full">
+                                        <Link href={`/space/CO1005/242/${post.id}`} className="hover:underline w-full">
+                                            <h2 className="text-xl font-semibold text-left w-full">{post.title}</h2>
+                                        </Link>
+                                        <div className="flex space-x-2 w-full justify-end items-end text-sm font-medium">
+                                            <button
+                                                onClick={() => handleEdit(post)}
+                                                className="bg-green text-black px-3 py-2 rounded-md"
+                                            >
+                                                Modify
+                                            </button>
+                                            <button
+                                                onClick={() => handleDelete(post.id)}
+                                                className="bg-black text-white px-3 py-2 rounded-md"
+                                            >
+                                                Delete
+                                            </button>
+                                        </div>
+                                    </div>
                                     <p className="text-gray-500 text-sm">
                                         Last Modified: {new Date(post.last_modified).toLocaleString()}
                                     </p>
-                                    <pre className="bg-gray-100 p-2 rounded mt-2 overflow-x-auto">
-                                        <code>{post.testcase.code}</code>
-                                    </pre>
-                                    <div className="mt-4 flex space-x-2 w-full justify-end items-end">
-                                        <button
-                                            onClick={() => handleEdit(post)}
-                                            className="bg-green text-black px-4 py-2 rounded hover:bg-opacity-200"
-                                        >
-                                            Edit
-                                        </button>
-                                        <button
-                                            onClick={() => handleDelete(post.id)}
-                                            className="bg-black text-white px-4 py-2 rounded hover:bg-opacity-200"
-                                        >
-                                            Delete
-                                        </button>
+                                    <p className="text-gray-600">{post.description}</p>
+                                    <div className="flex flex-col items-start gap-2 w-full my-2 p-4 border rounded-lg">
+                                        <div className="grid grid-cols-[8rem_1fr] items-center gap-2 w-full">
+                                            <span className="text-sm font-semibold">Input:</span>
+                                            <span className="bg-gray-100 py-2 px-3 rounded-lg">{post.testcase.input}</span>
+                                        </div>
+                                        <div className="grid grid-cols-[8rem_1fr] items-center gap-2 w-full">
+                                            <span className="text-sm font-semibold">Expected Output:</span>
+                                            <span className="bg-gray-100 py-2 px-3 rounded-lg">{post.testcase.expected}</span>
+                                        </div>
                                     </div>
+                                    <CodeMarkdownArea code={post.testcase.code} />
                                 </div>
                             )}
                         </div>
@@ -138,63 +146,107 @@ const MyPosts = () => {
 };
 
 // Component for editing a post
-const EditPostForm = ({ post, onSave, onCancel } : { post: TPost, onSave: (postId: string, updatedData: any) => void, onCancel: () => void }) => {
-    const [title, setTitle] = useState(post.title);
-    const [description, setDescription] = useState(post.description);
-    const [code, setCode] = useState(post.testcase.code);
+const EditPostForm = ({ post, onSave, onCancel }: { post: TPost, onSave: (postId: string, updatedData: any) => void, onCancel: () => void }) => {
+    const { register, handleSubmit, formState: { errors } } = useForm({
+        resolver: yupResolver(postSchema),
+        defaultValues: {
+            title: post.title,
+            description: post.description,
+            input: post.testcase.input,
+            expected: post.testcase.expected,
+            code: post.testcase.code,
+        },
+    });
 
-    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
-        onSave(post.id, {
-            title,
-            description,
-            testcase: { ...post.testcase, code }
-        });
+    const onSubmit = async (data: any) => {
+        try {
+            try {
+                const res = await postService.updatePost(
+                    post.id,
+                    data.title,
+                    data.description,
+                    data.input,
+                    data.expected,
+                    data.code
+                )
+            } catch (error) {
+                console.error("Error updating post:", error);
+                return;
+            }
+
+            // Update local state
+            onSave(post.id, {
+                title: data.title,
+                description: data.description,
+                testcase: {
+                    ...post.testcase,
+                    input: data.input,
+                    expected: data.expected,
+                    code: data.code,
+                },
+            });
+        } catch (error) {
+            console.error("Error updating post:", error);
+        }
     };
 
     return (
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             <div>
                 <label className="block text-sm font-medium">Title</label>
                 <input
-                    type="text"
-                    value={title}
-                    onChange={(e) => setTitle(e.target.value)}
-                    className="w-full border rounded p-2"
-                    required
+                    {...register("title")}
+                    className="w-full border border-black rounded-lg p-2"
                 />
+                {errors.title && <p className="text-red-500 text-sm">{errors.title.message}</p>}
             </div>
             <div>
                 <label className="block text-sm font-medium">Description</label>
                 <textarea
-                    value={description}
-                    onChange={(e) => setDescription(e.target.value)}
-                    className="w-full border rounded p-2"
+                    {...register("description")}
+                    className="w-full border border-black rounded-lg p-2"
                     rows={4}
-                    required
                 />
+                {errors.description && <p className="text-red-500 text-sm">{errors.description.message}</p>}
+            </div>
+            <div>
+                <label className="block text-sm font-medium">Input</label>
+                <textarea
+                    {...register("input")}
+                    className="w-full border border-black rounded-lg p-2"
+                    rows={1}
+                />
+                {errors.input && <p className="text-red-500 text-sm">{errors.input.message}</p>}
+            </div>
+            <div>
+                <label className="block text-sm font-medium">Expected Output</label>
+                <textarea
+                    {...register("expected")}
+                    className="w-full border border-black rounded-lg p-2"
+                    rows={1}
+                />
+                {errors.expected && <p className="text-red-500 text-sm">{errors.expected.message}</p>}
             </div>
             <div>
                 <label className="block text-sm font-medium">Code</label>
                 <textarea
-                    value={code}
-                    onChange={(e) => setCode(e.target.value)}
-                    className="w-full border rounded p-2 font-mono"
-                    rows={10}
-                    required
+                    {...register("code")}
+                    className="w-full border border-black rounded-lg p-2 font-mono"
+                    rows={5}
                 />
+                {errors.code && <p className="text-red-500 text-sm">{errors.code.message}</p>}
             </div>
-            <div className="flex space-x-2 w-full justify-end">
+            <div className="flex space-x-2 w-full justify-end text-sm font-medium">
                 <button
                     type="submit"
-                    className="bg-green text-black px-4 py-2 rounded"
+                    className="bg-green text-black px-3 py-2 rounded-md"
                 >
                     Save
                 </button>
                 <button
                     type="button"
                     onClick={onCancel}
-                    className="bg-black text-white px-4 py-2 rounded"
+                    className="bg-black text-white px-3 py-2 rounded-md"
                 >
                     Cancel
                 </button>

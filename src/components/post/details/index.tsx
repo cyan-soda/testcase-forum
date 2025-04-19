@@ -39,7 +39,7 @@ const Tab = ({ title, isActive, count, onClick }: { title: string, isActive: boo
     )
 }
 
-const CodeMarkdownArea = ({ code }: { code: string }) => {
+export const CodeMarkdownArea = ({ code }: { code: string }) => {
     const lines = (code || "No code provided").split('\n')
     return (
         <div className="rounded-lg bg-grey px-3 py-3 text-sm font-mono w-full">
@@ -157,11 +157,11 @@ const PostDetails = ({ post_id }: { post_id: string }) => {
                             </div>
                         </div>
                         <span className="text-xl font-semibold mt-2">{post.title}</span>
-                        <div className='flex flex-row gap-[10px] mt-[2px]'>
+                        {/* <div className='flex flex-row gap-[10px] mt-[2px]'>
                             {post.tags?.map((tag, index) => (
                                 <Tag key={index} tag={tag} />
                             ))}
-                        </div>
+                        </div> */}
                     </div>
 
                     <div className="text-sm font-light text-left w-full mt-4 mb-2">

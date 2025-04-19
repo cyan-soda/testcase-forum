@@ -35,10 +35,10 @@ export const LikeButton = ({
     const post = getPostById(post_id);
     if (!post) return;
   
-    const wasLiked = post.interaction.like_id !== null;
-    const prevCount = post.interaction.like_count;
+    const wasLiked = post.interaction?.like_id !== null;
+    const prevCount = post.interaction?.like_count;
 
-    console.log("Post before like:", post.interaction.like_id, post.interaction.like_count);
+    console.log("Post before like:", post.interaction?.like_id, post.interaction?.like_count);
   
     const optimisticLiked = !wasLiked;
     const optimisticCount = wasLiked ? prevCount - 1 : prevCount + 1;

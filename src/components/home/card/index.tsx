@@ -74,11 +74,11 @@ const PostCard = ({ post_id }: { post_id: string }) => {
                     <div className='flex flex-row gap-[10px] items-start'>
                         <div className='flex flex-col gap-[10px] w-[80%]'>
                             <span className='text-xl font-semibold'>{post.title}</span>
-                            <div className='flex flex-row gap-[10px]'>
+                            {/* <div className='flex flex-row gap-[10px]'>
                                 {post.tags.map((tag, index) => (
                                     <Tag key={index} tag={tag} />
                                 ))}
-                            </div>
+                            </div> */}
                             <span className='max-h-[48px] h-fit overflow-hidden text-ellipsis'>{post.description}</span>
                         </div>
                         <div className='w-1/4 flex flex-col items-center justify-start overflow-hidden'>

@@ -127,6 +127,7 @@ const LoginForm = () => {
                         className="w-full p-2 mt-1 border border-gray-300 rounded-md"
                         placeholder="name.name@hcmut.edu.vn"
                         {...register('email')}
+                        disabled={true}
                     />
                     {errors.email && <p>{errors.email.message}</p>}
                 </div>
@@ -140,10 +141,11 @@ const LoginForm = () => {
                         className="w-full p-2 mt-1 border border-gray-300 rounded-md"
                         placeholder="********"
                         {...register('password')}
+                        disabled={true}
                     />
                     {errors.password && <p>{errors.password.message}</p>}
                 </div>
-                <div className="w-full flex flex-row gap-4 justify-between items-center">
+                {/* <div className="w-full flex flex-row gap-4 justify-between items-center">
                     <div className="flex items-center">
                         <input
                             id="RememberMe"
@@ -160,7 +162,7 @@ const LoginForm = () => {
                             {t('options.forgot_password')}
                         </Link>
                     </p>
-                </div>
+                </div> */}
                 <button
                     disabled={true}
                     type="submit"
@@ -185,7 +187,7 @@ const LoginForm = () => {
                         {t('options.login_with_google')}
                     {/* </button> */}
                 </button>
-                <div className="text-center">
+                {/* <div className="text-center">
                     <span className="me-2 text-black font-normal">{t('register_text')}</span>{" "}
                     <Link
                         href={'/auth/register'}
@@ -193,7 +195,7 @@ const LoginForm = () => {
                     >
                         {t('options.register')}
                     </Link>
-                </div>
+                </div> */}
             </div>
         </form>
     )
