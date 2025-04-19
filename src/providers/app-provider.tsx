@@ -14,7 +14,7 @@ export default function AppProvider({ children }: { children: React.ReactNode })
 
     // console.log('authcode from app-provider:', googleAuthCode)
     // console.log('isAuthenticated from app-provider:', isAuthenticated)
-    const token = localStorage.getItem('token')
+    // const token = localStorage.getItem('token')
     // console.log('token from app-provider:', token)
 
     useEffect(() => {

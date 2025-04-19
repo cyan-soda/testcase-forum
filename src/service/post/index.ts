@@ -90,7 +90,7 @@ export class PostService {
             },
         });
 
-        return response.data;
+        return response;
     }
 
     async clickPost(post_id: string, post_type: number) {
