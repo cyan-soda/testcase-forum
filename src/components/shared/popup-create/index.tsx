@@ -1,7 +1,7 @@
 'use client'
 
 import axios from 'axios'
-import { useForm, SubmitHandler, set } from 'react-hook-form'
+import { useForm, SubmitHandler } from 'react-hook-form'
 import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
 import Image from 'next/image'
@@ -22,7 +22,6 @@ interface CreatePopupProps {
 
 interface ICreatePostForm {
     title: string
-    tags?: string
     description?: string
     input: string
     expected: string
@@ -60,7 +59,6 @@ interface PostResponse {
 
 const createPostSchema = yup.object().shape({
     title: yup.string().trim().required('Title is required'),
-    tags: yup.string().trim(),
     description: yup.string().trim(),
     input: yup.string().trim().required('Input is required'),
     expected: yup.string().trim().required('Expected output is required'),
@@ -144,7 +142,6 @@ const CreatePostPopup = (props: CreatePopupProps) => {
 
     const onSubmit: SubmitHandler<ICreatePostForm> = async (data) => {
         try {
-            // console.log('Posting as user:', user?.mail)
             const response = await postService.createPostForm(
                 data.title,
                 data.description || '',
@@ -152,23 +149,30 @@ const CreatePostPopup = (props: CreatePopupProps) => {
                 data.expected,
                 data.code
             )
-            const responseData = response as PostResponse
 
-            if (responseData.similar_posts && responseData.similar_posts.length > 0) {
-                // Similar posts found, open DuplicatePopup
-                setSimilarPosts(responseData.similar_posts)
-                setPostId(responseData.post.id)
-                setPostData(data)
-                setIsDuplicatePopupOpen(true)
-            } else {
+            const status = response.status
+            const responseData: PostResponse = response.data
+
+            if (status === 201) {
                 // No similar posts, post is uploaded
-                // console.log('Post uploaded successfully:', responseData)
                 reset()
                 props.onClose()
+            } else if (status === 302) {
+                // Similar posts found, open DuplicatePopup
+                setPostId(responseData.post.id)
+                if (responseData.similar_posts && responseData.similar_posts.length > 0) {
+                    setSimilarPosts(responseData.similar_posts)
+                    setPostData(data)
+                    setIsDuplicatePopupOpen(true)
+                } else {
+                    console.warn('No similar posts provided in 302 response')
+                }
+            } else {
+                console.error('Unexpected status code:', status)
             }
         } catch (error) {
             if (axios.isAxiosError(error)) {
-                console.error('Axios error:', error.response?.data || error.message)
+                console.error('Axios error:', error.response?.data || error.message, error.response?.status)
             } else {
                 console.error('Unexpected error:', error)
             }
@@ -176,7 +180,10 @@ const CreatePostPopup = (props: CreatePopupProps) => {
     }
 
     const handlePostAnyway = async () => {
-        if (!postData) return
+        if (!postId) {
+            // console.error('No postId available for posting anyway')
+            return
+        }
 
         try {
             await postService.createPostAnyway(postId)
@@ -194,9 +201,11 @@ const CreatePostPopup = (props: CreatePopupProps) => {
     }
 
     const handleCancelPost = () => {
+        console.log('Post cancelled')
         setIsDuplicatePopupOpen(false)
         setPostData(null)
         setSimilarPosts([])
+        setPostId('')
     }
 
     return (
@@ -210,10 +219,9 @@ const CreatePostPopup = (props: CreatePopupProps) => {
                         Add some basic information about your post
                     </span>
                     <Item title='Title *' {...register('title', { required: true })} error={errors.title?.message} />
-                    <Item title='Tags *' {...register('tags')} error={errors.tags?.message} />
-                    <ContentItem title='Content *' {...register('description')} error={errors.description?.message} />
+                    <ContentItem title='Content' {...register('description')} error={errors.description?.message} />
                     <Item
-                        title='Executable Code *'
+                        title='Test Code *'
                         {...register('code', { required: true })}
                         error={errors.code?.message}
                     />

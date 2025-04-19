@@ -33,3 +33,5 @@ export class UserService {
         return response.data;
     }
 }
+
+export const userService = new UserService()
