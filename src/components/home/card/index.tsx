@@ -72,20 +72,22 @@ const PostCard = ({ post_id }: { post_id: string }) => {
                 </div>
                 <div className='w-[85%] flex flex-col gap-3 flex-grow'>
                     <div className='flex flex-row gap-[10px] items-start'>
-                        <div className='flex flex-col gap-[10px] w-[80%]'>
-                            <span className='text-xl font-semibold'>{post.title}</span>
+                        <div className='flex flex-col gap-[10px] w-4/5'>
+                            <span className='text-xl font-semibold overflow-hidden text-ellipsis'>{post.title}</span>
                             {/* <div className='flex flex-row gap-[10px]'>
                                 {post.tags.map((tag, index) => (
                                     <Tag key={index} tag={tag} />
                                 ))}
                             </div> */}
-                            <span className='max-h-[48px] h-fit overflow-hidden text-ellipsis'>{post.description}</span>
+                            <div className='whitespace-pre-wrap break-words'>{post.description}</div>
                         </div>
-                        <div className='w-1/4 flex flex-col items-center justify-start overflow-hidden'>
-                            <div className='flex flex-row items-center gap-[10px] '>
-                                <div className='rounded-full p-2 bg-grey h-10 w-10 text-black flex items-center justify-center'>{getInitials(post.author)}</div>
+                        <div className='w-1/5 flex-shrink-0 flex flex-col items-center justify-start overflow-hidden'>
+                            <div className='flex flex-row items-center gap-[10px]'>
+                                <div className='rounded-full p-2 bg-grey h-10 w-10 text-black flex items-center justify-center'>
+                                    {getInitials(post.author)}
+                                </div>
                                 <div className='flex flex-col items-start gap-1'>
-                                    <span className='text-base font-semibold flex-1'>{post.author}</span>
+                                    <span className='text-base font-semibold'>{post.author}</span>
                                     <span className='text-sm font-normal'>{post.last_modified}</span>
                                 </div>
                             </div>

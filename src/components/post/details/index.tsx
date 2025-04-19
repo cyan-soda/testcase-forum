@@ -156,7 +156,7 @@ const PostDetails = ({ post_id }: { post_id: string }) => {
                                 <span className="text-xs font-normal">{post.last_modified}</span>
                             </div>
                         </div>
-                        <span className="text-xl font-semibold mt-2">{post.title}</span>
+                        <span className="text-xl font-semibold mt-2 whitespace-pre-wrap break-words">{post.title}</span>
                         {/* <div className='flex flex-row gap-[10px] mt-[2px]'>
                             {post.tags?.map((tag, index) => (
                                 <Tag key={index} tag={tag} />
@@ -164,17 +164,17 @@ const PostDetails = ({ post_id }: { post_id: string }) => {
                         </div> */}
                     </div>
 
-                    <div className="text-sm font-light text-left w-full mt-4 mb-2">
+                    <div className="text-sm font-light text-left w-full mt-4 mb-2 whitespace-pre-wrap break-words">
                         {post.description}
                     </div>
                     <div className="flex flex-col items-start gap-2 w-full my-2 p-4 border rounded-lg">
                         <div className="grid grid-cols-[8rem_1fr] items-center gap-2 w-full">
                             <span className="text-sm font-semibold">Input:</span>
-                            <span className="bg-grey py-2 px-3 rounded-lg">{post.testcase.input}</span>
+                            <div className="bg-grey py-2 px-3 rounded-lg whitespace-pre-wrap break-words break-all">{post.testcase.input}</div>
                         </div>
                         <div className="grid grid-cols-[8rem_1fr] items-center gap-2 w-full">
                             <span className="text-sm font-semibold">Expected Output:</span>
-                            <span className="bg-grey py-2 px-3 rounded-lg">{post.testcase.expected}</span>
+                            <div className="bg-grey py-2 px-3 rounded-lg whitespace-pre-wrap break-words break-all">{post.testcase.expected}</div>
                         </div>
                     </div>
                     <CodeMarkdownArea code={post.testcase.code} />

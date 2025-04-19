@@ -10,19 +10,20 @@ import { usePostStore } from '@/store/post/post-store';
 import { TPost } from '@/types/post';
 import { postService } from '@/service/post';
 
-// Field component (unchanged)
 const Field = ({ label, value }: { label: string; value?: string }) => {
     return (
         <div className="flex flex-col items-start gap-2 w-full">
             <span className="text-xs font-semibold">{label}</span>
-            <div className="rounded-lg bg-grey px-[10px] py-3 text-sm w-full" style={{ whiteSpace: 'pre-wrap' }}>
+            <div
+                className="rounded-lg bg-grey px-[10px] py-3 text-sm w-full overflow-hidden text-ellipsis"
+                style={{ whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}
+            >
                 {value}
             </div>
         </div>
     );
 };
 
-// RecPostItem component (unchanged)
 const RecPostItem = ({ title, author, link }: { title: string; author: string; link: string }) => {
     return (
         <div 
