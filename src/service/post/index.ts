@@ -5,7 +5,7 @@ import axios from "axios"
 
 export class PostService {
     async getAllPosts() {
-        const response = await axiosClient.get(`/posts`, {
+        const response = await axiosClient.get(`/api/private/posts`, {
             headers: {
                 'Content-Type': 'application/json',
                 Authorization: `Bearer ${localStorage.getItem('token')}`,
@@ -15,7 +15,7 @@ export class PostService {
     }
 
     async getPost(id: string) {
-        const response = await axiosClient.get(`/post/${id}`, {
+        const response = await axiosClient.get(`/api/private/post/${id}`, {
             headers: {
                 'Content-Type': 'application/json',
                 Authorization: `Bearer ${localStorage.getItem('token')}`,
@@ -25,7 +25,7 @@ export class PostService {
     }
 
     async getAllPostIDs() {
-        const response = await axiosClient.get(`/postsID`, {
+        const response = await axiosClient.get(`/api/private/postsID`, {
             headers: {
                 'Content-Type': 'application/json',
                 Authorization: `Bearer ${localStorage.getItem('token')}`,
@@ -41,7 +41,7 @@ export class PostService {
         description: string,
         testcase: { input: string; expected_output: string }
     ) {
-        const response = await axiosClient.put(`/update/${id}`, {
+        const response = await axiosClient.put(`/api/private/update/${id}`, {
             user_mail,
             title,
             description,
@@ -56,7 +56,7 @@ export class PostService {
     }
 
     async deletePost(id: string) {
-        const response = await axiosClient.delete(`/delete/${id}`, {
+        const response = await axiosClient.delete(`/api/private/delete/${id}`, {
             headers: {
                 'Content-Type': 'application/json',
                 Authorization: `Bearer ${localStorage.getItem('token')}`,
@@ -66,7 +66,7 @@ export class PostService {
     }
 
     async likePost(id: string) {
-        const response = await axiosClient.put(`/post/${id}/like`, {}, {
+        const response = await axiosClient.put(`/api/private/post/${id}/like`, {}, {
             headers: {
                 'Content-Type': 'application/json',
                 Authorization: `Bearer ${localStorage.getItem('token')}`,
@@ -83,7 +83,7 @@ export class PostService {
         formData.append("expected", expected)
         formData.append("code", code)
 
-        const response = await axiosClient.post(`/create`, formData, {
+        const response = await axiosClient.post(`/api/private/create`, formData, {
             headers: {
                 "Content-Type": "multipart/form-data",
                 Authorization: `Bearer ${localStorage.getItem('token')}`,
@@ -94,7 +94,7 @@ export class PostService {
     }
 
     async clickPost(post_id: string, post_type: number) {
-        const response = await axiosClient.post(`/posts/read`, {post_id, post_type}, {
+        const response = await axiosClient.post(`/api/private/posts/read`, {post_id, post_type}, {
             headers: {
                 'Content-Type': 'application/json',
                 Authorization: `Bearer ${localStorage.getItem('token')}`,
@@ -104,7 +104,7 @@ export class PostService {
     }
 
     async getSuggestedPosts() {
-        const response = await axiosClient.get(`/sgposts`, {
+        const response = await axiosClient.get(`/api/private/sgposts`, {
             headers: {
                 'Content-Type': 'application/json',
                 Authorization: `Bearer ${localStorage.getItem('token')}`,
@@ -114,7 +114,7 @@ export class PostService {
     }
 
     async getRelatedPosts(post_id: string) {
-        const response = await axiosClient.get(`/post/${post_id}/related`, {
+        const response = await axiosClient.get(`/api/private/post/${post_id}/related`, {
             headers: {
                 'Content-Type': 'application/json',
                 Authorization: `Bearer ${localStorage.getItem('token')}`,
@@ -124,7 +124,7 @@ export class PostService {
     }
 
     async createPostAnyway(post_id: string) {
-        const response = await axiosClient.post(`/confirm/${post_id}`, {}, {
+        const response = await axiosClient.post(`/api/private/confirm/${post_id}`, {}, {
             headers: {
                 'Content-Type': 'application/json',
                 Authorization: `Bearer ${localStorage.getItem('token')}`,
