@@ -3,10 +3,8 @@
 import axiosClient from "../axios-client"
 
 export class UserService {
-    private baseUrl = 'http://localhost:3000';
-
     getUserPosts = async () => {
-        const response = await axiosClient.get(`${this.baseUrl}/user/posts`, {
+        const response = await axiosClient.get(`/user/posts`, {
             headers: {
                 'Content-Type': 'application/json',
                 Authorization: `Bearer ${localStorage.getItem('token')}`,
@@ -16,7 +14,7 @@ export class UserService {
     }
 
     getUserLikedPosts = async () => {
-        const response = await axiosClient.get(`${this.baseUrl}/user/likedposts`, {
+        const response = await axiosClient.get(`/user/likedposts`, {
             headers: {
                 'Content-Type': 'application/json',
                 Authorization: `Bearer ${localStorage.getItem('token')}`,
@@ -26,7 +24,7 @@ export class UserService {
     }
 
     getUserCommentedPosts = async () => {
-        const response = await axiosClient.get(`${this.baseUrl}/user/commentedposts`, {
+        const response = await axiosClient.get(`/user/commentedposts`, {
             headers: {
                 'Content-Type': 'application/json',
                 Authorization: `Bearer ${localStorage.getItem('token')}`,

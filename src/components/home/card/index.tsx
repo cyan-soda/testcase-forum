@@ -53,7 +53,7 @@ const PostCard = ({ post_id }: { post_id: string }) => {
         course && term && router.push(`/space/${course}/${term}/${post.id}`)
 
         postService.clickPost(post.id, post.post_type).then((res) => {
-            // console.log('Post clicked:', res)
+            console.log('Post clicked:', res)
         }).catch((err) => {
             console.error('Error clicking post:', err)
         })
