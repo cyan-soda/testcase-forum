@@ -65,10 +65,10 @@ const PostCard = ({ post_id }: { post_id: string }) => {
         <>
             <div className="w-full flex flex-row gap-6 bg-white text-black px-6 py-5 rounded-2xl border border-black border-b-[3px]">
                 <div className='flex flex-col gap-5'>
-                    <Reaction count={post.interaction.like_count} icon={iconStar} />
-                    <Reaction count={post.interaction.comment_count} icon={iconComment} />
-                    <Reaction count={post.interaction.view_count} icon={iconView} />
-                    <Reaction count={post.interaction.verified_teacher_mail ? 1 : 0} icon={iconBadge} />
+                    <Reaction count={post.interaction?.like_count} icon={iconStar} />
+                    <Reaction count={post.interaction?.comment_count} icon={iconComment} />
+                    <Reaction count={post.interaction?.view_count} icon={iconView} />
+                    <Reaction count={post.interaction?.verified_teacher_mail ? 1 : 0} icon={iconBadge} />
                 </div>
                 <div className='w-[85%] flex flex-col gap-3 flex-grow'>
                     <div className='flex flex-row gap-[10px] items-start'>

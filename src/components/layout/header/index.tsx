@@ -29,6 +29,7 @@ const Header = () => {
     const { t } = useTranslation('header')
 
     const { user } = useUserStore()
+    console.log(user)
     const { isAuthenticated, logOut } = useAuthStore()
 
     useEffect(() => {
@@ -39,10 +40,10 @@ const Header = () => {
     const handleClick = (link: string) => {
         setActiveLink(link)
         localStorage.setItem('activeLink', link)
-        if (link === '/archive') {
-            router.push(`/archive/${user?.id}`)
-            return
-        }
+        // if (link === '/archive') {
+        //     router.push(`/archive/${user?.id}`)
+        //     return
+        // }
         router.push(link)
     }
 

@@ -101,27 +101,27 @@ const PostDetails = ({ post_id }: { post_id: string }) => {
             }
         };
 
-        const fetchRelatedPosts = async () => {
-            try {
-                setLoadingRelatedPosts(true);
-                setErrorRelatedPosts(null); // Reset error state
-                const res = await postService.getRelatedPosts(post.id);
-                if (res.status === 404) {
-                    setRelatedPosts([]); // No related posts found
-                } else {
-                    setRelatedPosts(res); // Set related posts
-                }
-            } catch (error: any) {
-                console.error("Error fetching related posts:", error);
-                setErrorRelatedPosts("Failed to load related posts. Please try again later.");
-                setRelatedPosts([]); // Clear posts on error
-            } finally {
-                setLoadingRelatedPosts(false);
-            }
-        };
+        // const fetchRelatedPosts = async () => {
+        //     try {
+        //         setLoadingRelatedPosts(true);
+        //         setErrorRelatedPosts(null); // Reset error state
+        //         const res = await postService.getRelatedPosts(post.id);
+        //         if (res.status === 404) {
+        //             setRelatedPosts([]); // No related posts found
+        //         } else {
+        //             setRelatedPosts(res); // Set related posts
+        //         }
+        //     } catch (error: any) {
+        //         console.error("Error fetching related posts:", error);
+        //         setErrorRelatedPosts("Failed to load related posts. Please try again later.");
+        //         setRelatedPosts([]); // Clear posts on error
+        //     } finally {
+        //         setLoadingRelatedPosts(false);
+        //     }
+        // };
 
         fetchComments();
-        fetchRelatedPosts();
+        // fetchRelatedPosts();
     }, [post.id]);
 
     return (
