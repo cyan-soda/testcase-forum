@@ -114,6 +114,26 @@ export class PostService {
         });
         return response.data;
     }
+
+    async getRelatedPosts(post_id: string) {
+        const response = await axiosClient.get(`${this.baseUrl}/post/${post_id}/related`, {
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${localStorage.getItem('token')}`,
+            },
+        });
+        return response.data.related_posts;
+    }
+
+    async createPostAnyway(post_id: string) {
+        const response = await axiosClient.post(`${this.baseUrl}/confirm/${post_id}`, {}, {
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${localStorage.getItem('token')}`,
+            },
+        });
+        return response.data;
+    }
 }
 
 export const postService = new PostService();

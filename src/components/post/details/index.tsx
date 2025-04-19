@@ -13,10 +13,11 @@ import { LikeButton, CommentButton, BadgeButton } from "@/components/shared/butt
 import Comment from "../comments"
 import RecPosts from "../rec-posts"
 import { commentService } from "@/service/comment"
-import { TPost } from "@/types/post"
+import { TPost, TPostRelated } from "@/types/post"
 import CommentEditor from "../comment-editor"
 import { TComment } from "@/types/comment"
 import { usePostStore } from "@/store/post/post-store"
+import { postService } from "@/service/post"
 
 const getInitials = (name: string) => {
     if (!name) return ''
@@ -37,25 +38,6 @@ const Tab = ({ title, isActive, count, onClick }: { title: string, isActive: boo
         </button>
     )
 }
-interface Comment {
-    id: string;
-    parent_id: string | null;
-    author: string;
-    content: string;
-    created_at: string;
-    like_count: 5,
-    comment_count: 5,
-    badge_count: 2,
-    date: '3 days ago',
-}
-
-const POSTS = [
-    { title: "I put my minimum effort into creating this set of test cases for you guys, but I promise it works for 90% of this assignment.", author: "Dang Hoang", link: "#" },
-    { title: "I put my minimum effort into creating this set of test cases for you guys, but I promise it works for 90% of this assignment.", author: "Son Nguyen", link: "#" },
-    { title: "I put my minimum effort into creating this set of test cases for you guys, but I promise it works for 90% of this assignment.", author: "Dang Hoang", link: "#" },
-    { title: "I put my minimum effort into creating this set of test cases for you guys, but I promise it works for 90% of this assignment.", author: "Son Nguyen", link: "#" },
-    { title: "I put my minimum effort into creating this set of test cases for you guys, but I promise it works for 90% of this assignment.", author: "Dang Hoang", link: "#" },
-]
 
 const CodeMarkdownArea = ({ code }: { code: string }) => {
     const lines = (code || "No code provided").split('\n')
@@ -93,33 +75,54 @@ const PostDetails = ({ post_id }: { post_id: string }) => {
     const [comments, setComments] = useState<TComment[]>([]);
     const [loadingComment, setLoadingComment] = useState(true);
 
-    const [isOpenComment, setIsOpenComment] = useState(false)
-    const [isOpenBadge, setIsOpenBadge] = useState(false)
+    const [relatedPosts, setRelatedPosts] = useState<TPostRelated[]>([]);
+    const [loadingRelatedPosts, setLoadingRelatedPosts] = useState(true);
+    const [errorRelatedPosts, setErrorRelatedPosts] = useState<string | null>(null);
 
-    const [isOpenPreviewPopup, setIsOpenPreviewPopup] = useState(false)
-    const handleOpenPreviewPopup = () => {
-        setIsOpenPreviewPopup(true)
-    }
+    const [isOpenComment, setIsOpenComment] = useState(false);
+    const [isOpenBadge, setIsOpenBadge] = useState(false);
+    const [isOpenPreviewPopup, setIsOpenPreviewPopup] = useState(false);
 
-    const [activeTab, setActiveTab] = useState<'comments' | 'similar'>('comments')
+    const [activeTab, setActiveTab] = useState<'comments' | 'similar'>('comments');
     const handleToggleTab = (tab: 'comments' | 'similar') => {
-        setActiveTab(tab)
-    }
+        setActiveTab(tab);
+    };
 
     useEffect(() => {
         const fetchComments = async () => {
             try {
-                const res = await commentService.getAllComments(post.id)
-                setComments(res)
+                setLoadingComment(true);
+                const res = await commentService.getAllComments(post.id);
+                setComments(res);
             } catch (error) {
-                console.error("Lỗi khi tải comment:", error)
+                console.error("Error fetching comments:", error);
             } finally {
-                setLoadingComment(false)
+                setLoadingComment(false);
             }
-        }
+        };
 
-        fetchComments()
-    }, [post.id])
+        const fetchRelatedPosts = async () => {
+            try {
+                setLoadingRelatedPosts(true);
+                setErrorRelatedPosts(null); // Reset error state
+                const res = await postService.getRelatedPosts(post.id);
+                if (res.status === 404) {
+                    setRelatedPosts([]); // No related posts found
+                } else {
+                    setRelatedPosts(res); // Set related posts
+                }
+            } catch (error: any) {
+                console.error("Error fetching related posts:", error);
+                setErrorRelatedPosts("Failed to load related posts. Please try again later.");
+                setRelatedPosts([]); // Clear posts on error
+            } finally {
+                setLoadingRelatedPosts(false);
+            }
+        };
+
+        fetchComments();
+        fetchRelatedPosts();
+    }, [post.id]);
 
     return (
         <>
@@ -201,7 +204,7 @@ const PostDetails = ({ post_id }: { post_id: string }) => {
                             title="Related Posts"
                             isActive={activeTab === 'similar'}
                             onClick={() => handleToggleTab('similar')}
-                            count={POSTS.length}
+                            count={relatedPosts.length}
                         />
                     </div>
                     <div className="w-full">
@@ -230,14 +233,22 @@ const PostDetails = ({ post_id }: { post_id: string }) => {
                         )}
                         {activeTab === 'similar' && (
                             <div className="flex flex-col gap-5 w-full">
-                                {POSTS.map((post, index) => (
-                                    <RecPosts
-                                        key={index}
-                                        title={post.title}
-                                        author={post.author}
-                                        link={post.link}
-                                    />
-                                ))}
+                                {loadingRelatedPosts ? (
+                                    <div className="text-center">Loading related posts...</div>
+                                ) : errorRelatedPosts ? (
+                                    <div className="text-center text-red-500">{errorRelatedPosts}</div>
+                                ) : relatedPosts.length === 0 ? (
+                                    <div className="text-center">No related posts found.</div>
+                                ) : (
+                                    relatedPosts.map((post, index) => (
+                                        <RecPosts
+                                            key={index}
+                                            title={post.title}
+                                            author={post.author}
+                                            link={`/space/CO1005/242/${post.post_id}`}
+                                        />
+                                    ))
+                                )}
                             </div>
                         )}
                     </div>

@@ -23,3 +23,13 @@ export type TPost = {
         run_count: number,
     }
 }
+
+export type TPostRelated = {
+    post_id: string, 
+    title: string,
+    description: string,
+    author: string,
+    input: string,
+    expected: string,
+    similarity: number,
+}
