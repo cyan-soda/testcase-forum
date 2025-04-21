@@ -18,22 +18,36 @@ interface DuplicatePopupProps {
     onPostAnyway: () => void
 }
 
-const Item = (props: {title: string, author: string, input: string, output: string}) => {
+const Item = (props: { title: string, author: string, input: string, output: string, id: string }) => {
     return (
         <div className='flex flex-col gap-1 items-start w-full'>
             <div className='flex flex-row items-center gap-1'>
                 <span className='text-base font-semibold'>Posted in</span>
-                <span className='text-base font-normal hover:underline hover:cursor-pointer'>{props.title}</span>
+                <span className='text-base font-normal hover:underline hover:cursor-pointer' onClick={() => { window.open(`/space/CO1005/242/${props.id}`, '_blank') }}>{props.title}</span>
                 <span className='text-base font-semibold'>{' '}by</span>
                 <span className='text-base font-normal'>{props.author}</span>
             </div>
-            <div className='flex flex-col gap-1 py-2 px-3 rounded-lg bg-grey w-full text-base font-semibold'>
-                <span className='text-base font-semibold'>Input: <span className='font-normal'>{props.input}</span></span>
-                <span className='text-base font-semibold'>Output: <span className='font-normal'>{props.output}</span></span>
+            <div className="flex flex-col items-start gap-2 w-full my-2 p-4 border rounded-lg">
+                <div className="grid grid-cols-[8rem_1fr] items-center gap-2 w-full">
+                    <span className="text-sm font-semibold">Support File's Content:</span>
+                    <span className="bg-grey py-2 px-3 rounded-lg whitespace-pre-wrap break-words break-all">
+                        {props.input.split('\n').map((line, index) => (
+                            <span key={index} className='text-base font-normal'>{line}</span>
+                        ))}
+                    </span>
+                </div>
+                <div className="grid grid-cols-[8rem_1fr] items-center gap-2 w-full">
+                    <span className="text-sm font-semibold">Expected Output:</span>
+                    <span className="bg-grey py-2 px-3 rounded-lg whitespace-pre-wrap break-words break-all">
+                        {props.output.split('\n').map((line, index) => (
+                            <span key={index} className='text-base font-normal'>{line}</span>
+                        ))}
+                    </span>
+                </div>
             </div>
         </div>
     )
-}   
+}
 
 const DuplicatePopup = (props: DuplicatePopupProps) => {
     return (
@@ -49,6 +63,7 @@ const DuplicatePopup = (props: DuplicatePopupProps) => {
                         author={item.author}
                         input={item.input}
                         output={item.expected}
+                        id={item.post_id}
                     />
                 ))}
                 <span className='text-xl leading-8 font-semibold text-left w-full'>

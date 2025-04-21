@@ -104,7 +104,7 @@ const MyPosts = () => {
                                     onCancel={handleCancelEdit}
                                 />
                             ) : ( */}
-                                <div className="space-y-2">
+                                <div className="flex flex-col items-start gap-2 w-full">
                                     <div className="flex flex-row items-center justify-between w-full">
                                         <Link href={`/space/CO1005/242/${post.id}`} className="hover:underline flex-grow">
                                             <h2 className="text-xl font-semibold text-left whitespace-pre-wrap break-words break-all">{post.title}</h2>
@@ -124,7 +124,7 @@ const MyPosts = () => {
                                     <p className="text-gray-600 whitespace-pre-wrap break-words break-all">{post.description}</p>
                                     <div className="flex flex-col items-start gap-2 w-full my-2 p-4 border rounded-lg">
                                         <div className="grid grid-cols-[8rem_1fr] items-center gap-2 w-full">
-                                            <span className="text-sm font-semibold">Input:</span>
+                                            <span className="text-sm font-semibold">Support File's Content:</span>
                                             <span className="bg-grey py-2 px-3 rounded-lg whitespace-pre-wrap break-words break-all">{post.testcase.input}</span>
                                         </div>
                                         <div className="grid grid-cols-[8rem_1fr] items-center gap-2 w-full">
@@ -132,6 +132,7 @@ const MyPosts = () => {
                                             <span className="bg-grey py-2 px-3 rounded-lg whitespace-pre-wrap break-words break-all">{post.testcase.expected}</span>
                                         </div>
                                     </div>
+                                    <span className="text-sm font-semibold">Test Code:</span>
                                     <CodeMarkdownArea code={post.testcase.code} />
                                 </div>
                             {/* )} */}

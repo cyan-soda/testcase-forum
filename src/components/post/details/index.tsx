@@ -101,33 +101,33 @@ const PostDetails = ({ post_id }: { post_id: string }) => {
             }
         };
 
-        // const fetchRelatedPosts = async () => {
-        //     try {
-        //         setLoadingRelatedPosts(true);
-        //         setErrorRelatedPosts(null); // Reset error state
-        //         const res = await postService.getRelatedPosts(post.id);
-        //         if (res.status === 404) {
-        //             setRelatedPosts([]); // No related posts found
-        //         } else {
-        //             setRelatedPosts(res); // Set related posts
-        //         }
-        //     } catch (error: any) {
-        //         console.error("Error fetching related posts:", error);
-        //         setErrorRelatedPosts("Failed to load related posts. Please try again later.");
-        //         setRelatedPosts([]); // Clear posts on error
-        //     } finally {
-        //         setLoadingRelatedPosts(false);
-        //     }
-        // };
+        const fetchRelatedPosts = async () => {
+            try {
+                setLoadingRelatedPosts(true);
+                setErrorRelatedPosts(null); // Reset error state
+                const res = await postService.getRelatedPosts(post.id);
+                if (res.status === 404) {
+                    setRelatedPosts([]); // No related posts found
+                } else {
+                    setRelatedPosts(res); // Set related posts
+                }
+            } catch (error: any) {
+                console.error("Error fetching related posts:", error);
+                setErrorRelatedPosts("Failed to load related posts. Please try again later.");
+                setRelatedPosts([]); // Clear posts on error
+            } finally {
+                setLoadingRelatedPosts(false);
+            }
+        };
 
         fetchComments();
-        // fetchRelatedPosts();
+        fetchRelatedPosts();
     }, [post.id]);
 
     return (
         <>
             <div className="min-h-screen bg-white text-black p-5 rounded-xl flex flex-col gap-5 items-center">
-                <div className="flex flex-col gap-2 pb-5 items-center w-full border-b border-black">
+                <div className="flex flex-col gap-2 pb-5 w-full border-b border-black">
                     <div className="flex flex-col gap-2 w-full">
                         <div className="flex flex-row items-center justify-between w-full">
                             {/* user's name, avatar & active status */}
@@ -169,7 +169,7 @@ const PostDetails = ({ post_id }: { post_id: string }) => {
                     </div>
                     <div className="flex flex-col items-start gap-2 w-full my-2 p-4 border rounded-lg">
                         <div className="grid grid-cols-[8rem_1fr] items-center gap-2 w-full">
-                            <span className="text-sm font-semibold">Input:</span>
+                            <span className="text-sm font-semibold">Support File's Content:</span>
                             <div className="bg-grey py-2 px-3 rounded-lg whitespace-pre-wrap break-words break-all">{post.testcase.input}</div>
                         </div>
                         <div className="grid grid-cols-[8rem_1fr] items-center gap-2 w-full">
@@ -177,6 +177,7 @@ const PostDetails = ({ post_id }: { post_id: string }) => {
                             <div className="bg-grey py-2 px-3 rounded-lg whitespace-pre-wrap break-words break-all">{post.testcase.expected}</div>
                         </div>
                     </div>
+                    <span className="text-sm font-semibold text-left">Test Code:</span>
                     <CodeMarkdownArea code={post.testcase.code} />
                     <div className="flex flex-row items-center justify-between w-full mt-2">
                         <div className="flex flex-row items-center gap-3">
