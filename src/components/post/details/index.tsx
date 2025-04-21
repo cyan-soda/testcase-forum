@@ -1,15 +1,15 @@
 'use client'
 
-import Image from "next/image"
+// import Image from "next/image"
 import { useState, useEffect } from "react"
 import dynamic from "next/dynamic"
-import iconSave from '@/icons/save-2.svg'
-import iconHide from '@/icons/eye-slash.svg'
-import iconReport from '@/icons/danger.svg'
+// import iconSave from '@/icons/save-2.svg'
+// import iconHide from '@/icons/eye-slash.svg'
+// import iconReport from '@/icons/danger.svg'
 
 const PreviewPopup = dynamic(() => import('@/components/shared/popup-preview'), { ssr: false })
-import { Tag } from "@/components/home/card"
-import { LikeButton, CommentButton, BadgeButton } from "@/components/shared/buttons"
+// import { Tag } from "@/components/home/card"
+import { LikeButton, BadgeButton } from "@/components/shared/buttons"
 import Comment from "../comments"
 import RecPosts from "../rec-posts"
 import { commentService } from "@/service/comment"
@@ -42,7 +42,7 @@ const Tab = ({ title, isActive, count, onClick }: { title: string, isActive: boo
 export const CodeMarkdownArea = ({ code }: { code: string }) => {
     const lines = (code || "No code provided").split('\n')
     return (
-        <div className="rounded-lg bg-grey px-3 py-3 text-sm font-mono w-full">
+        <div className="rounded-lg bg-gray-100 px-3 py-3 text-sm font-mono w-full">
             <pre className="whitespace-pre-wrap break-words">
                 {lines.map((line, index) => (
                     <div key={index} className="flex whitespace-pre-wrap break-words">
@@ -79,7 +79,7 @@ const PostDetails = ({ post_id }: { post_id: string }) => {
     const [loadingRelatedPosts, setLoadingRelatedPosts] = useState(true);
     const [errorRelatedPosts, setErrorRelatedPosts] = useState<string | null>(null);
 
-    const [isOpenComment, setIsOpenComment] = useState(false);
+    // const [isOpenComment, setIsOpenComment] = useState(false);
     const [isOpenBadge, setIsOpenBadge] = useState(false);
     const [isOpenPreviewPopup, setIsOpenPreviewPopup] = useState(false);
 
@@ -106,7 +106,7 @@ const PostDetails = ({ post_id }: { post_id: string }) => {
                 setLoadingRelatedPosts(true);
                 setErrorRelatedPosts(null); // Reset error state
                 const res = await postService.getRelatedPosts(post.id);
-                if (res.status === 404) {
+                if (res.status === 202) {
                     setRelatedPosts([]); // No related posts found
                 } else {
                     setRelatedPosts(res); // Set related posts
@@ -141,9 +141,9 @@ const PostDetails = ({ post_id }: { post_id: string }) => {
                                 </div>
                             </div>
                             <div className="flex flex-row items-center gap-4">
-                                <button><Image src={iconSave} alt="" width={24} height={24} /></button>
+                                {/* <button><Image src={iconSave} alt="" width={24} height={24} /></button>
                                 <button><Image src={iconHide} alt="" width={24} height={24} /></button>
-                                <button><Image src={iconReport} alt="" width={24} height={24} /></button>
+                                <button><Image src={iconReport} alt="" width={24} height={24} /></button> */}
                             </div>
                         </div>
                         <div className="w-full flex flex-row items-start gap-2">
@@ -222,18 +222,17 @@ const PostDetails = ({ post_id }: { post_id: string }) => {
                                         })
                                     }}
                                 />
-                                {comments.length === 0 ? (
-                                    <div className="text-center">No comments yet.</div>
-                                ) : (
-                                    comments
-                                        .sort((a: TComment, b: TComment) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
-                                        .map((comment: TComment) => (
-                                            <Comment
-                                                key={comment.id}
-                                                comment={comment}
-                                            />
-                                        ))
-                                )} 
+                                {loadingComment && (<div className="text-center">Loading comments...</div>)}
+                                {comments.length === 0 && (<div className="text-center">No comments yet.</div>)}
+                                {comments
+                                    .sort((a: TComment, b: TComment) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
+                                    .map((comment: TComment) => (
+                                        <Comment
+                                            key={comment.id}
+                                            comment={comment}
+                                        />
+                                    ))
+                                } 
                             </div>
                         )}
                         {activeTab === 'similar' && (

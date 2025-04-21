@@ -6,15 +6,15 @@ import { useDebouncedCallback } from 'use-debounce';
 
 import PostCard from "@/components/home/card";
 import PopularPosts from "@/components/home/popular/posts";
-import PopularTags from "@/components/home/popular/tags";
+// import PopularTags from "@/components/home/popular/tags";
 import SearchFilterField from "@/components/home/utils/search-filter";
-import SearchTagField from "@/components/home/utils/search-tag";
+// import SearchTagField from "@/components/home/utils/search-tag";
 import SearchTextField from "@/components/home/utils/search-text";
 import { postService } from "@/service/post";
 import { useTranslation } from "react-i18next";
 import { TPost } from "@/types/post";
 import { usePostStore } from "@/store/post/post-store";
-import { useUserStore } from "@/store/user/user-store";
+// import { useUserStore } from "@/store/user/user-store";
 
 const CoursePage = () => {
   const params = useParams();
@@ -25,7 +25,7 @@ const CoursePage = () => {
   const [tags, setTags] = useState<string[]>([]);
   const [sortFilter, setSortFilter] = useState<string>("");
   const [visiblePosts, setVisiblePosts] = useState<number>(5);
-  const { user } = useUserStore()
+  // const { user } = useUserStore()
 
   // Translation and sort options at top level
   const { t } = useTranslation("home");
@@ -137,10 +137,10 @@ const CoursePage = () => {
   }, 100);
 
   // Tag handler
-  const availableTags = ['assignment1', 'ultimate', 'infinity void', 'programming', 'homework', 'project', 'exam', 'test'];
-  const handleTagChange = (selectedTags: string[]) => {
-    setTags(selectedTags);
-  };
+  // const availableTags = ['assignment1', 'ultimate', 'infinity void', 'programming', 'homework', 'project', 'exam', 'test'];
+  // const handleTagChange = (selectedTags: string[]) => {
+  //   setTags(selectedTags);
+  // };
 
   // Sort handler
   const handleFilterChange = (selected: string) => {

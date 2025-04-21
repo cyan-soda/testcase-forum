@@ -5,24 +5,6 @@ import { useTranslation } from "react-i18next"
 import { useEffect, useState } from "react"
 import { postService } from "@/service/post"
 
-const POSTS = [
-    {   
-        id: 0,
-        title: 'I have found the ultimate test cases for this assignment',
-        author: 'Naomi Nguyen'
-    },
-    {
-        id: 1,
-        title: 'How to solve the last question in the assignment',
-        author: 'Naomi Nguyen'
-    },
-    {
-        id: 2,
-        title: 'How to solve the last question in the assignment',
-        author: 'Naomi Nguyen'
-    },
-]
-
 const Item = ({ id, title, author }: { id: string, title: string, author: string }) => {
     const { t } = useTranslation('home')
     return (

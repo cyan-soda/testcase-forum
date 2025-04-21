@@ -1,7 +1,7 @@
 'use client'
 
 import Image from "next/image"
-import { useParams } from "next/navigation"
+// import { useParams } from "next/navigation"
 import { useState } from "react"
 
 import iconHouse from '@/icons/house.svg'
@@ -16,7 +16,7 @@ const USER_OPTIONS = [
 ]
 
 const ArchivePage = () => {
-    const { userId } = useParams<{ userId: string }>()
+    // const { userId } = useParams<{ userId: string }>()
     const [activeTab, setActiveTab] = useState<string>("My Posts")
     const handleClickTab = (title: string) => {
         setActiveTab(title)

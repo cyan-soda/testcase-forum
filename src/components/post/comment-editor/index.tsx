@@ -4,7 +4,7 @@ import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import { useState } from 'react';
-import { commentService } from '@/service/comment'; // Adjust path as needed
+import { commentService } from '@/service/comment'; 
 
 // Validation schema
 const schema = yup
@@ -56,17 +56,7 @@ const CommentEditor = ({
         setError(null);
 
         try {
-            const response = await commentService.createComment(
-                postId,
-                data.content,
-            );
-
-            // if (!response.ok) {
-            //     throw new Error('Failed to create comment');
-            // }
-
-            reset(); // Clear form after successful submission
-            onCommentCreated?.(); // Notify parent component
+            await commentService.createComment(postId, data.content)
         } catch (err: any) {
             console.error('Error creating comment:', err);
             setError(err.message || 'Failed to create comment. Please try again.');

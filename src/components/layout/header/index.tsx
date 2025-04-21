@@ -12,7 +12,6 @@ const CreatePostPopup = dynamic(() => import('@/components/shared/popup-create')
 import { useTranslation } from "react-i18next"
 import { changeLanguage } from "i18next"
 import { useLanguage } from "@/utils/local-storage"
-import DuplicatePopup from "@/components/shared/popup-duplicate"
 import { useUserStore } from "@/store/user/user-store"
 import { useAuthStore } from "@/store/auth/auth-store"
 

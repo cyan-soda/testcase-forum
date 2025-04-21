@@ -1,18 +1,17 @@
 'use client';
 
-import Image from 'next/image';
 import { useState } from 'react';
 import { useParams } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 
-import iconSend from '@/icons/send.svg';
-import { LikeButton, CommentButton, BadgeButton } from '@/components/shared/buttons';
+// import iconSend from '@/icons/send.svg';
+// import { LikeButton, CommentButton, BadgeButton } from '@/components/shared/buttons';
 import { commentService } from '@/service/comment';
 import { useUserStore } from '@/store/user/user-store';
 import { TComment } from '@/types/comment';
-import CommentEditor from '../comment-editor';
+// import CommentEditor from '../comment-editor';
 
 // Validation schema for edit form
 const commentSchema = yup
@@ -36,14 +35,14 @@ interface CommentProps {
 }
 
 const Comment = ({ comment, onCommentUpdated, onCommentReplied }: CommentProps) => {
-    const [isOpenBadge, setIsOpenBadge] = useState(false);
-    const [isOpenAnswer, setIsOpenAnswer] = useState(false);
+    // const [isOpenBadge, setIsOpenBadge] = useState(false);
+    // const [isOpenAnswer, setIsOpenAnswer] = useState(false);
     const [isEditing, setIsEditing] = useState(false);
-    const [openReplies, setOpenReplies] = useState<Set<number>>(new Set());
+    // const [openReplies, setOpenReplies] = useState<Set<number>>(new Set());
     const [error, setError] = useState<string | null>(null);
 
     const { user } = useUserStore();
-    const { postId } = useParams<{ postId: string }>();
+    // const { postId } = useParams<{ postId: string }>();
 
     // Form for editing
     const {
@@ -58,19 +57,19 @@ const Comment = ({ comment, onCommentUpdated, onCommentReplied }: CommentProps) 
         },
     });
 
-    const toggleReply = (parentId: number) => {
-        if (parentId) {
-            setOpenReplies((prev) => {
-                const newState = new Set(prev);
-                if (newState.has(parentId)) {
-                    newState.delete(parentId);
-                } else {
-                    newState.add(parentId);
-                }
-                return newState;
-            });
-        }
-    };
+    // const toggleReply = (parentId: number) => {
+    //     if (parentId) {
+    //         setOpenReplies((prev) => {
+    //             const newState = new Set(prev);
+    //             if (newState.has(parentId)) {
+    //                 newState.delete(parentId);
+    //             } else {
+    //                 newState.add(parentId);
+    //             }
+    //             return newState;
+    //         });
+    //     }
+    // };
 
     const handleEdit = async (data: CommentFormData) => {
         if (!user || !user.mail) {
@@ -80,7 +79,7 @@ const Comment = ({ comment, onCommentUpdated, onCommentReplied }: CommentProps) 
 
         setError(null);
         try {
-            const response = await commentService.updateComment(
+            await commentService.updateComment(
                 comment.id,
                 data.content
             );

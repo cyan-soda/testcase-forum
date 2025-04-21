@@ -1,8 +1,6 @@
 'use-client'
 
 import axiosClient from "../axios-client"
-import axios from "axios"
-
 export class PostService {
     async getAllPosts() {
         const response = await axiosClient.get(`/posts`, {

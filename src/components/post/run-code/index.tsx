@@ -41,7 +41,7 @@ const RecPostItem = ({ title, author, link }: { title: string; author: string; l
 
 const RunCode = () => {
     const [fileNames, setFileNames] = useState<{ hFile?: string; cppFile?: string }>({});
-    const [isUploaded, setIsUploaded] = useState(false);
+    // const [isUploaded, setIsUploaded] = useState(false);
     const [isFileExist, setIsFileExist] = useState(false);
     const { postId } = useParams<{ postId: string }>();
     const [runState, setRunState] = useState<0 | 1 | 2>(0); // 0: not run, 1: passed, 2: failed
@@ -59,16 +59,16 @@ const RunCode = () => {
                 console.log('Check file existence response status:', response);
                 if (response === 204) {
                     setIsFileExist(true);
-                    setIsUploaded(true);
+                    // setIsUploaded(true);
                 } else {
                     setIsFileExist(false);
-                    setIsUploaded(false);
+                    // setIsUploaded(false);
                     setFileNames({});
                 }
             } catch (error) {
                 console.error('Error checking code file existence:', error);
                 setIsFileExist(false);
-                setIsUploaded(false);
+                // setIsUploaded(false);
                 setFileNames({});
             }
         };
@@ -103,11 +103,11 @@ const RunCode = () => {
         if (!selectedFiles) return;
 
         const files = Array.from(selectedFiles);
-        const hFile = files.find((file) => file.name.endsWith('.h'));
-        const cppFile = files.find((file) => file.name.endsWith('.cpp'));
+        const hFile = files.find((file) => file.name === 'hcmcampaign.h' && file.name.endsWith('.h'));
+        const cppFile = files.find((file) => file.name === 'hcmcampaign.cpp' && file.name.endsWith('.cpp'));
 
         if (!hFile || !cppFile) {
-            alert('Please upload both a .h and a .cpp file');
+            alert('Please upload both "hcmcampaign.h" and "hcmcampaign.cpp" files');
             return;
         }
 
@@ -120,7 +120,7 @@ const RunCode = () => {
             const uploadResponse = await codeService.submitCodeFile(hFile, cppFile);
             console.log('Upload response:', uploadResponse);
             if (uploadResponse.success) {
-                setIsUploaded(true);
+                // setIsUploaded(true);
                 setIsFileExist(true);
                 alert('Files uploaded successfully!');
             } else {
@@ -188,7 +188,7 @@ const RunCode = () => {
                         </span>
                     ) : (
                         <span className="text-sm font-normal w-full text-center">
-                            No files uploaded yet. Please upload your .h and .cpp files.
+                            No files uploaded yet. Please upload your "hcmcampaign.h" and "hcmcampaign.cpp" files.
                         </span>
                     )}
                 </div>

@@ -1,5 +1,5 @@
 import React from "react";
-import CoursePage from "./space/[course]/[term]/page";
+// import CoursePage from "./space/[course]/[term]/page";
 
 export default function Home() {
   return (

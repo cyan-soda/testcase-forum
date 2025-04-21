@@ -46,7 +46,6 @@ const PostCard = ({ post_id }: { post_id: string }) => {
 
     }
 
-
     const router = useRouter()
     const { course, term } = useParams()
     const handlePostDetailClick = (post: any) => {

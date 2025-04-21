@@ -30,7 +30,7 @@ const MyPosts = () => {
         const fetchPosts = async () => {
             try {
                 const res = await userService.getUserPosts();
-                if (res.status === 404) {
+                if (res.status === 202) {
                     setPosts([]);
                 } else {
                     setPosts(res.data as TPost[]);
@@ -77,18 +77,18 @@ const MyPosts = () => {
         );
     }
 
-    if (loading) {
-        return (
-            <div className="flex justify-center items-center min-h-screen">
-                <p>Loading...</p>
-            </div>
-        );
-    }
-
     return (
         <div className="w-full">
             <h1 className="text-3xl font-bold mb-6">My Posts</h1>
-            {posts.length === 0 ? (
+            {loading && (
+                <div className="flex items-center justify-center w-full h-full min-h-screen">
+                    <svg className="animate-spin h-10 w-10 text-gray-900" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" strokeWidth="4" stroke="currentColor" fill="none"></circle>
+                        <path className="opacity-75" fill="currentColor" d="M4.93 4.93a10 10 0 0 1 14.14 14.14L12 12l-7.07-7.07z"></path>
+                    </svg>
+                </div>
+            )}
+            {posts === null ? (
                 <p>No posts found.</p>
             ) : (
                 <div className="flex flex-col items-center gap-4 w-full">
@@ -106,7 +106,7 @@ const MyPosts = () => {
                             ) : ( */}
                                 <div className="flex flex-col items-start gap-2 w-full">
                                     <div className="flex flex-row items-center justify-between w-full">
-                                        <Link href={`/space/CO1005/242/${post.id}`} className="hover:underline flex-grow">
+                                        <Link href={`/space/CO1005/242/${post.id}`} className="hover:underline flex-grow" target="_blank" rel="noopener noreferrer">
                                             <h2 className="text-xl font-semibold text-left whitespace-pre-wrap break-words break-all">{post.title}</h2>
                                         </Link>
                                         <div className="flex items-end text-sm font-medium ml-10">

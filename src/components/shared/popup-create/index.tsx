@@ -3,10 +3,13 @@
 import axios from 'axios'
 import Image from 'next/image'
 import dynamic from 'next/dynamic'
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
+import { useForm, Controller } from 'react-hook-form'
+import * as Yup from 'yup'
+import { yupResolver } from '@hookform/resolvers/yup'
 
 import iconUpload from '@/icons/export.svg'
-import { useUserStore } from '@/store/user/user-store'
+// import { useUserStore } from '@/store/user/user-store'
 import { postService } from '@/service/post'
 
 const PopupWrapper = dynamic(() => import('@/components/shared/popup-wrapper'), { ssr: false })
@@ -22,7 +25,7 @@ interface ICreatePostForm {
   description: string
   expected: string
   code: string
-  input: File
+  input: File | null
 }
 
 interface SimilarPost {
@@ -54,114 +57,94 @@ interface PostResponse {
   similar_posts?: SimilarPost[]
 }
 
+// Yup schema for validation
+const createPostSchema = Yup.object().shape({
+  title: Yup.string().trim().required('Title is required'),
+  description: Yup.string().trim().required('Description is required'),
+  expected: Yup.string().trim().required('Expected output is required'),
+  code: Yup.string().trim().required('Code is required'),
+  input: Yup.mixed<File>()
+    .required('A config.txt file is required')
+    .test('fileName', 'File must be named config.txt', (value) => value && value.name === 'config.txt')
+    .test('fileType', 'Only .txt files are allowed', (value) => value && value.type === 'text/plain'),
+})
+
 const CreatePostPopup = (props: CreatePopupProps) => {
-  const { user } = useUserStore()
+  // const { user } = useUserStore()
   const [isDuplicatePopupOpen, setIsDuplicatePopupOpen] = useState(false)
   const [similarPosts, setSimilarPosts] = useState<SimilarPost[]>([])
   const [postData, setPostData] = useState<ICreatePostForm | null>(null)
   const [postId, setPostId] = useState<string>('')
   const [fileName, setFileName] = useState<string>('')
-  const [formData, setFormData] = useState<ICreatePostForm>({
-    title: '',
-    description: '',
-    expected: '',
-    code: '',
-    input: null as unknown as File, 
-  })
-  const [errors, setErrors] = useState<Partial<Record<keyof ICreatePostForm, string>>>({})
+  const [inputText, setInputText] = useState<string>('')
   const [isSubmitting, setIsSubmitting] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
-  const validateForm = (): boolean => {
-    const newErrors: Partial<Record<keyof ICreatePostForm, string>> = {}
-
-    if (!formData.title.trim()) {
-      newErrors.title = 'Title is required'
-    }
-    if (!formData.description.trim()) {
-      newErrors.description = 'Description is required'
-    }
-    if (!formData.expected.trim()) {
-      newErrors.expected = 'Expected output is required'
-    }
-    if (!formData.code.trim()) {
-      newErrors.code = 'Code is required'
-    }
-    if (!formData.input) {
-      newErrors.input = 'A config.txt file is required'
-    } else if (formData.input.name !== 'config.txt') {
-      newErrors.input = 'File must be named config.txt'
-    } else if (formData.input.type !== 'text/plain') {
-      newErrors.input = 'Only .txt files are allowed'
-    }
-
-    setErrors(newErrors)
-    return Object.keys(newErrors).length === 0
-  }
-
-  const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-    field: keyof Omit<ICreatePostForm, 'input'>
-  ) => {
-    setFormData((prev) => ({ ...prev, [field]: e.target.value }))
-    setErrors((prev) => ({ ...prev, [field]: undefined }))
-  }
-
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
-    setFileName(file ? file.name : '')
-    setFormData((prev) => ({ ...prev, input: file || null as unknown as File }))
-    setErrors((prev) => ({ ...prev, input: undefined }))
-  }
-
-  const resetForm = () => {
-    setFormData({
+  // React Hook Form setup
+  const {
+    control,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm<ICreatePostForm>({
+    resolver: yupResolver(createPostSchema) as any,
+    defaultValues: {
       title: '',
       description: '',
       expected: '',
       code: '',
-      input: null as unknown as File,
-    })
+      input: null,
+    },
+  })
+
+  // Reset form when popup is closed
+  useEffect(() => {
+    if (!props.isOpen) {
+      resetForm()
+    }
+  }, [props.isOpen])
+
+  const resetForm = () => {
+    reset()
     setFileName('')
-    setErrors({})
+    setInputText('')
+    setSimilarPosts([])
+    setPostData(null)
+    setPostId('')
     if (fileInputRef.current) {
       fileInputRef.current.value = ''
     }
   }
 
-  const onSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!validateForm()) {
-      return
-    }
+  const onSubmit = async (data: ICreatePostForm) => {
+    // Ensure input is a File (validation ensures it's not null)
+    if (!data.input) return
 
     setIsSubmitting(true)
     try {
       const response = await postService.createPostForm(
-        formData.title,
-        formData.description,
-        formData.expected,
-        formData.code,
-        formData.input
+        data.title,
+        data.description,
+        data.expected,
+        data.code,
+        data.input
       )
 
       const status = response.status
       const responseData: PostResponse = response.data
 
       if (status === 201) {
-        // No similar posts, post is uploaded
         resetForm()
         props.onClose()
         alert('Post created successfully!')
-      } else if (status === 302) {
-        // Similar posts found, open DuplicatePopup
+      } else if (status === 202) {
         setPostId(responseData.post.id)
         if (responseData.similar_posts && responseData.similar_posts.length > 0) {
           setSimilarPosts(responseData.similar_posts)
-          setPostData(formData)
+          setPostData(data)
           setIsDuplicatePopupOpen(true)
         } else {
-          console.warn('No similar posts provided in 302 response')
+          console.warn('No similar posts provided in 202 response')
         }
       } else {
         console.error('Unexpected status code:', status)
@@ -206,24 +189,132 @@ const CreatePostPopup = (props: CreatePopupProps) => {
   const handleCancelPost = () => {
     console.log('Post cancelled')
     setIsDuplicatePopupOpen(false)
-    setPostData(null)
-    setSimilarPosts([])
-    setPostId('')
     resetForm()
   }
 
-  const Item = ({ title, value, onChange, error }: {
+  const Item = ({ title, name, error }: {
     title: string
-    value: string
-    onChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void
+    name: keyof ICreatePostForm
+    error?: string
+  }) => {
+    const textareaRef = useRef<HTMLTextAreaElement>(null)
+
+    useEffect(() => {
+      const textarea = textareaRef.current
+      if (textarea) {
+        textarea.style.height = 'auto'
+        textarea.style.height = `${textarea.scrollHeight}px`
+      }
+    }, [])
+
+    return (
+      <div className='flex flex-col gap-1 items-start w-full'>
+        <span className='text-base font-semibold w-full'>{title}</span>
+        <div className='py-2 px-3 rounded-lg bg-grey w-full text-base'>
+          <Controller
+            name={name}
+            control={control}
+            render={({ field }) => (
+              <textarea
+                {...field}
+                ref={textareaRef}
+                className='rounded-lg bg-grey w-full text-base focus-within:outline-none auto-resize'
+                rows={1}
+                value={typeof field.value === 'string' ? field.value : ''}
+                onChange={(e) => {
+                  field.onChange(e)
+                  const target = e.target as HTMLTextAreaElement
+                  target.style.height = 'auto'
+                  target.style.height = `${target.scrollHeight}px`
+                }}
+              />
+            )}
+          />
+        </div>
+        {error && <span className='text-red-500 text-sm'>{error}</span>}
+      </div>
+    )
+  }
+
+  const FileItem = ({ title, name, error }: {
+    title: string
+    name: keyof ICreatePostForm
     error?: string
   }) => (
     <div className='flex flex-col gap-1 items-start w-full'>
       <span className='text-base font-semibold w-full'>{title}</span>
       <div className='py-2 px-3 rounded-lg bg-grey w-full text-base'>
+        <Controller
+          name={name}
+          control={control}
+          render={({ field: { onChange } }) => (
+            <div className='flex flex-row gap-3 items-center'>
+              <label className='cursor-pointer px-4 py-2 rounded-lg bg-white flex items-center gap-2'>
+                Choose File
+                <input
+                  type='file'
+                  accept='.txt'
+                  ref={fileInputRef}
+                  className='hidden'
+                  onChange={(e) => {
+                    const file = e.target.files?.[0] || null
+                    onChange(file)
+                    setFileName(file ? file.name : '')
+                    if (file) {
+                      file.text().then((text) => setInputText(text))
+                    } else {
+                      setInputText('')
+                    }
+                  }}
+                />
+              </label>
+              {fileName && <span className='ml-3 text-sm'>{fileName}</span>}
+            </div>
+          )}
+        />
+      </div>
+      {error && <span className='text-red-500 text-sm'>{error}</span>}
+    </div>
+  )
+
+  const ContentItem = ({ title, name, error }: {
+    title: string
+    name: keyof ICreatePostForm
+    error?: string
+  }) => (
+    <div className='flex flex-col gap-1 items-start w-full'>
+      <span className='text-base font-semibold w-full'>{title}</span>
+      <div className='flex flex-col gap-3 py-2 px-3 rounded-lg bg-grey w-full text-base'>
+        <Controller
+          name={name}
+          control={control}
+          render={({ field }) => (
+            <textarea
+              {...field}
+              className='rounded-lg bg-grey w-full text-base focus-within:outline-none resize-none'
+              rows={3}
+              value={typeof field.value === 'string' ? field.value : ''}
+              onChange={(e) => {
+                field.onChange(e)
+                const target = e.target as HTMLTextAreaElement
+                target.style.height = 'auto'
+                target.style.height = `${target.scrollHeight}px`
+              }}
+            />
+          )}
+        />
+      </div>
+      {error && <span className='text-red-500 text-sm'>{error}</span>}
+    </div>
+  )
+
+  const InputItem = () => (
+    <div className='flex flex-col gap-1 items-start w-full'>
+      <span className='text-base font-semibold w-full'>Input</span>
+      <div className='py-2 px-3 rounded-lg bg-grey w-full text-base'>
         <textarea
-          value={value}
-          onChange={onChange}
+          value={inputText}
+          onChange={(e) => setInputText(e.target.value)}
           className='rounded-lg bg-grey w-full text-base focus-within:outline-none resize-none'
           rows={1}
           onInput={(e) => {
@@ -233,60 +324,6 @@ const CreatePostPopup = (props: CreatePopupProps) => {
           }}
         />
       </div>
-      {error && <span className='text-red-500 text-sm'>{error}</span>}
-    </div>
-  )
-
-  const FileItem = ({
-    title,
-    error,
-    onChange,
-  }: {
-    title: string
-    error?: string
-    onChange: (e: React.ChangeEvent<HTMLInputElement>) => void
-  }) => (
-    <div className='flex flex-col gap-1 items-start w-full'>
-      <span className='text-base font-semibold w-full'>{title}</span>
-      <div className='py-2 px-3 rounded-lg bg-grey w-full text-base'>
-        <label className='cursor-pointer px-4 py-2 rounded-lg bg-white flex items-center gap-2'>
-          Choose File
-          <input
-            type='file'
-            accept='.txt'
-            ref={fileInputRef}
-            className='hidden'
-            onChange={onChange}
-          />
-        </label>
-        {fileName && <span className='ml-3 text-sm'>{fileName}</span>}
-      </div>
-      {error && <span className='text-red-500 text-sm'>{error}</span>}
-    </div>
-  )
-
-  const ContentItem = ({ title, value, onChange, error }: {
-    title: string
-    value: string
-    onChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void
-    error?: string
-  }) => (
-    <div className='flex flex-col gap-1 items-start w-full'>
-      <span className='text-base font-semibold w-full'>{title}</span>
-      <div className='flex flex-col gap-3 py-2 px-3 rounded-lg bg-grey w-full text-base'>
-        <textarea
-          value={value}
-          onChange={onChange}
-          className='rounded-lg bg-grey w-full text-base focus-within:outline-none resize-none'
-          rows={3}
-          onInput={(e) => {
-            const target = e.target as HTMLTextAreaElement
-            target.style.height = 'auto'
-            target.style.height = `${target.scrollHeight}px`
-          }}
-        />
-      </div>
-      {error && <span className='text-red-500 text-sm'>{error}</span>}
     </div>
   )
 
@@ -295,64 +332,46 @@ const CreatePostPopup = (props: CreatePopupProps) => {
       <PopupWrapper isOpen={props.isOpen} onClose={props.onClose} title='Create a New Post'>
         <form
           className='w-full min-w-[1000px] flex flex-col gap-5 pt-5 items-center'
-          onSubmit={onSubmit}
+          onSubmit={handleSubmit(onSubmit)}
         >
           <span className='text-xl leading-8 font-semibold text-left w-full'>
             Add some basic information about your post
           </span>
           <Item
             title='Title *'
-            value={formData.title}
-            onChange={(e) => handleInputChange(e, 'title')}
-            error={errors.title}
+            name='title'
+            error={errors.title?.message}
           />
           <ContentItem
             title='Content *'
-            value={formData.description}
-            onChange={(e) => handleInputChange(e, 'description')}
-            error={errors.description}
+            name='description'
+            error={errors.description?.message}
           />
           <ContentItem
             title='Test Code *'
-            value={formData.code}
-            onChange={(e) => handleInputChange(e, 'code')}
-            error={errors.code}
+            name='code'
+            error={errors.code?.message}
           />
 
           <span className='text-xl leading-8 font-semibold text-left w-full'>Add your testcase</span>
           <div className='w-full space-y-4'>
-            <div className='flex flex-col gap-1 items-start w-full'>
-              <span className='text-base font-semibold w-full'>Input</span>
-              <div className='py-2 px-3 rounded-lg bg-grey w-full text-base'>
-                <textarea
-                  className='rounded-lg bg-grey w-full text-base focus-within:outline-none resize-none'
-                  rows={1}
-                  onInput={(e) => {
-                    const target = e.target as HTMLTextAreaElement
-                    target.style.height = 'auto'
-                    target.style.height = `${target.scrollHeight}px`
-                  }}
-                />
-              </div>
-            </div>
+            <InputItem />
             <FileItem
               title='Support File (config.txt) *'
-              error={errors.input}
-              onChange={handleFileChange}
+              name='input'
+              error={errors.input?.message}
             />
           </div>
           <Item
             title='Expected Output *'
-            value={formData.expected}
-            onChange={(e) => handleInputChange(e, 'expected')}
-            error={errors.expected}
+            name='expected'
+            error={errors.expected?.message}
           />
 
           <button
             type='submit'
             disabled={isSubmitting}
-            className={`bg-green rounded-lg py-3 px-4 flex flex-row gap-2 items-center text-sm font-bold text-center hover:bg-grey transition-all duration-300 ${isSubmitting ? 'opacity-50 cursor-not-allowed' : ''
-              }`}
+            className={`bg-green rounded-lg py-3 px-4 flex flex-row gap-2 items-center text-sm font-bold text-center hover:bg-grey transition-all duration-300 ${isSubmitting ? 'opacity-50 cursor-not-allowed' : ''}`}
           >
             <span>{isSubmitting ? 'Uploading...' : 'Upload Post'}</span>
             <Image src={iconUpload} alt='' />

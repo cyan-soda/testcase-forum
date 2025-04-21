@@ -1,6 +1,6 @@
 'use client'
 
-import Link from "next/link"
+// import Link from "next/link"
 import { useSearchParams, useRouter } from "next/navigation"
 import { useEffect } from "react"
 import { useForm, SubmitHandler } from "react-hook-form"
@@ -65,9 +65,9 @@ const LoginForm = () => {
     }, [searchParams, router]);
 
     const {
-        register,
+        // register,
         handleSubmit,
-        formState: { errors, isSubmitting },
+        // formState: { errors, isSubmitting },
     } = useForm<ILoginForm>({
         resolver: yupResolver(loginSchema),
         defaultValues: {
@@ -77,7 +77,7 @@ const LoginForm = () => {
         },
     });
 
-    const onSubmit: SubmitHandler<ILoginForm> = async (data) => {
+    const onSubmit: SubmitHandler<ILoginForm> = async () => {
         try {
             const code = searchParams.get("code");
             // console.log("OAuth Code:", code);
@@ -117,7 +117,7 @@ const LoginForm = () => {
     return (
         <form className="text-start w-full max-w-[800px] px-8 py-12 rounded-md bg-grey shadow-sm" onSubmit={handleSubmit(onSubmit)}>
             <div className="flex flex-col gap-4 items-center justify-center">
-                <div className="w-full">
+                {/* <div className="w-full">
                     <label className="font-semibold text-sm" htmlFor="LoginEmail">
                         {t('email')}
                     </label>
@@ -144,7 +144,7 @@ const LoginForm = () => {
                         disabled={true}
                     />
                     {errors.password && <p>{errors.password.message}</p>}
-                </div>
+                </div> */}
                 {/* <div className="w-full flex flex-row gap-4 justify-between items-center">
                     <div className="flex items-center">
                         <input
@@ -163,7 +163,7 @@ const LoginForm = () => {
                         </Link>
                     </p>
                 </div> */}
-                <button
+                {/* <button
                     disabled={true}
                     type="submit"
                     className="w-full p-2 rounded-lg text-base font-semibold text-white bg-black disabled:bg-opacity-80 hover:bg-opacity-80"
@@ -174,7 +174,7 @@ const LoginForm = () => {
                     <hr className="w-full border-t-2 border-gray-300" />
                     <p className="text-center">{t('or')}</p>
                     <hr className="w-full border-t-2 border-gray-300" />
-                </div>
+                </div> */}
                 <button
                     // href={''}
                     type="button"

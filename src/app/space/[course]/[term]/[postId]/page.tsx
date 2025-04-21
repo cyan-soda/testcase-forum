@@ -2,12 +2,12 @@
 
 import Image from "next/image";
 import { useParams, useRouter } from "next/navigation";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 
 import iconArrow from '@/icons/arrow--right.svg'
 import PostDetails from "@/components/post/details";
 import RunCode from "@/components/post/run-code";
-import { postService } from "@/service/post";
+// import { postService } from "@/service/post";
 import { usePostStore } from "@/store/post/post-store";
 
 import { TPost } from "@/types/post";
@@ -26,13 +26,13 @@ const Tab = ({ title, isActive, onClick }: { title: string, isActive: boolean, o
 }
 
 const PostDetailPage = () => {
-    const { space, course, term, postId } = useParams<{ space: string, course: string, term: string, postId: string }>()
+    const { postId } = useParams<{ postId: string }>()
     const router = useRouter()
     const post = usePostStore((state) => state.posts.find((post) => post.id === postId)) as TPost
 
     const [activeTab, setActiveTab] = useState<'details' | 'runCode'>('details')
     // const [post, setPost] = useState<TPost | null>(null);
-    const [loading, setLoading] = useState<boolean>(true);
+    // const [loading, setLoading] = useState<boolean>(true);
 
     // useEffect(() => {
     //     const fetchPost = async () => {

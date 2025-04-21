@@ -7,7 +7,7 @@ import { useParams } from "next/navigation";
 import Image from "next/image";
 import iconHouse from '@/icons/house.svg';
 import { useTranslation } from "react-i18next";
-import { t } from "i18next";
+// import { t } from "i18next";
 
 const SIDEBAR_ITEMS = [
     {
