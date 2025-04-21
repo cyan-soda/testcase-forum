@@ -25,5 +25,6 @@
         "z_a": "Z to A"
     },
     "login_required": "Login Required",
-    "login_required_description": "You need to login to see this content."
+    "login_required_description": "You need to login to see this content.",
+    "see_more_button": "See More"
 }

@@ -25,5 +25,6 @@
         "z_a": "Từ Z đến A"
     },
     "login_required": "Yêu cầu đăng nhập",
-    "login_required_description": "Bạn cần đăng nhập để xem nội dung này."
+    "login_required_description": "Bạn cần đăng nhập để xem nội dung này.",
+    "see_more_button": "Xem thêm"
 }

@@ -14,7 +14,11 @@ const MyLikedPosts = () => {
         const fetchPosts = async () => {
             try {
                 const res = await userService.getUserLikedPosts();
-                setPosts(res as TPost[]);
+                if (res.status === 404) {
+                    setPosts([]);
+                } else {
+                    setPosts(res.data as TPost[]);
+                }
                 setLoading(false);
             } catch (error) {
                 console.error("Error fetching posts:", error);

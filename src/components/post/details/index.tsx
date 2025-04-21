@@ -45,11 +45,11 @@ export const CodeMarkdownArea = ({ code }: { code: string }) => {
         <div className="rounded-lg bg-grey px-3 py-3 text-sm font-mono w-full">
             <pre className="whitespace-pre-wrap break-words">
                 {lines.map((line, index) => (
-                    <div key={index} className="flex">
+                    <div key={index} className="flex whitespace-pre-wrap break-words">
                         <span className="text-gray-400 w-8 text-right pr-3 select-none">
                             {index + 1}
                         </span>
-                        <span className="flex-1 whitespace-pre-wrap break-words">
+                        <span className="flex-1 whitespace-pre-wrap break-words break-all">
                             {line || '\u00A0'}
                         </span>
                     </div>
@@ -221,14 +221,18 @@ const PostDetails = ({ post_id }: { post_id: string }) => {
                                         })
                                     }}
                                 />
-                                {comments
-                                    .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
-                                    .map((comment) => (
-                                        <Comment
-                                            key={comment.id}
-                                            comment={comment}
-                                        />
-                                    ))}
+                                {comments.length === 0 ? (
+                                    <div className="text-center">No comments yet.</div>
+                                ) : (
+                                    comments
+                                        .sort((a: TComment, b: TComment) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
+                                        .map((comment: TComment) => (
+                                            <Comment
+                                                key={comment.id}
+                                                comment={comment}
+                                            />
+                                        ))
+                                )} 
                             </div>
                         )}
                         {activeTab === 'similar' && (

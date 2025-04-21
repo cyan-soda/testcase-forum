@@ -1,7 +1,7 @@
 'use client'
 
 import { NAV_ITEMS } from "@/constants/header.constants"
-import { useRouter } from "next/navigation"
+import { useRouter, usePathname } from "next/navigation"
 import { useEffect, useState } from "react"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import Image from "next/image"
@@ -36,13 +36,17 @@ const Header = () => {
         if (savedLink) setActiveLink(savedLink)
     }, [])
 
+    const pathname = usePathname()
+    useEffect(() => {
+        if (pathname) {
+            setActiveLink(pathname)
+            localStorage.setItem('activeLink', pathname)
+        }
+    }, [pathname])
+
     const handleClick = (link: string) => {
         setActiveLink(link)
         localStorage.setItem('activeLink', link)
-        // if (link === '/archive') {
-        //     router.push(`/archive/${user?.id}`)
-        //     return
-        // }
         router.push(link)
     }
 
@@ -73,7 +77,7 @@ const Header = () => {
                         {NAV_ITEMS.map((item) => (
                             <button
                                 key={item.id}
-                                className={`flex items-center justify-center px-8 py-[10px] rounded-lg text-lg leading-6 font-semibold ${activeLink === item.link ? 'text-white bg-black' : 'text-black bg-white'
+                                className={`flex items-center justify-center px-8 py-[10px] rounded-lg text-lg leading-6 font-semibold ${activeLink.startsWith(item.link) ? 'text-white bg-black' : 'text-black bg-white'
                                     } hover:bg-grey hover:text-black hover:transition-all hover:duration-300 focus:outline-none`}
                                 onClick={() => handleClick(item.link)}
                             >

@@ -10,7 +10,7 @@ export class UserService {
                 Authorization: `Bearer ${localStorage.getItem('token')}`,
             },
         });
-        return response.data;
+        return response;
     }
 
     getUserLikedPosts = async () => {
@@ -20,7 +20,7 @@ export class UserService {
                 Authorization: `Bearer ${localStorage.getItem('token')}`,
             },
         });
-        return response.data;
+        return response;
     }
 
     getUserCommentedPosts = async () => {
@@ -30,7 +30,7 @@ export class UserService {
                 Authorization: `Bearer ${localStorage.getItem('token')}`,
             },
         });
-        return response.data;
+        return response;
     }
 }
 

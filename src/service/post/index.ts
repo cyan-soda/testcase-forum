@@ -34,11 +34,13 @@ export class PostService {
         return response.data;
     }
 
-    async updatePost(id: string, title: string, description: string, input: string, expected: string, code: string) {
+    async updatePost(id: string, title: string, description: string, expected: string, code: string, input?: File) {
         const formData = new FormData()
         formData.append("title", title)
         formData.append("description", description)
-        formData.append("input", input)
+        if (input) {
+            formData.append("input", input);
+        }
         formData.append("expected", expected)
         formData.append("code", code)
 
@@ -72,11 +74,13 @@ export class PostService {
         return response.data;
     }
 
-    async createPostForm(title: string, description: string, input: string, expected: string, code: string) {
+    async createPostForm(title: string, description: string, expected: string, code: string, input?: File) {
         const formData = new FormData()
         formData.append("title", title)
         formData.append("description", description)
-        formData.append("input", input)
+        if (input) {
+            formData.append("input", input);
+        }
         formData.append("expected", expected)
         formData.append("code", code)
 
@@ -122,6 +126,16 @@ export class PostService {
 
     async createPostAnyway(post_id: string) {
         const response = await axiosClient.post(`/confirm/${post_id}`, {}, {
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${localStorage.getItem('token')}`,
+            },
+        });
+        return response.data;
+    }
+
+    async getPopularPosts() {
+        const response = await axiosClient.get(`/posts/hot`, {
             headers: {
                 'Content-Type': 'application/json',
                 Authorization: `Bearer ${localStorage.getItem('token')}`,

@@ -14,7 +14,6 @@ import { postService } from "@/service/post";
 import { useTranslation } from "react-i18next";
 import { TPost } from "@/types/post";
 import { usePostStore } from "@/store/post/post-store";
-import { set } from "react-hook-form";
 import { useUserStore } from "@/store/user/user-store";
 
 const CoursePage = () => {
@@ -25,6 +24,7 @@ const CoursePage = () => {
   const [searchText, setSearchText] = useState<string>("");
   const [tags, setTags] = useState<string[]>([]);
   const [sortFilter, setSortFilter] = useState<string>("");
+  const [visiblePosts, setVisiblePosts] = useState<number>(5);
   const { user } = useUserStore()
 
   // Translation and sort options at top level
@@ -157,26 +157,34 @@ const CoursePage = () => {
             onChange={(e: string) => debounced(e)}
           />
           <div className="flex flex-row gap-3">
-            <div className="w-2/3">
+            {/* <div className="w-2/3">
               <SearchTagField
                 value={tags}
                 onChange={handleTagChange}
                 availableTags={availableTags}
               />
-            </div>
-            <div className="w-1/3">
+            </div> */}
+            {/* <div className="w-1/3"> */}
               <SearchFilterField
                 value={sortFilter}
                 onChange={handleFilterChange}
                 availableOptions={SORT_OPTIONS}
               />
-            </div>
+            {/* </div> */}
           </div>
         </div>
         <div className="flex flex-col gap-6">
-          {filteredPosts.map((post) => (
+          {filteredPosts.slice(0, visiblePosts).map((post) => (
             <PostCard key={post.id} post_id={post.id} />
           ))}
+          {visiblePosts < filteredPosts.length && (
+            <button
+              onClick={() => setVisiblePosts((prev) => prev + visiblePosts)}
+              className="self-center px-3 py-2 bg-black text-white rounded-lg text-sm font-medium"
+            >
+              {t('see_more_button')}
+            </button>
+          )}
         </div>
       </div>
       <div className="flex flex-col gap-5 w-1/4">
