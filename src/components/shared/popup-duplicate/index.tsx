@@ -29,7 +29,7 @@ const Item = (props: { title: string, author: string, input: string, output: str
             </div>
             <div className="flex flex-col items-start gap-2 w-full my-2 p-4 border rounded-lg">
                 <div className="grid grid-cols-[8rem_1fr] items-center gap-2 w-full">
-                    <span className="text-sm font-semibold">Support File's Content:</span>
+                    <span className="text-sm font-semibold">{"Support File's Content:"}</span>
                     <span className="bg-grey py-2 px-3 rounded-lg whitespace-pre-wrap break-words break-all">
                         {props.input.split('\n').map((line, index) => (
                             <span key={index} className='text-base font-normal'>{line}</span>
@@ -80,7 +80,7 @@ const DuplicatePopup = (props: DuplicatePopupProps) => {
                         className={`bg-green rounded-lg py-3 px-4 text-sm font-bold text-center hover:bg-green transition-all duration-300`}
                         onClick={props.onPostAnyway}
                     >
-                        Yes, I'm sure about posting
+                        {"Yes, I'm sure about posting"}
                     </button>
                 </div>
             </div>

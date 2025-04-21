@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 const LANGUAGE = 'language'
 const isBrowser = typeof window !== 'undefined'
 
-export const setLocalStorage = (name: string, value: any) => {
+export const setLocalStorage = (name: string, value: string) => {
     if (isBrowser) {
         localStorage.setItem(name, JSON.stringify(value))
     }

@@ -32,8 +32,8 @@ interface CommentEditorProps {
 const CommentEditor = ({
     postId,
     //   userMail,
-    parentId,
-    onCommentCreated,
+    // parentId,
+    // onCommentCreated,
     placeholder = 'Type here to comment...',
 }: CommentEditorProps) => {
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -42,7 +42,7 @@ const CommentEditor = ({
     const {
         register,
         handleSubmit,
-        reset,
+        // reset,
         formState: { errors },
     } = useForm<CommentFormData>({
         resolver: yupResolver(schema),
@@ -57,9 +57,9 @@ const CommentEditor = ({
 
         try {
             await commentService.createComment(postId, data.content)
-        } catch (err: any) {
+        } catch (err) {
             console.error('Error creating comment:', err);
-            setError(err.message || 'Failed to create comment. Please try again.');
+            setError((err as string) || 'Failed to create comment. Please try again.');
         } finally {
             setIsSubmitting(false);
         }

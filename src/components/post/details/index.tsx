@@ -61,7 +61,7 @@ export const CodeMarkdownArea = ({ code }: { code: string }) => {
 
 const PostDetails = ({ post_id }: { post_id: string }) => {
     const post = usePostStore().getPostById((post_id)) as TPost
-    if (!post) return null;
+    // if (!post) return null;
 
     post.last_modified = new Date(post.last_modified).toLocaleString('en-US', {
         year: 'numeric',
@@ -111,7 +111,7 @@ const PostDetails = ({ post_id }: { post_id: string }) => {
                 } else {
                     setRelatedPosts(res); // Set related posts
                 }
-            } catch (error: any) {
+            } catch (error) {
                 console.error("Error fetching related posts:", error);
                 setErrorRelatedPosts("Failed to load related posts. Please try again later.");
                 setRelatedPosts([]); // Clear posts on error
@@ -169,7 +169,7 @@ const PostDetails = ({ post_id }: { post_id: string }) => {
                     </div>
                     <div className="flex flex-col items-start gap-2 w-full my-2 p-4 border rounded-lg">
                         <div className="grid grid-cols-[8rem_1fr] items-center gap-2 w-full">
-                            <span className="text-sm font-semibold">Support File's Content:</span>
+                            <span className="text-sm font-semibold">{"Support File's Content:"}</span>
                             <div className="bg-grey py-2 px-3 rounded-lg whitespace-pre-wrap break-words break-all">{post.testcase.input}</div>
                         </div>
                         <div className="grid grid-cols-[8rem_1fr] items-center gap-2 w-full">
@@ -183,7 +183,7 @@ const PostDetails = ({ post_id }: { post_id: string }) => {
                         <div className="flex flex-row items-center gap-3">
                             <LikeButton like_count={post.interaction?.like_count} post_id={post.id} />
                             {/* <CommentButton count={5} isOpenComment={isOpenComment} setIsOpenComment={() => { setIsOpenComment(!isOpenComment) }} /> */}
-                            <BadgeButton count={post.interaction?.verified_teacher_mail ? 1 : 0} isOpenBadge={isOpenBadge} setIsOpenBadge={() => { setIsOpenBadge(!isOpenBadge) }} />
+                            <BadgeButton count={post.interaction?.verified_teacher_mail ? 1 : 0} setIsOpenBadge={() => { setIsOpenBadge(!isOpenBadge) }} />
                         </div>
                         {/* <button
                             className={`bg-grey rounded-lg py-2 px-3 text-sm font-bold text-black`}

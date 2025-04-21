@@ -73,7 +73,7 @@ const CreatePostPopup = (props: CreatePopupProps) => {
   // const { user } = useUserStore()
   const [isDuplicatePopupOpen, setIsDuplicatePopupOpen] = useState(false)
   const [similarPosts, setSimilarPosts] = useState<SimilarPost[]>([])
-  const [postData, setPostData] = useState<ICreatePostForm | null>(null)
+  // const [postData, setPostData] = useState<ICreatePostForm | null>(null)
   const [postId, setPostId] = useState<string>('')
   const [fileName, setFileName] = useState<string>('')
   const [inputText, setInputText] = useState<string>('')
@@ -109,7 +109,7 @@ const CreatePostPopup = (props: CreatePopupProps) => {
     setFileName('')
     setInputText('')
     setSimilarPosts([])
-    setPostData(null)
+    // setPostData(null)
     setPostId('')
     if (fileInputRef.current) {
       fileInputRef.current.value = ''
@@ -141,7 +141,7 @@ const CreatePostPopup = (props: CreatePopupProps) => {
         setPostId(responseData.post.id)
         if (responseData.similar_posts && responseData.similar_posts.length > 0) {
           setSimilarPosts(responseData.similar_posts)
-          setPostData(data)
+          // setPostData(data)
           setIsDuplicatePopupOpen(true)
         } else {
           console.warn('No similar posts provided in 202 response')

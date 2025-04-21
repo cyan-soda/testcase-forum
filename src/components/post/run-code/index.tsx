@@ -126,9 +126,13 @@ const RunCode = () => {
             } else {
                 alert(`Upload failed: ${uploadResponse.message || 'Unknown error'}`);
             }
-        } catch (error: any) {
-            console.error('Upload error:', error.message, error);
-            alert(`Failed to upload files: ${error.message || 'Unknown error'}`);
+        } catch (error) {
+            if (error instanceof Error) {
+                console.error('Upload error:', error.message, error);
+            } else {
+                console.error('Upload error:', error);
+            }
+            alert(`Failed to upload files: ${error instanceof Error ? error.message : 'Unknown error'}`);
         }
     };
 
@@ -188,7 +192,7 @@ const RunCode = () => {
                         </span>
                     ) : (
                         <span className="text-sm font-normal w-full text-center">
-                            No files uploaded yet. Please upload your "hcmcampaign.h" and "hcmcampaign.cpp" files.
+                            {`No files uploaded yet. Please upload your "hcmcampaign.h" and "hcmcampaign.cpp" files.`}
                         </span>
                     )}
                 </div>

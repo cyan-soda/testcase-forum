@@ -1,6 +1,7 @@
 'use-client'
 
 import axiosClient from "../axios-client";
+import axios from "axios";
 
 export const codeService = {
   submitCodeFile: async (hFile: File, cppFile: File) => {
@@ -26,8 +27,11 @@ export const codeService = {
         },
       });
       return response.data;
-    } catch (error: any) {
-      throw new Error(error.response?.data?.error || 'Run code failed');
+    } catch (error) {
+      if (axios.isAxiosError(error) && error.response?.data?.message) {
+        throw new Error(error.response.data.message);
+      }
+      throw new Error('Run code failed');
     }
   },
 
@@ -40,8 +44,11 @@ export const codeService = {
         },
       });
       return response.status;
-    } catch (error: any) {
-      throw new Error(error.response?.data?.error || 'Check code file existence failed');
+    } catch (error) {
+      if (axios.isAxiosError(error) && error.response?.data?.message) {
+        throw new Error(error.response.data.message);
+      }
+      throw new Error('Check code file existence failed');
     }
   }
 };

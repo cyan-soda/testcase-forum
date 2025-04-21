@@ -22,7 +22,7 @@ const CoursePage = () => {
   const { posts, setPosts } = usePostStore()
   const [filteredPosts, setFilteredPosts] = useState<TPost[]>([]);
   const [searchText, setSearchText] = useState<string>("");
-  const [tags, setTags] = useState<string[]>([]);
+  // const [tags, setTags] = useState<string[]>([]);
   const [sortFilter, setSortFilter] = useState<string>("");
   const [visiblePosts, setVisiblePosts] = useState<number>(5);
   // const { user } = useUserStore()
@@ -102,11 +102,11 @@ const CoursePage = () => {
     }
 
     // Apply tag filter
-    if (tags.length > 0) {
-      result = result.filter((post) =>
-        tags.some((tag) => post.tags.includes(tag))
-      );
-    }
+    // if (tags.length > 0) {
+    //   result = result.filter((post) =>
+    //     tags.some((tag) => post.tags.includes(tag))
+    //   );
+    // }
 
     // Apply sort filter
     switch (sortFilter) {
@@ -129,7 +129,7 @@ const CoursePage = () => {
     }
 
     setFilteredPosts(result);
-  }, [posts, searchText, tags, sortFilter]);
+  }, [SORT_OPTIONS, posts, searchText, sortFilter]);
 
   // Search text handler
   const debounced = useDebouncedCallback((text: string) => {

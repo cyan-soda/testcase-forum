@@ -124,7 +124,7 @@ const MyPosts = () => {
                                     <p className="text-gray-600 whitespace-pre-wrap break-words break-all">{post.description}</p>
                                     <div className="flex flex-col items-start gap-2 w-full my-2 p-4 border rounded-lg">
                                         <div className="grid grid-cols-[8rem_1fr] items-center gap-2 w-full">
-                                            <span className="text-sm font-semibold">Support File's Content:</span>
+                                            <span className="text-sm font-semibold">{"Support File's Content:"}</span>
                                             <span className="bg-grey py-2 px-3 rounded-lg whitespace-pre-wrap break-words break-all">{post.testcase.input}</span>
                                         </div>
                                         <div className="grid grid-cols-[8rem_1fr] items-center gap-2 w-full">

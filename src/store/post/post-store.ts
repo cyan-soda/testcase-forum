@@ -2,7 +2,7 @@
 
 import { create } from 'zustand'
 import { TPost } from '@/types/post'
-import { persist, createJSONStorage } from 'zustand/middleware'
+import { persist } from 'zustand/middleware'
 
 type PostState = {
     posts: TPost[]

@@ -71,7 +71,7 @@ const MyLikedPosts = () => {
                                 <p className="text-gray-600">{post.description}</p>
                                 <div className="flex flex-col items-start gap-2 w-full my-2 p-4 border rounded-lg">
                                     <div className="grid grid-cols-[8rem_1fr] items-center gap-2 w-full">
-                                        <span className="text-sm font-semibold">Support File's Content:</span>
+                                        <span className="text-sm font-semibold">{"Support File's Content:"}</span>
                                         <span className="bg-gray-100 py-2 px-3 rounded-lg">{post.testcase.input}</span>
                                     </div>
                                     <div className="grid grid-cols-[8rem_1fr] items-center gap-2 w-full">

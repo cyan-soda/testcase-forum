@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { useParams } from 'next/navigation';
+// import { useParams } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
@@ -34,7 +34,7 @@ interface CommentProps {
     onCommentReplied?: () => void;
 }
 
-const Comment = ({ comment, onCommentUpdated, onCommentReplied }: CommentProps) => {
+const Comment = ({ comment, onCommentUpdated }: CommentProps) => {
     // const [isOpenBadge, setIsOpenBadge] = useState(false);
     // const [isOpenAnswer, setIsOpenAnswer] = useState(false);
     const [isEditing, setIsEditing] = useState(false);
@@ -86,9 +86,15 @@ const Comment = ({ comment, onCommentUpdated, onCommentReplied }: CommentProps) 
             setIsEditing(false);
             resetEdit({ content: data.content });
             onCommentUpdated?.();
-        } catch (err: any) {
+        } catch (err) {
             console.error('Error updating comment:', err);
-            setError(err.message || 'Failed to update comment. Please try again.');
+            setError(
+                typeof err === 'string'
+                    ? err
+                    : err instanceof Error
+                    ? err.message
+                    : 'Failed to update comment. Please try again.'
+            );
         }
     };
 
@@ -100,11 +106,17 @@ const Comment = ({ comment, onCommentUpdated, onCommentReplied }: CommentProps) 
 
         setError(null);
         try {
-            const response = await commentService.deleteComment(comment.id);
+            await commentService.deleteComment(comment.id);
             onCommentUpdated?.();
-        } catch (err: any) {
+        } catch (err) {
             console.error('Error deleting comment:', err);
-            setError(err.message || 'Failed to delete comment. Please try again.');
+            setError(
+                typeof err === 'string'
+                    ? err
+                    : err instanceof Error
+                    ? err.message
+                    : 'Failed to delete comment. Please try again.'
+            );
         }
     }
 

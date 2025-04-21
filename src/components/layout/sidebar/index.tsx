@@ -48,7 +48,7 @@ type SidebarGroupProps = {
     courses: { id: number; title: string; term: string; code: string }[];
 }
 
-const SidebarGroup = ({ id, title, courses }: SidebarGroupProps) => {
+const SidebarGroup = ({ title, courses }: SidebarGroupProps) => {
     const router = useRouter()
     const { course, term } = useParams()
     const [activeTab, setActiveTab] = useState<string>("")
@@ -63,7 +63,7 @@ const SidebarGroup = ({ id, title, courses }: SidebarGroupProps) => {
         }
     }, [course, term]);
 
-    const handleClickTab = (courseCode: string, courseTerm: string, spaceId?: number) => {
+    const handleClickTab = (courseCode: string, courseTerm: string) => {
         // const space = spaceId === 0 ? "my-spaces" : "all-spaces";
         router.push(`/space/${courseCode}/${courseTerm}`);
     };
@@ -81,7 +81,7 @@ const SidebarGroup = ({ id, title, courses }: SidebarGroupProps) => {
                         className={`w-full px-5 py-4 text-base font-medium text-black
                         hover:bg-grey hover:rounded-r-xl hover:transition-all hover:duration-300
                         ${activeTab === course.code + "-" + course.term ? "bg-green rounded-r-xl border-l-[3px] border-black" : ""}`}
-                        onClick={() => handleClickTab(course.code, course.term, id)}
+                        onClick={() => handleClickTab(course.code, course.term)}
                     >
                         <p className="text-left">[{course.term}] - {course.title}</p>
                     </button>

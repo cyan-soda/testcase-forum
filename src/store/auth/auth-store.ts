@@ -2,7 +2,7 @@
 
 import { TUser } from '@/types/user'
 import { create } from 'zustand'
-import { persist, createJSONStorage } from 'zustand/middleware'
+import { persist } from 'zustand/middleware'
 
 export type State = {
     token: string | null

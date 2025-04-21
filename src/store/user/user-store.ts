@@ -1,6 +1,6 @@
 import { create } from 'zustand'
 import { TUser } from '@/types/user'
-import { persist, createJSONStorage } from 'zustand/middleware'
+import { persist } from 'zustand/middleware'
 
 type AppState = {
   user: TUser | null

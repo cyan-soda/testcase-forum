@@ -48,9 +48,10 @@ const PostCard = ({ post_id }: { post_id: string }) => {
 
     const router = useRouter()
     const { course, term } = useParams()
-    const handlePostDetailClick = (post: any) => {
-        course && term && router.push(`/space/${course}/${term}/${post.id}`)
-
+    const handlePostDetailClick = (post: TPost) => {
+        if (course && term) {
+            router.push(`/space/${course}/${term}/${post.id}`)
+        }
         postService.clickPost(post.id, post.post_type).then((res) => {
             console.log('Post clicked:', res)
         }).catch((err) => {
