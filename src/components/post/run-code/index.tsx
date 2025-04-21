@@ -9,6 +9,7 @@ import { useParams } from 'next/navigation';
 import { usePostStore } from '@/store/post/post-store';
 import { TPost } from '@/types/post';
 import { postService } from '@/service/post';
+import { useTranslation } from 'react-i18next';
 
 const Field = ({ label, value }: { label: string; value?: string }) => {
     return (
@@ -50,13 +51,14 @@ const RunCode = () => {
     const [loadingRunCode, setLoadingRunCode] = useState<boolean>(false);
     const [loadingSuggestions, setLoadingSuggestions] = useState<boolean>(false);
     const [suggestions, setSuggestions] = useState<TPost[]>([]);
+    const {t} = useTranslation('post')
 
     // Check if code files exist for the given postId
     useEffect(() => {
         const checkCodeFileExist = async () => {
             try {
                 const response = await codeService.checkCodeFileExist();
-                console.log('Check file existence response status:', response);
+                // console.log('Check file existence response status:', response);
                 if (response === 204) {
                     setIsFileExist(true);
                     // setIsUploaded(true);
@@ -107,7 +109,7 @@ const RunCode = () => {
         const cppFile = files.find((file) => file.name === 'hcmcampaign.cpp' && file.name.endsWith('.cpp'));
 
         if (!hFile || !cppFile) {
-            alert('Please upload both "hcmcampaign.h" and "hcmcampaign.cpp" files');
+            alert(t('run_code.file_name_alert'));
             return;
         }
 
@@ -118,13 +120,13 @@ const RunCode = () => {
 
         try {
             const uploadResponse = await codeService.submitCodeFile(hFile, cppFile);
-            console.log('Upload response:', uploadResponse);
+            // console.log('Upload response:', uploadResponse);
             if (uploadResponse.success) {
                 // setIsUploaded(true);
                 setIsFileExist(true);
-                alert('Files uploaded successfully!');
+                alert(t('run_code.upload_success'));
             } else {
-                alert(`Upload failed: ${uploadResponse.message || 'Unknown error'}`);
+                alert(t('run_code.upload_failed') + ` ${uploadResponse.message || 'Unknown error'}`);
             }
         } catch (error) {
             if (error instanceof Error) {
@@ -132,13 +134,13 @@ const RunCode = () => {
             } else {
                 console.error('Upload error:', error);
             }
-            alert(`Failed to upload files: ${error instanceof Error ? error.message : 'Unknown error'}`);
+            alert(t('run_code.upload_failed') + ` ${error instanceof Error ? error.message : 'Unknown error'}`);
         }
     };
 
     const handleRunCode = async () => {
         if (!isFileExist) {
-            alert('Please upload your files first!');
+            alert(t('run_code.upload_alert'));
             return;
         }
         try {
@@ -153,10 +155,10 @@ const RunCode = () => {
                 setRunState(result.score === 1 ? 1 : 2);
                 setOutput(result.log);
             }
-            console.log('Execution result:', result);
+            // console.log('Execution result:', result);
         } catch (error) {
             console.error('Run code failed:', error);
-            alert('Failed to run code');
+            alert(t('run_code.failed'));
         } finally {
             setLoadingRunCode(false);
         }
@@ -164,26 +166,26 @@ const RunCode = () => {
 
     return (
         <div className="min-h-screen w-full bg-white text-black p-5 rounded-xl">
-            <span className="font-semibold text-2xl">Try it out!</span>
+            <span className="font-semibold text-2xl">{t('run_code.sub')}</span>
             <div className="flex flex-row items-center gap-3 w-full mb-6 mt-3 text-base font-bold">
                 <button
                     className="flex flex-row gap-2 px-4 py-3 rounded-lg bg-green"
                     onClick={handleRunCode}
                     disabled={loadingRunCode}
                 >
-                    {loadingRunCode ? 'Running...' : 'Run Code'}
+                    {loadingRunCode ? t('run_code.running') : t('run_code.run_code')}
                     <Image src={iconPlay} alt="" width={20} height={20} />
                 </button>
                 <label className="cursor-pointer px-4 py-3 rounded-lg bg-grey flex items-center gap-2">
-                    Upload Files
+                    {t('run_code.upload_files')}
                     <input type="file" multiple accept=".h,.cpp" className="hidden" onChange={handleUploadFiles} />
                 </label>
                 <div className="flex-1 w-full flex flex-row items-center border-black border rounded-lg border-dashed h-full p-3">
                     {isFileExist ? (
                         <span className="text-sm font-normal w-full text-center">
                             {fileNames.hFile && fileNames.cppFile
-                                ? `Files uploaded: ${fileNames.hFile}, ${fileNames.cppFile}`
-                                : 'Files exist in database. You can run the code or upload new files to replace them.'}
+                                ? t('run_code.files_uploaded') +` ${fileNames.hFile}, ${fileNames.cppFile}`
+                                : t('run_code.files_exist')}
                         </span>
                     ) : fileNames.hFile || fileNames.cppFile ? (
                         <span className="text-sm font-normal w-full text-center">
@@ -192,7 +194,7 @@ const RunCode = () => {
                         </span>
                     ) : (
                         <span className="text-sm font-normal w-full text-center">
-                            {`No files uploaded yet. Please upload your "hcmcampaign.h" and "hcmcampaign.cpp" files.`}
+                            {t('run_code.files_not_exist')}
                         </span>
                     )}
                 </div>
@@ -200,11 +202,11 @@ const RunCode = () => {
             <div className="flex flex-row items-start gap-5">
                 <div className="flex flex-col gap-5 items-start w-3/5">
                     <div className="flex flex-col p-4 items-start rounded-lg border border-black w-full">
-                        <span className="text-xl font-semibold">Test Results</span>
+                        <span className="text-xl font-semibold">{t('run_code.test_results')}</span>
                         {loadingRunCode ? (
                             <div className="w-full flex flex-col gap-1 items-center justify-center h-full">
-                                <span className="text-sm font-normal">Executing...</span>
-                                <span className="text-sm font-normal">Please wait a few seconds.</span>
+                                <span className="text-sm font-normal">{t('run_code.executing')}</span>
+                                <span className="text-sm font-normal">{t('run_code.please_wait')}</span>
                                 <div className="flex items-center justify-center my-3">
                                     <div className="w-5 h-5 border-2 border-t-transparent border-black rounded-full animate-spin"></div>
                                 </div>
@@ -216,20 +218,20 @@ const RunCode = () => {
                                     <div className={`${runState === 2 ? 'bg-black text-white' : 'bg-grey'} px-2 py-1 rounded-lg text-xs font-bold`}>Failed</div>
                                 </div>
                                 <div className="mt-5 flex flex-col gap-2 items-start w-full">
-                                    <Field label="Input" value={post?.testcase.input} />
-                                    <Field label="Expected Output" value={post?.testcase.expected} />
-                                    <Field label="Output" value={output.split('\n').join('\n')} />
+                                    <Field label={t('run_code.input')} value={post?.testcase.input} />
+                                    <Field label={t('run_code.expected_output')} value={post?.testcase.expected} />
+                                    <Field label={t('run_code.actual_output')} value={output.split('\n').join('\n')} />
                                 </div>
                             </>
                         )}
                     </div>
                 </div>
                 <div className="rounded-lg border border-black py-5 px-3 w-2/5">
-                    <span className="text-xl font-semibold p-3">Recommended Posts</span>
+                    <span className="text-xl font-semibold p-3">{t('run_code.recommended_posts')}</span>
                     <div className="flex flex-col gap-1 mt-3">
                         {loadingSuggestions ? (
                             <div className="w-full flex flex-col gap-1 items-center justify-center h-full">
-                                <span className="text-sm font-normal">Loading recommendations...</span>
+                                <span className="text-sm font-normal">{t('run_code.loading_recommended_posts')}</span>
                                 <div className="flex items-center justify-center my-3">
                                     <div className="w-5 h-5 border-2 border-t-transparent border-black rounded-full animate-spin"></div>
                                 </div>
@@ -239,7 +241,7 @@ const RunCode = () => {
                                 <RecPostItem key={index} title={item.title} author={item.author} link={`/space/CO1005/242/${item.id}`} />
                             ))
                         ) : (
-                            <span className="text-sm font-normal text-center w-full">No recommendations available.</span>
+                            <span className="text-sm font-normal text-center w-full">{t('run_code.no_recommended_posts')}</span>
                         )}
                     </div>
                 </div>

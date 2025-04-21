@@ -1,0 +1,57 @@
+{
+    "popup_create": {
+        "title": "Tạo bài viết mới",
+        "sub_1": "Thêm một số thông tin cơ bản cho bài viết của bạn",
+        "sub_2": "Thêm testcase của bạn",
+        "input": {
+            "title": {
+                "label": "Tiêu đề",
+                "required": "Tiêu đề là bắt buộc."
+            },
+            "description": {
+                "label": "Mô tả",
+                "required": "Mô tả là bắt buộc."
+            },
+            "code": {
+                "label": "Test Code",
+                "required": "Test Code là bắt buộc."
+            },
+            "input": {
+                "label": "Đầu vào"
+            },
+            "expected": {
+                "label": "Đầu ra mong đợi",
+                "required": "Đầu ra mong đợi là bắt buộc."
+            },
+            "support_file": {
+                "label": "File hỗ trợ (config.txt)",
+                "test_name": "File phải được đặt tên là config.txt.",
+                "test_type": "Chỉ cho phép file .txt.",
+                "input_text": "Chọn một file"
+            }
+        },
+        "upload_button": {
+            "label": "Đăng tải bài viết",
+            "loading": "Đang tải lên..."
+        }
+    },
+    "popup_duplicate": {
+        "title": "Cảnh báo trùng lặp",
+        "sub_1": "Chúng tôi đã tìm thấy một số testcase rất giống với testcase của bạn:",
+        "sub_2": "Bạn có chắc chắn về việc đăng testcase của mình không?",
+        "button_cancel": "Không, hủy bài viết",
+        "button_continue": "Có, tiếp tục đăng bài",
+        "item": {
+            "title": "Đã đăng trong",
+            "author": "bởi",
+            "support_file": "Nội dung file hỗ trợ:",
+            "expected": "Đầu ra mong đợi:"
+        }
+    },
+    "alert": {
+        "create_post_success": "Bài viết đã được tạo thành công.",
+        "create_post_fail": "Không thể tạo bài viết.",
+        "create_unexpected_error": "Đã xảy ra lỗi không mong muốn.",
+        "no_post_id": "Không tìm thấy ID bài viết."
+    }
+}

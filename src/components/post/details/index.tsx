@@ -18,6 +18,7 @@ import CommentEditor from "../comment-editor"
 import { TComment } from "@/types/comment"
 import { usePostStore } from "@/store/post/post-store"
 import { postService } from "@/service/post"
+import { useTranslation } from "react-i18next"
 
 const getInitials = (name: string) => {
     if (!name) return ''
@@ -40,7 +41,8 @@ const Tab = ({ title, isActive, count, onClick }: { title: string, isActive: boo
 }
 
 export const CodeMarkdownArea = ({ code }: { code: string }) => {
-    const lines = (code || "No code provided").split('\n')
+    const {t} = useTranslation('post')
+    const lines = (code || t('post_details.no_code_markdown')).split('\n')
     return (
         <div className="rounded-lg bg-gray-100 px-3 py-3 text-sm font-mono w-full">
             <pre className="whitespace-pre-wrap break-words">
@@ -60,6 +62,7 @@ export const CodeMarkdownArea = ({ code }: { code: string }) => {
 }
 
 const PostDetails = ({ post_id }: { post_id: string }) => {
+    const {t} = useTranslation('post')
     const post = usePostStore().getPostById((post_id)) as TPost
     // if (!post) return null;
 
@@ -113,7 +116,7 @@ const PostDetails = ({ post_id }: { post_id: string }) => {
                 }
             } catch (error) {
                 console.error("Error fetching related posts:", error);
-                setErrorRelatedPosts("Failed to load related posts. Please try again later.");
+                setErrorRelatedPosts(t('post_details.error_loading_post'));
                 setRelatedPosts([]); // Clear posts on error
             } finally {
                 setLoadingRelatedPosts(false);
@@ -148,11 +151,11 @@ const PostDetails = ({ post_id }: { post_id: string }) => {
                         </div>
                         <div className="w-full flex flex-row items-start gap-2">
                             <div className="flex flex-row items-center gap-[2px]">
-                                <span className="text-xs font-semibold">Posted</span>
+                                <span className="text-xs font-semibold">{t('post_details.posted')}</span>
                                 <span className="text-xs font-normal">{post.last_modified}</span>
                             </div>
                             <div className="flex flex-row items-center gap-[2px]">
-                                <span className="text-xs font-semibold">Modified</span>
+                                <span className="text-xs font-semibold">{t('post_details.modified')}</span>
                                 <span className="text-xs font-normal">{post.last_modified}</span>
                             </div>
                         </div>
@@ -169,15 +172,15 @@ const PostDetails = ({ post_id }: { post_id: string }) => {
                     </div>
                     <div className="flex flex-col items-start gap-2 w-full my-2 p-4 border rounded-lg">
                         <div className="grid grid-cols-[8rem_1fr] items-center gap-2 w-full">
-                            <span className="text-sm font-semibold">{"Support File's Content:"}</span>
+                            <span className="text-sm font-semibold">{t('post_details.support_file')}</span>
                             <div className="bg-grey py-2 px-3 rounded-lg whitespace-pre-wrap break-words break-all">{post.testcase.input}</div>
                         </div>
                         <div className="grid grid-cols-[8rem_1fr] items-center gap-2 w-full">
-                            <span className="text-sm font-semibold">Expected Output:</span>
+                            <span className="text-sm font-semibold">{t('post_details.expected_output')}</span>
                             <div className="bg-grey py-2 px-3 rounded-lg whitespace-pre-wrap break-words break-all">{post.testcase.expected}</div>
                         </div>
                     </div>
-                    <span className="text-sm font-semibold text-left">Test Code:</span>
+                    <span className="text-sm font-semibold text-left">{t('post_details.test_code')}</span>
                     <CodeMarkdownArea code={post.testcase.code} />
                     <div className="flex flex-row items-center justify-between w-full mt-2">
                         <div className="flex flex-row items-center gap-3">
@@ -196,13 +199,13 @@ const PostDetails = ({ post_id }: { post_id: string }) => {
                 <div className="flex flex-col gap-5 w-full">
                     <div className="flex flex-row items-start gap-3 w-full">
                         <Tab
-                            title="Comments"
+                            title={t('post_details.comments')}
                             isActive={activeTab === 'comments'}
                             onClick={() => handleToggleTab('comments')}
                             count={comments.length}
                         />
                         <Tab
-                            title="Related Posts"
+                            title={t('post_details.related_posts')}
                             isActive={activeTab === 'similar'}
                             onClick={() => handleToggleTab('similar')}
                             count={relatedPosts.length}
@@ -214,6 +217,7 @@ const PostDetails = ({ post_id }: { post_id: string }) => {
                                 {/* comment editor */}
                                 <CommentEditor
                                     postId={post.id}
+                                    placeholder={t('post_details.comment_placeholder')}
                                     onCommentCreated={() => {
                                         setLoadingComment(true)
                                         commentService.getAllComments(post.id).then(res => {
@@ -222,8 +226,8 @@ const PostDetails = ({ post_id }: { post_id: string }) => {
                                         })
                                     }}
                                 />
-                                {loadingComment && (<div className="text-center">Loading comments...</div>)}
-                                {comments.length === 0 && (<div className="text-center">No comments yet.</div>)}
+                                {loadingComment && (<div className="text-center">{t('post_details.loading_comments')}</div>)}
+                                {comments.length === 0 && (<div className="text-center">{t('post_details.no_comments')}.</div>)}
                                 {comments
                                     .sort((a: TComment, b: TComment) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
                                     .map((comment: TComment) => (
@@ -238,11 +242,11 @@ const PostDetails = ({ post_id }: { post_id: string }) => {
                         {activeTab === 'similar' && (
                             <div className="flex flex-col gap-5 w-full">
                                 {loadingRelatedPosts ? (
-                                    <div className="text-center">Loading related posts...</div>
+                                    <div className="text-center">{t('post_details.loading_related_posts')}</div>
                                 ) : errorRelatedPosts ? (
                                     <div className="text-center text-red-500">{errorRelatedPosts}</div>
                                 ) : relatedPosts.length === 0 ? (
-                                    <div className="text-center">No related posts found.</div>
+                                    <div className="text-center">{t('post_details.no_related_posts')}</div>
                                 ) : (
                                     relatedPosts.map((post, index) => (
                                         <RecPosts

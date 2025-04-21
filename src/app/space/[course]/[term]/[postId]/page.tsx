@@ -11,6 +11,7 @@ import RunCode from "@/components/post/run-code";
 import { usePostStore } from "@/store/post/post-store";
 
 import { TPost } from "@/types/post";
+import { useTranslation } from "react-i18next";
 
 const Tab = ({ title, isActive, onClick }: { title: string, isActive: boolean, onClick: () => void }) => {
     return (
@@ -29,7 +30,7 @@ const PostDetailPage = () => {
     const { postId } = useParams<{ postId: string }>()
     const router = useRouter()
     const post = usePostStore((state) => state.posts.find((post) => post.id === postId)) as TPost
-
+    const {t} = useTranslation('post')
     const [activeTab, setActiveTab] = useState<'details' | 'runCode'>('details')
     // const [post, setPost] = useState<TPost | null>(null);
     // const [loading, setLoading] = useState<boolean>(true);
@@ -62,18 +63,18 @@ const PostDetailPage = () => {
                 onClick={() => router.back()}
             >
                 <Image src={iconArrow} alt="" width={20} height={20} style={{ transform: 'scaleX(-1)' }} />
-                <p>Back</p>
+                <p>{t('back_button')} </p>
             </button>
 
             <div className="flex flex-col items-center">
                 <div className="flex flex-row items-center">
                     <Tab 
-                        title="Post Details" 
+                        title={t('post_details.title')} 
                         isActive={activeTab === 'details'} 
                         onClick={() => handleToggleTab('details')} 
                     />
                     <Tab 
-                        title="Run Code" 
+                        title={t('run_code.title')} 
                         isActive={activeTab === 'runCode'} 
                         onClick={() => handleToggleTab('runCode')} 
                     />

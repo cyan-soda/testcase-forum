@@ -5,6 +5,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import { useState } from 'react';
 import { commentService } from '@/service/comment'; 
+import { useTranslation } from 'react-i18next';
 
 // Validation schema
 const schema = yup
@@ -33,11 +34,12 @@ const CommentEditor = ({
     postId,
     //   userMail,
     // parentId,
-    // onCommentCreated,
-    placeholder = 'Type here to comment...',
+    onCommentCreated,
+    placeholder,
 }: CommentEditorProps) => {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [error, setError] = useState<string | null>(null);
+    const {t} = useTranslation('post')
 
     const {
         register,
@@ -59,7 +61,7 @@ const CommentEditor = ({
             await commentService.createComment(postId, data.content)
         } catch (err) {
             console.error('Error creating comment:', err);
-            setError((err as string) || 'Failed to create comment. Please try again.');
+            setError((err as string) || t('post_details.comment_create_error'));
         } finally {
             setIsSubmitting(false);
         }
@@ -97,7 +99,7 @@ const CommentEditor = ({
                         }`}
                     disabled={isSubmitting}
                 >
-                    {isSubmitting ? 'Submitting...' : 'Submit'}
+                    {isSubmitting ? t('post_details.submitting') : t('post_details.submit_comment')}
                 </button>
             </div>
         </form>

@@ -1,0 +1,39 @@
+{
+    "my_archive": "Lưu trữ của tôi",
+    "my_posts": {
+        "title": "Bài viết của tôi",
+        "item": {
+            "last_modified": "Chỉnh sửa lần cuối: ",
+            "button_delete": "Xóa bài",
+            "confirm_delete": "Bạn có chắc chắn muốn xóa bài viết này không?",
+            "support_files": "Nội dung file hỗ trợ: ",
+            "expected": "Đầu ra mong đợi: ",
+            "code": "Test Code: "
+        },
+        "empty": "Không tìm thấy bài viết nào.",
+        "log_in": "Vui lòng đăng nhập để xem bài viết của bạn."
+    },
+    "my_liked_posts": {
+        "title": "Bài viết đã thích",
+        "item": {
+            "author": "Tác giả: ",
+            "last_modified": "Chỉnh sửa lần cuối: ",
+            "support_files": "Nội dung file hỗ trợ: ",
+            "expected": "Đầu ra mong đợi: ",
+            "code": "Test Code: "
+        },
+        "empty": "Không tìm thấy bài viết nào đã thích.",
+        "log_in": "Vui lòng đăng nhập để xem bài viết bạn đã thích."
+    },
+    "my_commented_posts": {
+        "title": "Bài viết đã bình luận",
+        "item": {
+            "author": "Tác giả: ",
+            "last_modified": "Chỉnh sửa lần cuối: ",
+            "your_comments": "Bình luận của tôi",
+            "commented_on": "Đã bình luận vào: "
+        },
+        "empty": "Không tìm thấy bài viết nào đã bình luận.",
+        "log_in": "Vui lòng đăng nhập để xem bài viết bạn đã bình luận."
+    }
+}

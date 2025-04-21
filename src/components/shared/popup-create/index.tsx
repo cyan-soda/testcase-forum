@@ -11,6 +11,7 @@ import { yupResolver } from '@hookform/resolvers/yup'
 import iconUpload from '@/icons/export.svg'
 // import { useUserStore } from '@/store/user/user-store'
 import { postService } from '@/service/post'
+import { useTranslation } from 'react-i18next'
 
 const PopupWrapper = dynamic(() => import('@/components/shared/popup-wrapper'), { ssr: false })
 const DuplicatePopup = dynamic(() => import('@/components/shared/popup-duplicate'), { ssr: false })
@@ -25,7 +26,7 @@ interface ICreatePostForm {
   description: string
   expected: string
   code: string
-  input: File | null
+  input?: File | null
 }
 
 interface SimilarPost {
@@ -57,20 +58,8 @@ interface PostResponse {
   similar_posts?: SimilarPost[]
 }
 
-// Yup schema for validation
-const createPostSchema = Yup.object().shape({
-  title: Yup.string().trim().required('Title is required'),
-  description: Yup.string().trim().required('Description is required'),
-  expected: Yup.string().trim().required('Expected output is required'),
-  code: Yup.string().trim().required('Code is required'),
-  input: Yup.mixed<File>()
-    .required('A config.txt file is required')
-    .test('fileName', 'File must be named config.txt', (value) => value && value.name === 'config.txt')
-    .test('fileType', 'Only .txt files are allowed', (value) => value && value.type === 'text/plain'),
-})
-
 const CreatePostPopup = (props: CreatePopupProps) => {
-  // const { user } = useUserStore()
+  const { t } = useTranslation('popup')
   const [isDuplicatePopupOpen, setIsDuplicatePopupOpen] = useState(false)
   const [similarPosts, setSimilarPosts] = useState<SimilarPost[]>([])
   // const [postData, setPostData] = useState<ICreatePostForm | null>(null)
@@ -79,6 +68,16 @@ const CreatePostPopup = (props: CreatePopupProps) => {
   const [inputText, setInputText] = useState<string>('')
   const [isSubmitting, setIsSubmitting] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
+
+  const createPostSchema = Yup.object().shape({
+    title: Yup.string().trim().required(t('popup_create.input.title.required')),
+    description: Yup.string().trim().required(t('popup_create.input.description.required')),
+    expected: Yup.string().trim().required(t('popup_create.input.expected.required')),
+    code: Yup.string().trim().required(t('popup_create.input.code.required')),
+    input: Yup.mixed<File>()
+      .test('fileName', t('popup_create.input.support_file.test_name'), (value) => value && value.name === 'config.txt')
+      .test('fileType', t('popup_create.input.support_file.test_type'), (value) => value && value.type === 'text/plain'),
+  })
 
   // React Hook Form setup
   const {
@@ -117,7 +116,6 @@ const CreatePostPopup = (props: CreatePopupProps) => {
   }
 
   const onSubmit = async (data: ICreatePostForm) => {
-    // Ensure input is a File (validation ensures it's not null)
     if (!data.input) return
 
     setIsSubmitting(true)
@@ -136,7 +134,7 @@ const CreatePostPopup = (props: CreatePopupProps) => {
       if (status === 201) {
         resetForm()
         props.onClose()
-        alert('Post created successfully!')
+        alert(t('alert.create_post_success'))
       } else if (status === 202) {
         setPostId(responseData.post.id)
         if (responseData.similar_posts && responseData.similar_posts.length > 0) {
@@ -148,15 +146,15 @@ const CreatePostPopup = (props: CreatePopupProps) => {
         }
       } else {
         console.error('Unexpected status code:', status)
-        alert('Unexpected error occurred. Please try again.')
+        alert(t('alert.create_unexpected_error'))
       }
     } catch (error) {
       if (axios.isAxiosError(error)) {
         console.error('Axios error:', error.response?.data || error.message, error.response?.status)
-        alert(`Failed to create post: ${error.response?.data?.message || error.message}`)
+        alert(t('alert.create_post_fail') + ` ${error.response?.data?.message || error.message}`)
       } else {
         console.error('Unexpected error:', error)
-        alert('An unexpected error occurred. Please try again.')
+        alert(t('alert.create_unexpected_error'))
       }
     } finally {
       setIsSubmitting(false)
@@ -165,7 +163,7 @@ const CreatePostPopup = (props: CreatePopupProps) => {
 
   const handlePostAnyway = async () => {
     if (!postId) {
-      alert('No post ID available.')
+      alert(t('alert.no_post_id'))
       return
     }
 
@@ -174,20 +172,20 @@ const CreatePostPopup = (props: CreatePopupProps) => {
       resetForm()
       setIsDuplicatePopupOpen(false)
       props.onClose()
-      alert('Post created successfully!')
+      alert(t('alert.create_post_success'))
     } catch (error) {
       if (axios.isAxiosError(error)) {
         console.error('Axios error:', error.response?.data || error.message)
-        alert(`Failed to post: ${error.response?.data?.message || error.message}`)
+        alert(t('alert.create_post_fail') + ` ${error.response?.data?.message || error.message}`)
       } else {
         console.error('Unexpected error:', error)
-        alert('An unexpected error occurred.')
+        alert(t('alert.create_unexpected_error'))
       }
     }
   }
 
   const handleCancelPost = () => {
-    console.log('Post cancelled')
+    // console.log('Post cancelled')
     setIsDuplicatePopupOpen(false)
     resetForm()
   }
@@ -240,42 +238,45 @@ const CreatePostPopup = (props: CreatePopupProps) => {
     title: string
     name: keyof ICreatePostForm
     error?: string
-  }) => (
-    <div className='flex flex-col gap-1 items-start w-full'>
-      <span className='text-base font-semibold w-full'>{title}</span>
-      <div className='py-2 px-3 rounded-lg bg-grey w-full text-base'>
-        <Controller
-          name={name}
-          control={control}
-          render={({ field: { onChange } }) => (
-            <div className='flex flex-row gap-3 items-center'>
-              <label className='cursor-pointer px-4 py-2 rounded-lg bg-white flex items-center gap-2'>
-                Choose File
-                <input
-                  type='file'
-                  accept='.txt'
-                  ref={fileInputRef}
-                  className='hidden'
-                  onChange={(e) => {
-                    const file = e.target.files?.[0] || null
-                    onChange(file)
-                    setFileName(file ? file.name : '')
-                    if (file) {
-                      file.text().then((text) => setInputText(text))
-                    } else {
-                      setInputText('')
-                    }
-                  }}
-                />
-              </label>
-              {fileName && <span className='ml-3 text-sm'>{fileName}</span>}
-            </div>
-          )}
-        />
+  }) => {  
+    return (
+      <div className='flex flex-col gap-1 items-start w-full'>
+        <span className='text-base font-semibold w-full'>{title}</span>
+        <div className='py-2 px-3 rounded-lg bg-grey w-full text-base'>
+          <Controller
+            name={name}
+            control={control}
+            render={({ field: { onChange } }) => (
+              <div className='flex flex-row gap-3 items-center'>
+                <label className='cursor-pointer px-4 py-2 rounded-lg bg-white flex items-center gap-2'>
+                  {t('popup_create.input.support_file.input_text')}
+                  <input
+                    type='file'
+                    accept='.txt'
+                    ref={fileInputRef}
+                    className='hidden'
+                    required={false}
+                    onChange={(e) => {
+                      const file = e.target.files?.[0] || null; // Explicitly allow null
+                      onChange(file); // Pass null or file to react-hook-form
+                      setFileName(file ? file.name : '');
+                      // if (file) {
+                      //   file.text().then((text) => setInputText(text));
+                      // } else {
+                      //   setInputText('');
+                      // }
+                    }}
+                  />
+                </label>
+                {fileName && <span className='ml-3 text-sm'>{fileName}</span>}
+              </div>
+            )}
+          />
+        </div>
+        {error && <span className='text-red-500 text-sm'>{error}</span>}
       </div>
-      {error && <span className='text-red-500 text-sm'>{error}</span>}
-    </div>
-  )
+    );
+  };
 
   const ContentItem = ({ title, name, error }: {
     title: string
@@ -310,9 +311,10 @@ const CreatePostPopup = (props: CreatePopupProps) => {
 
   const InputItem = () => (
     <div className='flex flex-col gap-1 items-start w-full'>
-      <span className='text-base font-semibold w-full'>Input</span>
+      <span className='text-base font-semibold w-full'>{t('popup_create.input.input.label')}</span>
       <div className='py-2 px-3 rounded-lg bg-grey w-full text-base'>
         <textarea
+          disabled
           value={inputText}
           onChange={(e) => setInputText(e.target.value)}
           className='rounded-lg bg-grey w-full text-base focus-within:outline-none resize-none'
@@ -329,41 +331,41 @@ const CreatePostPopup = (props: CreatePopupProps) => {
 
   return (
     <>
-      <PopupWrapper isOpen={props.isOpen} onClose={props.onClose} title='Create a New Post'>
+      <PopupWrapper isOpen={props.isOpen} onClose={props.onClose} title={t('popup_create.title')}>
         <form
           className='w-full min-w-[1000px] flex flex-col gap-5 pt-5 items-center'
           onSubmit={handleSubmit(onSubmit)}
         >
           <span className='text-xl leading-8 font-semibold text-left w-full'>
-            Add some basic information about your post
+            {t('popup_create.sub_1')}
           </span>
           <Item
-            title='Title *'
+            title={t('popup_create.input.title.label') + " *"}
             name='title'
             error={errors.title?.message}
           />
           <ContentItem
-            title='Content *'
+            title={t('popup_create.input.description.label') + " *"}
             name='description'
             error={errors.description?.message}
           />
           <ContentItem
-            title='Test Code *'
+            title={t('popup_create.input.code.label') + " *"}
             name='code'
             error={errors.code?.message}
           />
 
-          <span className='text-xl leading-8 font-semibold text-left w-full'>Add your testcase</span>
+          <span className='text-xl leading-8 font-semibold text-left w-full'>{t('popup_create.sub_2')}</span>
           <div className='w-full space-y-4'>
             <InputItem />
             <FileItem
-              title='Support File (config.txt) *'
+              title={t('popup_create.input.support_file.label')}
               name='input'
               error={errors.input?.message}
             />
           </div>
           <Item
-            title='Expected Output *'
+            title={t('popup_create.input.expected.label') + " *"}
             name='expected'
             error={errors.expected?.message}
           />
@@ -373,7 +375,7 @@ const CreatePostPopup = (props: CreatePopupProps) => {
             disabled={isSubmitting}
             className={`bg-green rounded-lg py-3 px-4 flex flex-row gap-2 items-center text-sm font-bold text-center hover:bg-grey transition-all duration-300 ${isSubmitting ? 'opacity-50 cursor-not-allowed' : ''}`}
           >
-            <span>{isSubmitting ? 'Uploading...' : 'Upload Post'}</span>
+            <span>{isSubmitting ? t('popup_create.upload_button.loading') : t('popup_create.upload_button.label')}</span>
             <Image src={iconUpload} alt='' />
           </button>
         </form>

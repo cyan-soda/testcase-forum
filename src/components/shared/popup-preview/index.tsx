@@ -1,6 +1,7 @@
 'use client'
 
 import dynamic from 'next/dynamic'
+import { useTranslation } from 'react-i18next'
 
 const PopupWrapper = dynamic(() => import('@/components/shared/popup-wrapper'), { ssr: false })
 
@@ -36,11 +37,12 @@ const Item = (props: ItemProps) => {
 }
 
 const PreviewPopup = (props: PreviewPopupProps) => {
+    const { t } = useTranslation("home")
     return (
-        <PopupWrapper isOpen={props.isOpen} onClose={props.onClose} title={'Preview Testcase'}>
+        <PopupWrapper isOpen={props.isOpen} onClose={props.onClose} title={t('popup_preview.title')}>
             <div className='w-full min-w-[1000px] flex flex-col gap-5 pt-5 items-start'>
-                <Item title={`Support File's Content`} value={props.testcase.input} />
-                <Item title={'Expected Output'} value={props.testcase.expected} />
+                <Item title={t('popup_preview.support_file') + ':'} value={props.testcase.input} />
+                <Item title={t('popup_preview.expected_output') + ':'} value={props.testcase.expected} />
             </div>
         </PopupWrapper>
     )

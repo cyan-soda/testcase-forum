@@ -1,0 +1,39 @@
+{
+    "my_archive": "My Archive",
+    "my_posts": {
+        "title": "My Posts",
+        "item": {
+            "last_modified": "Last modified: ",
+            "button_delete": "Delete",
+            "confirm_delete": "Are you sure you want to delete this post?",
+            "support_files": "Support File's Content: ",
+            "expected": "Expected Output: ",
+            "code": "Test Code:"
+        },
+        "empty": "No posts found.",
+        "log_in": "Please log in to view your posts."
+    },
+    "my_liked_posts": {
+        "title": "My Liked Posts",
+        "item": {
+            "author": "Author: ",
+            "last_modified": "Last modified: ",
+            "support_files": "Support File's Content: ",
+            "expected": "Expected Output: ",
+            "code": "Test Code:"
+        },
+        "empty": "No liked posts found.",
+        "log_in": "Please log in to view your liked posts."
+    },
+    "my_commented_posts": {
+        "title": "My Commented Posts",
+        "item": {
+            "author": "Author: ",
+            "last_modified": "Last modified: ",
+            "your_comments": "Your Comments",
+            "commented_on": "Commented on: "
+        },
+        "empty": "No commented posts found.",
+        "log_in": "Please log in to view your commented posts."
+    }
+}

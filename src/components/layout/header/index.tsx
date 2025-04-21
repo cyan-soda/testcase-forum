@@ -98,17 +98,17 @@ const Header = () => {
                                         <div className="bg-green rounded-md p-2">
                                             <p className="text-base font-semibold">{isAuthenticated && user ? getInitials(user.first_name, user.last_name) : "?"}</p>
                                         </div>
-                                        <p className="text-base font-normal">{isAuthenticated && user ? `${user.first_name} ${user.last_name}` : t('guest_placeholder')}</p>
+                                        <p className="text-base font-normal">{isAuthenticated && user ? `${user.last_name} ${user.first_name}` : t('guest_placeholder')}</p>
                                         <Image src={iconDownArrow} alt="" />
                                     </DropdownMenuTrigger>
                                     <DropdownMenuContent align="end">
                                         <div>
                                             {user && isAuthenticated ? (
                                                 <>
-                                                    <DropdownMenuItem onClick={() => { router.push('/profile') }} className="hover:cursor-pointer">
+                                                    {/* <DropdownMenuItem onClick={() => { router.push('/profile') }} className="hover:cursor-pointer">
                                                         {t('account_options.profile')}
                                                     </DropdownMenuItem>
-                                                    <DropdownMenuSeparator />
+                                                    <DropdownMenuSeparator /> */}
                                                     <DropdownMenuItem onClick={() => { logOut(); router.push('/') }} className="hover:cursor-pointer">
                                                         {t('account_options.logout')}
                                                     </DropdownMenuItem>

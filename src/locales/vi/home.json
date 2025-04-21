@@ -26,5 +26,10 @@
     },
     "login_required": "Yêu cầu đăng nhập",
     "login_required_description": "Bạn cần đăng nhập để xem nội dung này.",
-    "see_more_button": "Xem thêm"
+    "see_more_button": "Xem thêm",
+    "popup_preview": {
+        "title": "Xem trước Testcase",
+        "support_file": "Nội dung file hỗ trợ",
+        "expected_output": "Đầu ra mong đợi"
+    }
 }

@@ -43,7 +43,7 @@ const CoursePage = () => {
       try {
         const res = await postService.getAllPosts();
         setPosts(res as TPost[]);
-        console.log("Post page: ", res);
+        // console.log("Post page: ", res);
         if (res) {
           const formattedPosts: TPost[] = (res as TPost[]).map((item: TPost) => ({
             id: item.id,
@@ -129,7 +129,7 @@ const CoursePage = () => {
     }
 
     setFilteredPosts(result);
-  }, [SORT_OPTIONS, posts, searchText, sortFilter]);
+  }, [posts, searchText, sortFilter]);
 
   // Search text handler
   const debounced = useDebouncedCallback((text: string) => {

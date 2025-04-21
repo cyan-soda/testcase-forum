@@ -26,5 +26,10 @@
     },
     "login_required": "Login Required",
     "login_required_description": "You need to login to see this content.",
-    "see_more_button": "See More"
+    "see_more_button": "See More",
+    "popup_preview": {
+        "title": "Preview Testcase",
+        "support_file": "Support File's Content",
+        "expected_output": "Expected Output"
+    }
 }

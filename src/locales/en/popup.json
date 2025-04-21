@@ -1,0 +1,57 @@
+{
+    "popup_create": {
+        "title": "Create a New Post",
+        "sub_1": "Add some basic information about your post",
+        "sub_2": "Add your testcase",
+        "input": {
+            "title": {
+                "label": "Title",
+                "required": "Title is required."
+            },
+            "description": {
+                "label": "Description",
+                "required": "Description is required."
+            },
+            "code": {
+                "label": "Test Code",
+                "required": "Test Code is required."
+            },
+            "input": {
+                "label": "Input"
+            },
+            "expected": {
+                "label": "Expected Output",
+                "required": "Expected Output is required."
+            },
+            "support_file": {
+                "label": "Support File (config.txt)",
+                "test_name": "File must be named config.txt.",
+                "test_type": "Only .txt files are allowed.",
+                "input_text": "Choose a file"
+            }
+        },
+        "upload_button": {
+            "label": "Upload Post",
+            "loading": "Uploading..."
+        }
+    },
+    "popup_duplicate": {
+        "title": "Duplicates Warning",
+        "sub_1": "We have found some testcases that are highly similar to your testcase:",
+        "sub_2": "Are you sure about posting your testcase?",
+        "button_cancel": "No, cancel my post",
+        "button_continue": "Yes, continue posting",
+        "item": {
+            "title": "Posted in",
+            "author": "by",
+            "support_file": "Support File's Content:",
+            "expected": "Expected Output:"
+        }
+    },
+    "alert": {
+        "create_post_success": "Post created successfully.",
+        "create_post_fail": "Failed to create post.",
+        "create_unexpected_error": "An unexpected error occurred.",
+        "no_post_id": "No post ID found."
+    }
+}

@@ -11,6 +11,7 @@ import * as yup from 'yup';
 import { commentService } from '@/service/comment';
 import { useUserStore } from '@/store/user/user-store';
 import { TComment } from '@/types/comment';
+import { useTranslation } from 'react-i18next';
 // import CommentEditor from '../comment-editor';
 
 // Validation schema for edit form
@@ -40,7 +41,7 @@ const Comment = ({ comment, onCommentUpdated }: CommentProps) => {
     const [isEditing, setIsEditing] = useState(false);
     // const [openReplies, setOpenReplies] = useState<Set<number>>(new Set());
     const [error, setError] = useState<string | null>(null);
-
+    const {t} = useTranslation('post')
     const { user } = useUserStore();
     // const { postId } = useParams<{ postId: string }>();
 
@@ -73,7 +74,7 @@ const Comment = ({ comment, onCommentUpdated }: CommentProps) => {
 
     const handleEdit = async (data: CommentFormData) => {
         if (!user || !user.mail) {
-            setError('You must be logged in to edit.');
+            setError(t('post_details.comment_edit_Log_in'));
             return;
         }
 
@@ -87,20 +88,20 @@ const Comment = ({ comment, onCommentUpdated }: CommentProps) => {
             resetEdit({ content: data.content });
             onCommentUpdated?.();
         } catch (err) {
-            console.error('Error updating comment:', err);
+            console.error(t('post_details.comment_edit_error'), err);
             setError(
                 typeof err === 'string'
                     ? err
                     : err instanceof Error
                     ? err.message
-                    : 'Failed to update comment. Please try again.'
+                    : t('post_details.comment_edit_error')
             );
         }
     };
 
     const handleDelete = async () => {
         if (!user || !user.mail) {
-            setError('You must be logged in to delete.');
+            setError(t('post_details.comment_delete_Log_in'));
             return;
         }
 
@@ -109,13 +110,13 @@ const Comment = ({ comment, onCommentUpdated }: CommentProps) => {
             await commentService.deleteComment(comment.id);
             onCommentUpdated?.();
         } catch (err) {
-            console.error('Error deleting comment:', err);
+            console.error(t('post_details.comment_delete_error'), err);
             setError(
                 typeof err === 'string'
                     ? err
                     : err instanceof Error
                     ? err.message
-                    : 'Failed to delete comment. Please try again.'
+                    : t('post_details.comment_delete_error')
             );
         }
     }
@@ -140,7 +141,7 @@ const Comment = ({ comment, onCommentUpdated }: CommentProps) => {
                         </div>
                     </div>
                     <span className="text-sm font-normal">
-                        <span className="font-semibold">Posted </span>
+                        <span className="font-semibold">{t('post_details.posted')}</span>
                         {new Date(comment.created_at).toLocaleString(undefined, {
                             year: 'numeric',
                             month: '2-digit',
@@ -175,7 +176,7 @@ const Comment = ({ comment, onCommentUpdated }: CommentProps) => {
                                 }}
                                 disabled={isSubmittingEdit}
                             >
-                                Cancel
+                                {t('post_details.comment_cancel')}
                             </button>
                             <button
                                 type="submit"
@@ -183,7 +184,7 @@ const Comment = ({ comment, onCommentUpdated }: CommentProps) => {
                                     }`}
                                 disabled={isSubmittingEdit}
                             >
-                                {isSubmittingEdit ? 'Saving...' : 'Save'}
+                                {isSubmittingEdit ? t('post_details.comment_saving') : t('post_details.comment_save')}
                             </button>
                         </div>
                     </form>
@@ -204,7 +205,7 @@ const Comment = ({ comment, onCommentUpdated }: CommentProps) => {
                                 className="bg-grey rounded-lg py-2 px-3 text-sm font-bold text-black"
                                 onClick={() => setIsEditing(true)}
                             >
-                                Edit
+                                {t('post_details.comment_edit')}
                             </button>
                         )}
                         {canDelete && (
@@ -212,7 +213,7 @@ const Comment = ({ comment, onCommentUpdated }: CommentProps) => {
                                 className="bg-grey rounded-lg py-2 px-3 text-sm font-bold text-black"
                                 onClick={handleDelete}
                             >
-                                Delete
+                                {t('post_details.comment_delete')}
                             </button>
                         )}
                         {/* <button
