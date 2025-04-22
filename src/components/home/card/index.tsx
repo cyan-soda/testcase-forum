@@ -4,10 +4,11 @@ import Image from 'next/image'
 import { useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import dynamic from 'next/dynamic'
-import iconStar from '@/icons/star.svg'
+// import iconStar from '@/icons/star.svg'
 import iconComment from '@/icons/message.svg'
 import iconView from '@/icons/eye.svg'
-import iconBadge from '@/icons/medal-star.svg'
+// import iconBadge from '@/icons/medal-star.svg'
+import iconLike from '@/icons/like.svg'
 import iconRightArrow from '@/icons/arrow--right.svg'
 const PreviewPopup = dynamic(() => import('@/components/shared/popup-preview'), { ssr: false })
 import { useTranslation } from 'react-i18next'
@@ -64,11 +65,11 @@ const PostCard = ({ post }: { post: TPost }) => {
     return (
         <>
             <div className="w-full flex flex-row gap-6 bg-white text-black px-6 py-5 rounded-2xl border border-black border-b-[3px]">
-                <div className='flex flex-col gap-5'>
-                    <Reaction count={post.interaction?.like_count} icon={iconStar} />
-                    <Reaction count={post.interaction?.comment_count} icon={iconComment} />
+                <div className='flex flex-col gap-5 h-full'>
+                    <Reaction count={post.interaction?.like_count} icon={iconLike} />
                     <Reaction count={post.interaction?.view_count} icon={iconView} />
-                    <Reaction count={post.interaction?.verified_teacher_mail ? 1 : 0} icon={iconBadge} />
+                    <Reaction count={post.interaction?.comment_count} icon={iconComment} />
+                    {/* <Reaction count={post.interaction?.verified_teacher_mail ? 1 : 0} icon={iconBadge} /> */}
                 </div>
                 <div className='w-[85%] flex flex-col gap-3 flex-grow'>
                     <div className='flex flex-row gap-[10px] items-start'>
