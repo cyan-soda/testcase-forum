@@ -192,7 +192,7 @@ const PostDetails = ({ post }: { post: TPost }) => {
                     <CodeMarkdownArea code={post.testcase.code} />
                     <div className="flex flex-row items-center justify-between w-full mt-2">
                         <div className="flex flex-row items-center gap-3">
-                            <LikeButton like_count={post.interaction?.like_count} post_id={post.id} />
+                            <LikeButton post={post} />
                             {/* <CommentButton count={5} isOpenComment={isOpenComment} setIsOpenComment={() => { setIsOpenComment(!isOpenComment) }} /> */}
                             <BadgeButton count={post.interaction?.verified_teacher_mail ? 1 : 0} setIsOpenBadge={() => { setIsOpenBadge(!isOpenBadge) }} />
                         </div>

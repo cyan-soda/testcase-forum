@@ -1,7 +1,7 @@
 'use client'
 
 import Image from "next/image"
-import { useEffect, useState } from "react"
+import { useState } from "react"
 
 import iconLike from '@/icons/like.svg'
 // import iconDislike from '@/icons/dislike.svg'
@@ -10,82 +10,61 @@ import iconLikeActive from '@/icons/like-active.svg'
 import iconCommnent from '@/icons/message.svg'
 import iconBadge from '@/icons/medal-star.svg'
 import { postService } from "@/service/post"
-import { usePostStore } from "@/store/post/post-store"
+// import { usePostStore } from "@/store/post/post-store"
 import { TPost } from "@/types/post"
 
 
 export const LikeButton = ({
-  like_count,
-  post_id,
+  post,
   initialLiked = false,
 }: {
-  like_count: number;
-  post_id: string;
+  post: TPost;
   initialLiked?: boolean;
 }) => {
-  const { getPostById, setPostById } = usePostStore();
-  const post = getPostById(post_id);
+  const [loading, setLoading] = useState(false);
+
   const initialLikeId = post?.interaction?.like_id;
   const [liked, setLiked] = useState(initialLikeId !== null ? true : initialLiked);
-  const [count, setCount] = useState(post?.interaction?.like_count ?? like_count);
-  const [loading, setLoading] = useState(false);
-  // const [post, setPost] = useState<TPost>();
-
-  // useEffect(() => {
-  //   const fetchPost = async () => {
-  //     const post = await getPostById(post_id);
-  //     if (post) {
-  //       setLiked(post.interaction?.like_id !== null);
-  //       setCount(post.interaction?.like_count ?? like_count);
-  //     }
-  //   }
-  //   fetchPost();
-  // }, [post_id])
-
-  // const initialLikeId = post?.interaction?.like_id;
-  // const [liked, setLiked] = useState(initialLikeId !== null ? true : initialLiked);
-  // const [count, setCount] = useState(post?.interaction?.like_count ?? like_count);
+  const [count, setCount] = useState(post?.interaction?.like_count ?? 0);
 
   const handleLike = async () => {
-    if (loading) return;
-
-    const post = getPostById(post_id);
-    if (!post) return;
-
-    const wasLiked = post.interaction?.like_id !== null;
-    const prevCount = post.interaction?.like_count;
-
-    // console.log("Post before like:", post.interaction?.like_id, post.interaction?.like_count);
-
-    const optimisticLiked = !wasLiked;
-    const optimisticCount = wasLiked ? prevCount - 1 : prevCount + 1;
-
-    setLiked(optimisticLiked);
-    setCount(optimisticCount);
+    if (loading || !post) return;
+  
+    const prevLiked = liked;
+    const prevCount = count;
+  
+    // Optimistically update UI
+    setLiked(!prevLiked);
+    setCount(prevLiked ? prevCount - 1 : prevCount + 1);
     setLoading(true);
-
+  
     try {
-      const res = await postService.likePost(post_id); // returns { id, is_like }
-
-      const newLikeId = res.is_like ? res.id : null;
-
-      setPostById(post_id, {
-        interaction: {
-          ...post.interaction,
-          like_id: newLikeId,
-          like_count: optimisticCount,
-        },
-      });
+      const res = await postService.likePost(post.id); // returns { id, is_like }
+  
+      if (typeof res?.is_like === "boolean") {
+        setLiked(res.is_like);
+  
+        // Always calculate from prevCount — NOT the currently shown state
+        const correctedCount = res.is_like
+          ? (prevLiked ? prevCount : prevCount + 1)
+          : (prevLiked ? prevCount - 1 : prevCount);
+  
+        setCount(correctedCount);
+      } else {
+        // Invalid response, revert
+        setLiked(prevLiked);
+        setCount(prevCount);
+      }
     } catch (err) {
       console.error("Error liking post:", err);
-      // Revert on failure
-      setLiked(wasLiked);
+      // Revert everything
+      setLiked(prevLiked);
       setCount(prevCount);
     } finally {
       setLoading(false);
     }
   };
-
+  
 
   return (
     <div className="flex flex-row items-center gap-2 bg-grey rounded-lg px-4 py-2">
@@ -101,7 +80,6 @@ export const LikeButton = ({
     </div>
   );
 };
-
 
 export const CommentButton = ({ count, setIsOpenComment }: { count: number, setIsOpenComment?: () => void, }) => {
   return (
