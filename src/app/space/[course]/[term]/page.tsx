@@ -6,28 +6,25 @@ import { useDebouncedCallback } from 'use-debounce';
 
 import PostCard from "@/components/home/card";
 import PopularPosts from "@/components/home/popular/posts";
-// import PopularTags from "@/components/home/popular/tags";
 import SearchFilterField from "@/components/home/utils/search-filter";
-// import SearchTagField from "@/components/home/utils/search-tag";
 import SearchTextField from "@/components/home/utils/search-text";
 import { postService } from "@/service/post";
 import { useTranslation } from "react-i18next";
 import { TPost } from "@/types/post";
 import { usePostStore } from "@/store/post/post-store";
-// import { useUserStore } from "@/store/user/user-store";
 
 const CoursePage = () => {
   const params = useParams();
   const { course, term } = params as { course: string; term: string };
-  const { posts, setPosts } = usePostStore()
+  const { posts, setPosts } = usePostStore();
   const [filteredPosts, setFilteredPosts] = useState<TPost[]>([]);
   const [searchText, setSearchText] = useState<string>("");
-  // const [tags, setTags] = useState<string[]>([]);
   const [sortFilter, setSortFilter] = useState<string>("");
-  const [visiblePosts, setVisiblePosts] = useState<number>(5);
-  // const { user } = useUserStore()
+  const [suggestedPosts, setSuggestedPosts] = useState<TPost[]>([]);
+  const [normalPosts, setNormalPosts] = useState<TPost[]>([]);
+  const [displayedNormalCount, setDisplayedNormalCount] = useState<number>(0);
+  const [loading, setLoading] = useState<boolean>(false);
 
-  // Translation and sort options at top level
   const { t } = useTranslation("home");
   const SORT_OPTIONS = [
     t('filter_options.all'),
@@ -41,17 +38,13 @@ const CoursePage = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await postService.getAllPosts();
-        setPosts(res as TPost[]);
-        // console.log("Post page: ", res);
-        if (res) {
-          const formattedPosts: TPost[] = (res as TPost[]).map((item: TPost) => ({
-            id: item.id,
-            user_mail: item.user_mail,
-            author: item.author,
-            subject: item.subject,
-            title: item.title,
-            description: item.description,
+        setLoading(true)
+        const suggestData = await postService.getSuggestedPosts();
+        const allData = await postService.getAllPosts();
+
+        const formatPosts = (data: TPost[]) =>
+          data.map((item: TPost) => ({
+            ...item,
             last_modified: new Date(item.last_modified).toLocaleString('en-US', {
               year: 'numeric',
               month: '2-digit',
@@ -60,37 +53,33 @@ const CoursePage = () => {
               minute: '2-digit',
               hour12: false,
             }),
-            testcase: {
-              post_id: item.testcase.post_id || "",
-              input: item.testcase.input || "",
-              expected: item.testcase.expected || "",
-              code: item.testcase.code,
-            },
-            tags: ["assignment1", "ultimate", "infinity void", "programming"],
-            post_type: 0,
-            interaction: {
-              like_count: item.interaction?.like_count || 0,
-              comment_count: item.interaction?.comment_count || 0,
-              like_id: item.interaction?.like_id || null,
-              verified_teacher_mail: item.interaction?.verified_teacher_mail || null,
-              view_count: item.interaction?.view_count || 0,
-              run_count: item.interaction?.run_count || 0,
-            },
           }));
-          setPosts(formattedPosts);
-          // console.log("Formatted posts:", formattedPosts);
+
+        if (suggestData && allData) {
+          const formattedSuggested = formatPosts(suggestData);
+          const formattedNormal = formatPosts(allData).filter(
+            (post) => !suggestData.some((s: TPost) => s.id === post.id)
+          );
+
+          setSuggestedPosts(formattedSuggested);
+          setNormalPosts(formattedNormal);
+          setPosts([...formattedSuggested]); // Initialize store with suggested posts
         }
       } catch (error) {
+        setLoading(false)
         console.error("Failed to fetch data:", error);
+      } finally {
+        setLoading(false)
       }
     };
 
     fetchData();
-  }, [course, term]);
+  }, [course, term, setPosts]);
 
-  // Combine all filters
+  // Combine and filter posts
   useEffect(() => {
-    let result = [...posts];
+    // Combine suggested posts with the currently displayed normal posts
+    let result = [...suggestedPosts, ...normalPosts.slice(0, displayedNormalCount)];
 
     // Apply search text filter
     if (searchText) {
@@ -100,13 +89,6 @@ const CoursePage = () => {
           post.description.toLowerCase().includes(searchText.toLowerCase())
       );
     }
-
-    // Apply tag filter
-    // if (tags.length > 0) {
-    //   result = result.filter((post) =>
-    //     tags.some((tag) => post.tags.includes(tag))
-    //   );
-    // }
 
     // Apply sort filter
     switch (sortFilter) {
@@ -129,57 +111,53 @@ const CoursePage = () => {
     }
 
     setFilteredPosts(result);
-  }, [posts, searchText, sortFilter]);
+  }, [suggestedPosts, normalPosts, displayedNormalCount, searchText, sortFilter]);
 
   // Search text handler
   const debounced = useDebouncedCallback((text: string) => {
     setSearchText(text);
   }, 100);
 
-  // Tag handler
-  // const availableTags = ['assignment1', 'ultimate', 'infinity void', 'programming', 'homework', 'project', 'exam', 'test'];
-  // const handleTagChange = (selectedTags: string[]) => {
-  //   setTags(selectedTags);
-  // };
-
   // Sort handler
   const handleFilterChange = (selected: string) => {
     setSortFilter(selected);
   };
 
+  // See more button handler
+  const handleSeeMore = () => {
+    const nextCount = displayedNormalCount + 5;
+    setDisplayedNormalCount(nextCount);
+  };
+
   return (
     <div className="min-h-screen bg-white text-black pr-10 pt-5 pb-10 flex flex-row gap-5">
-      
       <div className="flex flex-col gap-5 w-3/4">
         <div className="w-full flex flex-col gap-3 p-5 rounded-2xl border border-black">
           <SearchTextField
             value={searchText}
             onChange={(e: string) => debounced(e)}
           />
-          <div className="flex flex-row gap-3">
-            {/* <div className="w-2/3">
-              <SearchTagField
-                value={tags}
-                onChange={handleTagChange}
-                availableTags={availableTags}
-              />
-            </div> */}
-            {/* <div className="w-1/3"> */}
-              <SearchFilterField
-                value={sortFilter}
-                onChange={handleFilterChange}
-                availableOptions={SORT_OPTIONS}
-              />
-            {/* </div> */}
-          </div>
+          <SearchFilterField
+            value={sortFilter}
+            onChange={handleFilterChange}
+            availableOptions={SORT_OPTIONS}
+          />
         </div>
         <div className="flex flex-col gap-6">
-          {filteredPosts.slice(0, visiblePosts).map((post) => (
-            <PostCard key={post.id} post_id={post.id} />
+          {loading && (
+            <div className="w-full flex flex-col gap-1 items-center justify-center h-full">
+              {/* <span className="text-sm font-normal">{t('run_code.loading_recommended_posts')}</span> */}
+              <div className="flex items-center justify-center my-3">
+                <div className="w-10 h-10 border-2 border-t-transparent border-black rounded-full animate-spin"></div>
+              </div>
+            </div>
+          )}
+          {filteredPosts.map((post) => (
+            <PostCard key={post.id} post={post} />
           ))}
-          {visiblePosts < filteredPosts.length && (
+          {displayedNormalCount < normalPosts.length && (
             <button
-              onClick={() => setVisiblePosts((prev) => prev + visiblePosts)}
+              onClick={handleSeeMore}
               className="self-center px-3 py-2 bg-black text-white rounded-lg text-sm font-medium"
             >
               {t('see_more_button')}
@@ -189,7 +167,6 @@ const CoursePage = () => {
       </div>
       <div className="flex flex-col gap-5 w-1/4">
         <PopularPosts />
-        {/* <PopularTags /> */}
       </div>
     </div>
   );

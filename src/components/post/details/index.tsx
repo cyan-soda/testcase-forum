@@ -61,19 +61,27 @@ export const CodeMarkdownArea = ({ code }: { code: string }) => {
     )
 }
 
-const PostDetails = ({ post_id }: { post_id: string }) => {
+const PostDetails = ({ post }: { post: TPost }) => {
     const {t} = useTranslation('post')
-    const post = usePostStore().getPostById((post_id)) as TPost
-    // if (!post) return null;
 
-    post.last_modified = new Date(post.last_modified).toLocaleString('en-US', {
-        year: 'numeric',
-        month: '2-digit',
-        day: '2-digit',
-        hour: '2-digit',
-        minute: '2-digit',
-        hour12: false,
-    });
+    if (post) {
+        post.last_modified = new Date(post.last_modified).toLocaleString('en-US', {
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit',
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: false,
+        });
+        post.created_at = new Date(post.created_at).toLocaleString('en-US', {
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit',
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: false,
+        });
+    }
 
     const [comments, setComments] = useState<TComment[]>([]);
     const [loadingComment, setLoadingComment] = useState(true);
@@ -129,7 +137,7 @@ const PostDetails = ({ post_id }: { post_id: string }) => {
 
     return (
         <>
-            <div className="min-h-screen bg-white text-black p-5 rounded-xl flex flex-col gap-5 items-center">
+            <div className="min-h-screen bg-white text-black p-5 rounded-xl flex flex-col gap-5 items-center">               
                 <div className="flex flex-col gap-2 pb-5 w-full border-b border-black">
                     <div className="flex flex-col gap-2 w-full">
                         <div className="flex flex-row items-center justify-between w-full">
@@ -152,11 +160,11 @@ const PostDetails = ({ post_id }: { post_id: string }) => {
                         <div className="w-full flex flex-row items-start gap-2">
                             <div className="flex flex-row items-center gap-[2px]">
                                 <span className="text-xs font-semibold">{t('post_details.posted')}</span>
-                                <span className="text-xs font-normal">{post.last_modified}</span>
+                                <span className="text-xs font-normal">{post?.created_at}</span>
                             </div>
                             <div className="flex flex-row items-center gap-[2px]">
                                 <span className="text-xs font-semibold">{t('post_details.modified')}</span>
-                                <span className="text-xs font-normal">{post.last_modified}</span>
+                                <span className="text-xs font-normal">{post?.last_modified}</span>
                             </div>
                         </div>
                         <span className="text-xl font-semibold mt-2 whitespace-pre-wrap break-words">{post.title}</span>
@@ -253,7 +261,7 @@ const PostDetails = ({ post_id }: { post_id: string }) => {
                                             key={index}
                                             title={post.title}
                                             author={post.author}
-                                            link={`/space/CO1005/242/${post.post_id}`}
+                                            id={post.post_id}
                                         />
                                     ))
                                 )}

@@ -2,12 +2,12 @@
 
 import Image from "next/image";
 import { useParams, useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 import iconArrow from '@/icons/arrow--right.svg'
 import PostDetails from "@/components/post/details";
 import RunCode from "@/components/post/run-code";
-// import { postService } from "@/service/post";
+import { postService } from "@/service/post";
 import { usePostStore } from "@/store/post/post-store";
 
 import { TPost } from "@/types/post";
@@ -28,29 +28,29 @@ const Tab = ({ title, isActive, onClick }: { title: string, isActive: boolean, o
 
 const PostDetailPage = () => {
     const { postId } = useParams<{ postId: string }>()
+    console.log('postId', postId)
     const router = useRouter()
-    const post = usePostStore((state) => state.posts.find((post) => post.id === postId)) as TPost
+    // const { getPostById } = usePostStore()
+    // const post = getPostById(postId) as TPost
+    // console.log('post', post)
     const {t} = useTranslation('post')
     const [activeTab, setActiveTab] = useState<'details' | 'runCode'>('details')
-    // const [post, setPost] = useState<TPost | null>(null);
-    // const [loading, setLoading] = useState<boolean>(true);
+    const [post, setPost] = useState<TPost | null>(null);
 
-    // useEffect(() => {
-    //     const fetchPost = async () => {
-    //         if (!postId) return;
+    useEffect(() => {
+        const fetchPost = async () => {
+            if (!postId) return;
+            try {
+                const res = await postService.getPost(postId)
+                setPost(res as TPost);
+                console.log('post', res)
+            } catch (error) {
+                console.error("Failed to fetch post data:", error);
+            } 
+        };
 
-    //         try {
-    //             const res = await postService.getPost(postId)
-    //             // setPost(res as TPost);
-    //         } catch (error) {
-    //             console.error("Failed to fetch post data:", error);
-    //         } finally {
-    //             setLoading(false);
-    //         }
-    //     };
-
-    //     fetchPost();
-    // }, [postId]);
+        fetchPost();
+    }, [postId]);
 
     const handleToggleTab = (tab: 'details' | 'runCode') => {
         setActiveTab(tab)
@@ -60,7 +60,10 @@ const PostDetailPage = () => {
         <div className="min-h-screen bg-white text-black pr-10 pt-5 pb-10 flex flex-col gap-8">
             <button
                 className={`bg-grey rounded-lg py-2 px-3 text-black font-bold text-sm w-fit flex flex-row gap-[6px] items-center`}
-                onClick={() => router.back()}
+                onClick={() => {
+                    router.back();
+                    router.push('/space/CO1005/242');
+                }}
             >
                 <Image src={iconArrow} alt="" width={20} height={20} style={{ transform: 'scaleX(-1)' }} />
                 <p>{t('back_button')} </p>
@@ -82,11 +85,16 @@ const PostDetailPage = () => {
 
                 <div className="w-full bg-grey rounded-2xl p-7">
                     {activeTab === 'details' && (
-                        post && <PostDetails post_id={post.id} />
+                        post && <PostDetails post={post} />
                     )}
 
                     {activeTab === 'runCode' && (
                         <RunCode />
+                    )}
+                    {!post && (
+                        <div className="flex items-center justify-center my-3">
+                            <div className="w-5 h-5 border-2 border-t-transparent border-black rounded-full animate-spin"></div>
+                        </div>
                     )}
                 </div>
             </div>

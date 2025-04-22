@@ -112,6 +112,16 @@ export class PostService {
         return response.data;
     }
 
+    async getRecommendedPosts() {
+        const response = await axiosClient.get(`/recposts`, {
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${localStorage.getItem('token')}`,
+            },
+        });
+        return response.data;
+    }
+
     async getRelatedPosts(post_id: string) {
         const response = await axiosClient.get(`/post/${post_id}/related`, {
             headers: {

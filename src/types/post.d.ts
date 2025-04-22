@@ -6,6 +6,7 @@ export type TPost = {
     title: string,
     description: string,
     last_modified: string,
+    created_at: string,
     testcase: {
         post_id: string,
         input: string,

@@ -77,6 +77,15 @@ const MyPosts = () => {
     //     setEditingPost(null);
     // };
 
+    const handleClickItem = async (post: TPost) => {
+        try {
+            await postService.clickPost(post.id, post.post_type)
+        } catch (error) {
+            alert("Can't open post.")
+        }
+        window.open(`/space/CO1005/242/${post.id}`, '_blank', 'noopener,noreferrer')
+    }
+
     return (
         <div className="w-full">
             <h1 className="text-3xl font-bold mb-6">{t('my_posts.title')}</h1>
@@ -85,10 +94,9 @@ const MyPosts = () => {
             )}
             {loading && (
                 <div className="flex items-center justify-center w-full h-full min-h-screen">
-                    <svg className="animate-spin h-10 w-10 text-gray-900" viewBox="0 0 24 24">
-                        <circle className="opacity-25" cx="12" cy="12" r="10" strokeWidth="4" stroke="currentColor" fill="none"></circle>
-                        <path className="opacity-75" fill="currentColor" d="M4.93 4.93a10 10 0 0 1 14.14 14.14L12 12l-7.07-7.07z"></path>
-                    </svg>
+                    <div className="flex items-center justify-center my-3">
+                        <div className="w-5 h-5 border-2 border-t-transparent border-black rounded-full animate-spin"></div>
+                    </div>
                 </div>
             )}
             {posts === null ? (
@@ -109,9 +117,9 @@ const MyPosts = () => {
                             ) : ( */}
                                 <div className="flex flex-col items-start gap-2 w-full">
                                     <div className="flex flex-row items-center justify-between w-full">
-                                        <Link href={`/space/CO1005/242/${post.id}`} className="hover:underline flex-grow" target="_blank" rel="noopener noreferrer">
+                                        <div className="hover:underline hover:cursor-pointer flex-grow" onClick={() => handleClickItem(post)}>
                                             <h2 className="text-xl font-semibold text-left whitespace-pre-wrap break-words break-all">{post.title}</h2>
-                                        </Link>
+                                        </div>
                                         <div className="flex items-end text-sm font-medium ml-10">
                                             <button
                                                 onClick={() => handleDelete(post.id)}

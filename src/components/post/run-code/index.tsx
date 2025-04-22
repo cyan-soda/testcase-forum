@@ -25,11 +25,20 @@ const Field = ({ label, value }: { label: string; value?: string }) => {
     );
 };
 
-const RecPostItem = ({ title, author, link }: { title: string; author: string; link: string }) => {
+const RecPostItem = ({ title, author, id }: { title: string; author: string; id: string }) => {
+    const handleClick = async (id: string) => {
+        try {
+            await postService.clickPost(id, 1)
+        } catch (error) {
+            // console.error('Error clicking post:', error)
+            alert('Error opening post: ' + error)
+        }
+        window.open(`/space/CO1005/242/${id}`, '_blank')
+    }
     return (
         <div 
             className="flex flex-row items-start gap-4 cursor-pointer hover:bg-grey p-3 rounded-lg w-full"
-            onClick={() => window.open(link, '_blank')}
+            onClick={() => handleClick(id)}
         >
             <div className="flex flex-col items-start gap-[6px] w-full">
                 <span className="text-sm font-semibold">{title}</span>
@@ -83,19 +92,19 @@ const RunCode = () => {
     // Fetch suggested posts after a code run (when output changes)
     useEffect(() => {
         const fetchRecommendedPosts = async () => {
-            if (runState === 0) return; // Only fetch after a code run
-            setLoadingSuggestions(true);
+            if (runState === 0) return // Only fetch after a code run
+            setLoadingSuggestions(true)
             try {
-                const response = await postService.getSuggestedPosts();
-                const recommendedPosts = response.filter((item: TPost) => item.id !== postId);
+                const response = await postService.getRecommendedPosts()
+                const recommendedPosts = response.filter((item: TPost) => item.id !== postId)
                 setSuggestions(recommendedPosts);
             } catch (error) {
-                console.error('Error fetching recommended posts:', error);
-                setSuggestions([]);
+                // console.error('Error fetching recommended posts:', error)
+                setSuggestions([])
             } finally {
-                setLoadingSuggestions(false);
+                setLoadingSuggestions(false)
             }
-        };
+        }
 
         fetchRecommendedPosts();
     }, [runState, postId]); // Trigger when runState changes (after code run)
@@ -157,8 +166,9 @@ const RunCode = () => {
             }
             // console.log('Execution result:', result);
         } catch (error) {
-            console.error('Run code failed:', error);
-            alert(t('run_code.failed'));
+            // console.error('Run code failed:', error);
+            alert(t('run_code.run_code_failed'));
+            setRunState(2); // Set to failed state if an error occurs
         } finally {
             setLoadingRunCode(false);
         }
@@ -238,7 +248,7 @@ const RunCode = () => {
                             </div>
                         ) : suggestions.length > 0 ? (
                             suggestions.map((item, index) => (
-                                <RecPostItem key={index} title={item.title} author={item.author} link={`/space/CO1005/242/${item.id}`} />
+                                <RecPostItem key={index} title={item.title} author={item.author} id={item.id} />
                             ))
                         ) : (
                             <span className="text-sm font-normal text-center w-full">{t('run_code.no_recommended_posts')}</span>

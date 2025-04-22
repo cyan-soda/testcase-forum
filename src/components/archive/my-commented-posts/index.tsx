@@ -5,6 +5,7 @@ import Link from "next/link";
 import { userService } from "@/service/user";
 import { TComment } from "@/types/comment";
 import { useTranslation } from "react-i18next";
+import { postService } from "@/service/post";
 
 interface IMyCommentedPostsProps {
     post: TPost
@@ -59,6 +60,15 @@ const MyCommentedPosts = () => {
         }
     }, [user]);
 
+    const handleClickItem = async (post: TPost) => {
+        try {
+            await postService.clickPost(post.id, post.post_type)
+        } catch (error) {
+            alert("Can't open post.")
+        }
+        window.open(`/space/CO1005/242/${post.id}`, '_blank', 'noopener,noreferrer')
+    }
+
     return (
         <div className="w-full">
             <h1 className="text-3xl font-bold mb-6">{t('my_commented_posts.title')}</h1>
@@ -67,10 +77,9 @@ const MyCommentedPosts = () => {
             )}
             {loading && (
                 <div className="flex items-center justify-center w-full h-full min-h-screen">
-                    <svg className="animate-spin h-10 w-10 text-gray-900" viewBox="0 0 24 24">
-                        <circle className="opacity-25" cx="12" cy="12" r="10" strokeWidth="4" stroke="currentColor" fill="none"></circle>
-                        <path className="opacity-75" fill="currentColor" d="M4.93 4.93a10 10 0 0 1 14.14 14.14L12 12l-7.07-7.07z"></path>
-                    </svg>
+                    <div className="flex items-center justify-center my-3">
+                        <div className="w-5 h-5 border-2 border-t-transparent border-black rounded-full animate-spin"></div>
+                    </div>
                 </div>
             )}
             {posts === null ? (
@@ -81,9 +90,9 @@ const MyCommentedPosts = () => {
                         <div key={index} className="border border-black border-b-4 rounded-2xl p-4 shadow-sm w-full">
                             <div className="space-y-2 whitespace-pre-wrap break-words break-all">
                                 <div className="flex flex-row items-center justify-between w-full">
-                                    <Link href={`/space/CO1005/242/${item.post.id}`} className="hover:underline w-full" target="_blank" rel="noopener noreferrer">
-                                        <h2 className="text-xl font-semibold text-left w-full">{item.post.title}</h2>
-                                    </Link>
+                                    <div className="hover:underline hover:cursor-pointer flex-grow" onClick={() => handleClickItem(item.post)}>
+                                        <h2 className="text-xl font-semibold text-left whitespace-pre-wrap break-words break-all">{item.post.title}</h2>
+                                    </div>
                                 </div>
                                 <p className="text-gray-500 text-sm">
                                     {t('my_commented_posts.item.author')} {item.post.author}
