@@ -80,7 +80,7 @@ const PostCard = ({ post }: { post: TPost }) => {
                                     <Tag key={index} tag={tag} />
                                 ))}
                             </div> */}
-                            <div className='whitespace-pre-wrap break-words'>{post.description}</div>
+                            <div className='whitespace-pre-wrap break-words max-h-20'>{post.description}</div>
                         </div>
                         <div className='w-1/5 flex-shrink-0 flex flex-col items-center justify-start overflow-hidden'>
                             <div className='flex flex-row items-center gap-[10px]'>

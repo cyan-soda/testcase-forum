@@ -92,7 +92,7 @@ const Header = () => {
                             {t('create_button')}
                         </button>
                         <div className="flex flex-row px-[10px] py-2 gap-8 items-center justify-center rounded-md bg-white hover:bg-grey transition-all duration-300 cursor-pointer">
-                            <div className="">
+                            {/* <div className="">
                                 <DropdownMenu>
                                     <DropdownMenuTrigger className="flex flex-row gap-3 items-center focus:border-none">
                                         <div className="bg-green rounded-md p-2">
@@ -105,10 +105,10 @@ const Header = () => {
                                         <div>
                                             {user && isAuthenticated ? (
                                                 <>
-                                                    {/* <DropdownMenuItem onClick={() => { router.push('/profile') }} className="hover:cursor-pointer">
+                                                    <DropdownMenuItem onClick={() => { router.push('/profile') }} className="hover:cursor-pointer">
                                                         {t('account_options.profile')}
                                                     </DropdownMenuItem>
-                                                    <DropdownMenuSeparator /> */}
+                                                    <DropdownMenuSeparator />
                                                     <DropdownMenuItem onClick={() => { logOut(); router.push('/') }} className="hover:cursor-pointer">
                                                         {t('account_options.logout')}
                                                     </DropdownMenuItem>
@@ -123,8 +123,29 @@ const Header = () => {
                                         </div>
                                     </DropdownMenuContent>
                                 </DropdownMenu>
+                            </div> */}
+                            <div className="flex flex-row gap-3 items-center focus:border-none">
+                                <div className="bg-green rounded-md p-2">
+                                    <p className="text-base font-semibold">{isAuthenticated && user ? getInitials(user.first_name, user.last_name) : "?"}</p>
+                                </div>
+                                <p className="text-base font-normal">{isAuthenticated && user ? `${user.last_name} ${user.first_name}` : t('guest_placeholder')}</p>
+                                <Image src={iconDownArrow} alt="" />
                             </div>
                         </div>
+                        <div className="h-[30px] w-[1px] bg-black" />
+                        {user && isAuthenticated ? (
+                            <>
+                                <button onClick={() => { logOut(); router.push('/') }} className="hover:cursor-pointer hover:bg-grey transition-all duration-300 p-4 items-center justify-center rounded-md">
+                                    {t('account_options.logout')}
+                                </button>
+                            </>
+                        ) : (
+                            <>
+                                <button onClick={() => { router.push('/auth/log-in') }} className="hover:cursor-pointer hover:bg-grey transition-all duration-300 p-4 items-center justify-center rounded-md">
+                                    {t('account_options.login')}
+                                </button>
+                            </>
+                        )}
                         <div className="-ml-4 flex flex-row items-center gap-[10px] rounded-md bg-white hover:bg-grey transition-all duration-300 cursor-pointer p-4">
                             <DropdownMenu>
                                 <DropdownMenuTrigger className="flex flex-row gap-[10px] items-center focus:border-none">
