@@ -145,7 +145,7 @@ const Header = () => {
                     </div>
                 </div>
             </div>
-            <CreatePostPopup isOpen={isOpenCreatePopup} onClose={() => { setIsOpenCreatePopup(false); console.log(isOpenCreatePopup) }} />
+            <CreatePostPopup isOpen={isOpenCreatePopup} onClose={() => { setIsOpenCreatePopup(false) }} />
 
         </>
     )

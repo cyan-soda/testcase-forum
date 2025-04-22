@@ -6,7 +6,7 @@ import iconRightArrow from '@/icons/arrow--right.svg';
 import iconPlay from '@/icons/video-square.svg';
 import { codeService } from '@/service/code';
 import { useParams } from 'next/navigation';
-import { usePostStore } from '@/store/post/post-store';
+// import { usePostStore } from '@/store/post/post-store';
 import { TPost } from '@/types/post';
 import { postService } from '@/service/post';
 import { useTranslation } from 'react-i18next';
@@ -224,8 +224,8 @@ const RunCode = ({ post } : { post: TPost }) => {
                         ) : (
                             <>
                                 <div className="mt-3 flex flex-row gap-3 items-center">
-                                    <div className={`${runState === 1 ? 'bg-green' : 'bg-grey'} px-2 py-1 rounded-lg text-xs font-bold`}>Passed</div>
-                                    <div className={`${runState === 2 ? 'bg-black text-white' : 'bg-grey'} px-2 py-1 rounded-lg text-xs font-bold`}>Failed</div>
+                                    <div className={`${runState === 1 ? 'bg-green' : 'bg-grey'} px-2 py-1 rounded-lg text-xs font-bold`}>{t('run_code.passed')}</div>
+                                    <div className={`${runState === 2 ? 'bg-red-600 text-white' : 'bg-grey'} px-2 py-1 rounded-lg text-xs font-bold`}>{t('run_code.failed')}</div>
                                 </div>
                                 <div className="mt-5 flex flex-col gap-2 items-start w-full">
                                     <Field label={t('run_code.input')} value={post?.testcase.input} />

@@ -16,7 +16,7 @@ import { commentService } from "@/service/comment"
 import { TPost, TPostRelated } from "@/types/post"
 import CommentEditor from "../comment-editor"
 import { TComment } from "@/types/comment"
-import { usePostStore } from "@/store/post/post-store"
+// import { usePostStore } from "@/store/post/post-store"
 import { postService } from "@/service/post"
 import { useTranslation } from "react-i18next"
 
@@ -44,7 +44,7 @@ export const CodeMarkdownArea = ({ code }: { code: string }) => {
     const {t} = useTranslation('post')
     const lines = (code || t('post_details.no_code_markdown')).split('\n')
     return (
-        <div className="rounded-lg bg-gray-100 px-3 py-3 text-sm font-mono w-full">
+        <div className="rounded-lg bg-grey px-3 py-3 text-sm font-mono w-full">
             <pre className="whitespace-pre-wrap break-words">
                 {lines.map((line, index) => (
                     <div key={index} className="flex whitespace-pre-wrap break-words">
@@ -194,7 +194,7 @@ const PostDetails = ({ post }: { post: TPost }) => {
                         <div className="flex flex-row items-center gap-3">
                             <LikeButton post={post} />
                             {/* <CommentButton count={5} isOpenComment={isOpenComment} setIsOpenComment={() => { setIsOpenComment(!isOpenComment) }} /> */}
-                            <BadgeButton count={post.interaction?.verified_teacher_mail ? 1 : 0} setIsOpenBadge={() => { setIsOpenBadge(!isOpenBadge) }} />
+                            {/* <BadgeButton count={post.interaction?.verified_teacher_mail ? 1 : 0} setIsOpenBadge={() => { setIsOpenBadge(!isOpenBadge) }} /> */}
                         </div>
                         {/* <button
                             className={`bg-grey rounded-lg py-2 px-3 text-sm font-bold text-black`}
@@ -235,7 +235,7 @@ const PostDetails = ({ post }: { post: TPost }) => {
                                     }}
                                 />
                                 {loadingComment && (<div className="text-center">{t('post_details.loading_comments')}</div>)}
-                                {comments.length === 0 && (<div className="text-center">{t('post_details.no_comments')}.</div>)}
+                                {comments.length === 0 && (<div className="text-center">{t('post_details.no_comments')}</div>)}
                                 {comments
                                     .sort((a: TComment, b: TComment) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
                                     .map((comment: TComment) => (

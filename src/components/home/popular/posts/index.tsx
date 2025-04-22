@@ -47,7 +47,7 @@ const PopularPosts = () => {
             try {
                 const response = await postService.getPopularPosts()
                 setPopularPosts(response)
-                console.log('Popular posts:', response)
+                // console.log('Popular posts:', response)
             } catch (error) {
                 console.error('Error fetching popular posts:', error)
             }

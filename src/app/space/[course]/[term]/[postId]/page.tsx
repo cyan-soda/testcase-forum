@@ -28,7 +28,7 @@ const Tab = ({ title, isActive, onClick }: { title: string, isActive: boolean, o
 
 const PostDetailPage = () => {
     const { postId } = useParams<{ postId: string }>()
-    console.log('postId', postId)
+    // console.log('postId', postId)
     const router = useRouter()
     // const { getPostById } = usePostStore()
     // const post = getPostById(postId) as TPost
@@ -43,7 +43,7 @@ const PostDetailPage = () => {
             try {
                 const res = await postService.getPost(postId)
                 setPost(res as TPost);
-                console.log('post', res)
+                // console.log('post', res)
             } catch (error) {
                 console.error("Failed to fetch post data:", error);
             } 

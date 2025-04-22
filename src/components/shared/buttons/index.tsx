@@ -67,17 +67,17 @@ export const LikeButton = ({
   
 
   return (
-    <div className="flex flex-row items-center gap-2 bg-grey rounded-lg px-4 py-2">
-      <button onClick={handleLike} disabled={loading}>
+    <button onClick={handleLike} disabled={loading} className={`flex flex-row items-center gap-2 bg-grey rounded-lg px-4 py-2 ${liked ? 'hover:bg-grey' : 'hover:bg-green'} hover:cursor-pointer`}>
+      {/* <button onClick={handleLike} disabled={loading}> */}
         <Image
           src={liked ? iconLikeActive : iconLike}
           alt={liked ? "Unlike" : "Like"}
           width={24}
           height={24}
         />
-      </button>
+      {/* </button> */}
       <span>{count}</span>
-    </div>
+    </button>
   );
 };
 
