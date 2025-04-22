@@ -1,3 +1,4 @@
+// import { postService } from '@/service/post'
 import dynamic from 'next/dynamic'
 import { useTranslation } from 'react-i18next'
 const PopupWrapper = dynamic(() => import('@/components/shared/popup-wrapper'), { ssr: false })
@@ -21,11 +22,20 @@ interface DuplicatePopupProps {
 
 const Item = (props: { title: string, author: string, input: string, output: string, id: string }) => {
     const { t } = useTranslation('popup')
+    const handleClick = async (id: string) => {
+        // try {
+        //     await postService.clickPost(id, )
+        // } catch (err) {
+        //     // console.error('Error clicking post:', err)
+        //     alert('Error opening post. Please try again later.')
+        // }
+        window.open(`/space/CO1005/242/${id}`, '_blank')
+    }
     return (
         <div className='flex flex-col gap-1 items-start w-full'>
             <div className='flex flex-row items-center gap-1'>
                 <span className='text-base font-semibold'>{t('popup_duplicate.item.title')}</span>
-                <span className='text-base font-normal hover:underline hover:cursor-pointer' onClick={() => { window.open(`/space/CO1005/242/${props.id}`, '_blank') }}>{props.title}</span>
+                <span className='text-base font-normal hover:underline hover:cursor-pointer' onClick={() => { handleClick(props.id) }}>{props.title}</span>
                 <span className='text-base font-semibold'>{' '}{t('popup_duplicate.item.author')}</span>
                 <span className='text-base font-normal'>{props.author}</span>
             </div>
