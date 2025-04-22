@@ -49,14 +49,14 @@ const RecPostItem = ({ title, author, id }: { title: string; author: string; id:
     );
 };
 
-const RunCode = () => {
+const RunCode = ({ post } : { post: TPost }) => {
     const [fileNames, setFileNames] = useState<{ hFile?: string; cppFile?: string }>({});
     // const [isUploaded, setIsUploaded] = useState(false);
     const [isFileExist, setIsFileExist] = useState(false);
     const { postId } = useParams<{ postId: string }>();
     const [runState, setRunState] = useState<0 | 1 | 2>(0); // 0: not run, 1: passed, 2: failed
     const [output, setOutput] = useState<string>('None');
-    const post = usePostStore().getPostById(postId);
+    // const post = usePostStore().getPostById(postId);
     const [loadingRunCode, setLoadingRunCode] = useState<boolean>(false);
     const [loadingSuggestions, setLoadingSuggestions] = useState<boolean>(false);
     const [suggestions, setSuggestions] = useState<TPost[]>([]);

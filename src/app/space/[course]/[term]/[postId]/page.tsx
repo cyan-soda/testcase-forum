@@ -89,7 +89,7 @@ const PostDetailPage = () => {
                     )}
 
                     {activeTab === 'runCode' && (
-                        <RunCode />
+                        post && <RunCode post={post} />
                     )}
                     {!post && (
                         <div className="flex items-center justify-center my-3">

@@ -59,6 +59,7 @@ const CommentEditor = ({
 
         try {
             await commentService.createComment(postId, data.content)
+            onCommentCreated?.()
         } catch (err) {
             console.error('Error creating comment:', err);
             setError((err as string) || t('post_details.comment_create_error'));

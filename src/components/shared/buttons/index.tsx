@@ -1,7 +1,7 @@
 'use client'
 
 import Image from "next/image"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 
 import iconLike from '@/icons/like.svg'
 // import iconDislike from '@/icons/dislike.svg'
@@ -11,6 +11,7 @@ import iconCommnent from '@/icons/message.svg'
 import iconBadge from '@/icons/medal-star.svg'
 import { postService } from "@/service/post"
 import { usePostStore } from "@/store/post/post-store"
+import { TPost } from "@/types/post"
 
 
 export const LikeButton = ({
@@ -28,6 +29,22 @@ export const LikeButton = ({
   const [liked, setLiked] = useState(initialLikeId !== null ? true : initialLiked);
   const [count, setCount] = useState(post?.interaction?.like_count ?? like_count);
   const [loading, setLoading] = useState(false);
+  // const [post, setPost] = useState<TPost>();
+
+  // useEffect(() => {
+  //   const fetchPost = async () => {
+  //     const post = await getPostById(post_id);
+  //     if (post) {
+  //       setLiked(post.interaction?.like_id !== null);
+  //       setCount(post.interaction?.like_count ?? like_count);
+  //     }
+  //   }
+  //   fetchPost();
+  // }, [post_id])
+
+  // const initialLikeId = post?.interaction?.like_id;
+  // const [liked, setLiked] = useState(initialLikeId !== null ? true : initialLiked);
+  // const [count, setCount] = useState(post?.interaction?.like_count ?? like_count);
 
   const handleLike = async () => {
     if (loading) return;
