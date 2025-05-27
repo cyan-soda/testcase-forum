@@ -24,6 +24,6 @@
       "@/images/*": ["./public/assets/images/*"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "babel.config.js", "__mocks__/svgMock.js", "jest.setup.js"],
   "exclude": ["node_modules"]
 }
